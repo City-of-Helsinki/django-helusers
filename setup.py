@@ -19,6 +19,9 @@ setup(
     url='https://github.com/City-of-Helsinki/helusers',
     author='Juha Yrjölä',
     author_email='juha.yrjola@iki.fi',
+    install_requires=[
+        'Django',
+    ],
     classifiers=[
         'Environment :: Web Environment',
         'Framework :: Django',
