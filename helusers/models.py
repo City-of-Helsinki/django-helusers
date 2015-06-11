@@ -13,8 +13,6 @@ class AbstractUser(DjangoAbstractUser):
     def save(self, *args, **kwargs):
         if self.uuid is None:
             self.uuid = uuid.uuid1()
-        if not self.primary_sid:
-            self.primary_sid = uuid.uuid4()
         return super(AbstractUser, self).save(*args, **kwargs)
 
     class Meta:
