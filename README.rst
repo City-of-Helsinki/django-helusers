@@ -11,8 +11,19 @@ First, install the pip package.
 
   pip install django-helusers
 
-Second, modify your ``settings.py`` to add the ``helusers`` app and
-to use the modified User model.
+Second, implement your own custom User model in your application's
+``models.py``.
+
+.. code:: python
+
+  from helusers.models import AbstractUser
+
+
+  class User(AbstractUser):
+      pass
+
+Then, modify your ``settings.py`` to add the ``helusers`` app and
+point Django to use your custom User model.
 
 .. code:: python
 
@@ -22,4 +33,15 @@ to use the modified User model.
       ...
   )
 
-  AUTH_USER_MODEL = 'helusers.User'
+  AUTH_USER_MODEL = 'myapp.User'
+
+
+OAuth2 provider
+---------------
+
+If you want to use the City's OAuth2 API, you need to install the
+``django-allauth`` package. Follow the installation instructions
+provided by ``django-allauth``.
+
+Then, install the allauth provider by adding ``helusers.providers.helsinki``
+to your ``INSTALLED_APPS``.
