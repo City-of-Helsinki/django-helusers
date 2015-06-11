@@ -9,7 +9,6 @@ logger = logging.getLogger(__name__)
 class AbstractUser(DjangoAbstractUser):
     uuid = models.UUIDField(primary_key=True)
     department_name = models.CharField(max_length=50, null=True, blank=True)
-    primary_sid = models.CharField(max_length=100, unique=True)
 
     def save(self, *args, **kwargs):
         if self.uuid is None:
