@@ -1,6 +1,7 @@
 from allauth.socialaccount import providers
 from allauth.socialaccount.providers.base import ProviderAccount
 from allauth.socialaccount.providers.oauth2.provider import OAuth2Provider
+from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
 
 
 class HelsinkiAccount(ProviderAccount):
@@ -25,11 +26,21 @@ class HelsinkiProvider(OAuth2Provider):
         return str(data['uuid'])
 
     def extract_common_fields(self, data):
-        return dict(email=data.get('email'),
-                    username=data.get('username'),
-                    name=data.get('full_name'))
+        return data.copy()
 
     def get_default_scope(self):
         return ['read']
 
 providers.registry.register(HelsinkiProvider)
+
+
+class SocialAccountAdapter(DefaultSocialAccountAdapter):
+
+    def populate_user(self, request, sociallogin, data):
+        user = sociallogin.user
+        exclude_fields = ['is_staff', 'password', 'is_superuser']
+        user_fields = [f.name for f in user._meta.fields if f not in exclude_fields]
+        for field in user_fields:
+            if field in data:
+                setattr(user, field, data[field])
+        return user
