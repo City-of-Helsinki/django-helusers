@@ -40,7 +40,8 @@ OAuth2 provider
 ---------------
 
 If you want to use the City's OAuth2 API, you need to install the
-``django-allauth`` package. Follow the installation instructions
+``django-allauth`` package. Follow the `installation instructions
+<http://django-allauth.readthedocs.org/en/latest/installation.html>`_
 provided by ``django-allauth``.
 
 Then, install the allauth provider by adding ``helusers.providers.helsinki``
