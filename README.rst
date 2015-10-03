@@ -46,3 +46,18 @@ provided by ``django-allauth``.
 
 Then, install the allauth provider by adding ``helusers.providers.helsinki``
 to your ``INSTALLED_APPS``.
+
+After allauth is correctly set up, you need to create a ``SocialApp``
+instance. You can do it through the Django admin interface (Social Applications).
+You will be provided the client id and secret key by the City of Helsinki.
+
+You should also make sure ``allauth`` doesn't try to send verification emails
+by including this in your ``settings.py``:
+
+.. code:: python
+
+  SOCIALACCOUNT_PROVIDERS = {
+      'helsinki': {
+          'VERIFIED_EMAIL': True
+      }
+  }
