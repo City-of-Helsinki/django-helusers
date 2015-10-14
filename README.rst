@@ -61,3 +61,6 @@ by including this in your ``settings.py``:
           'VERIFIED_EMAIL': True
       }
   }
+  SOCIALACCOUNT_ADAPTER = 'helusers.providers.helsinki.provider.SocialAccountAdapter'
+  LOGIN_REDIRECT_URL = '/'
+  ACCOUNT_LOGOUT_ON_GET = True
