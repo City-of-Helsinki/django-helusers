@@ -36,6 +36,26 @@ providers.registry.register(HelsinkiProvider)
 
 class SocialAccountAdapter(DefaultSocialAccountAdapter):
 
+    def pre_social_login(self, request, sociallogin):
+        # Update some fields based on profile data.
+        fields = ['username', 'department_name', 'first_name', 'last_name', 'email']
+        update_fields = []
+        data = sociallogin.account.extra_data
+        user = sociallogin.user
+        user_fields = [f.name for f in user._meta.fields]
+        for field_name in fields:
+            if field_name not in user_fields:
+                continue
+            val = getattr(user, field_name)
+            if field_name not in data or data[field_name] == val:
+                continue
+
+            setattr(user, field_name, data[field_name])
+            update_fields.append(field_name)
+        if update_fields:
+            user.save(update_fields=update_fields)
+        return
+
     def populate_user(self, request, sociallogin, data):
         user = sociallogin.user
         exclude_fields = ['is_staff', 'password', 'is_superuser']
