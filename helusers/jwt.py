@@ -11,7 +11,7 @@ class JWTAuthentication(JSONWebTokenAuthentication):
 
     def populate_user(self, user, data):
         exclude_fields = ['is_staff', 'password', 'is_superuser', 'id']
-        user_fields = [f.name for f in user._meta.fields if f not in exclude_fields]
+        user_fields = [f.name for f in user._meta.fields if f.name not in exclude_fields]
         changed = False
         for field in user_fields:
             if field in data:
