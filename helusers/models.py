@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 
 
 class AbstractUser(DjangoAbstractUser):
-    uuid = models.UUIDField()
+    uuid = models.UUIDField(unique=True)
     department_name = models.CharField(max_length=50, null=True, blank=True)
 
     def save(self, *args, **kwargs):
