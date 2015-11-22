@@ -1,3 +1,4 @@
+import jwt
 import requests
 from django.conf import settings
 
@@ -21,11 +22,8 @@ class YleTunnusOAuth2Adapter(OAuth2Adapter):
         return super(YleTunnusOAuth2Adapter, self).__init__(*args, **kwargs)
 
     def complete_login(self, request, app, token, **kwargs):
-        headers = {'Authorization': 'Bearer {0}'.format(token.token)}
-        resp = requests.get(self.profile_url, headers=headers, params=self.auth_conf)
-        extra_data = resp.json()
-        return self.get_provider().sociallogin_from_response(request,
-                                                             extra_data)
+        data = jwt.decode(token.token, secret=app.secret, verify=False)
+        return self.get_provider().sociallogin_from_response(request, data)
 
 
 oauth2_login = OAuth2LoginView.adapter_view(YleTunnusOAuth2Adapter)

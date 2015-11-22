@@ -23,14 +23,13 @@ class YleTunnusProvider(OAuth2Provider):
     account_class = YleTunnusAccount
 
     def extract_uid(self, data):
-        print(data)
-        return str(data['uuid'])
+        return str(data['sub'])
 
     def extract_common_fields(self, data):
         return data.copy()
 
     def get_default_scope(self):
-        return ['sub']
+        return ['sub', 'email']
 
 providers.registry.register(YleTunnusProvider)
 
@@ -39,7 +38,7 @@ class SocialAccountAdapter(DefaultSocialAccountAdapter):
 
     def pre_social_login(self, request, sociallogin):
         # Update some fields based on profile data.
-        fields = ['username', 'department_name', 'first_name', 'last_name', 'email']
+        fields = ['email']
         update_fields = []
         data = sociallogin.account.extra_data
         user = sociallogin.user
