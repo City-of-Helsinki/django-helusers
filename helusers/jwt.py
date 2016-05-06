@@ -26,7 +26,8 @@ def patch_jwt_settings():
     defaults['JWT_SECRET_KEY'] = app.secret
     defaults['JWT_AUDIENCE'] = app.client_id
 
-patch_jwt_settings()
+# Disable automatic settings patching for now because it breaks Travis.
+# patch_jwt_settings()
 
 class JWTAuthentication(JSONWebTokenAuthentication):
 
