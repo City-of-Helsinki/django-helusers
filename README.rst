@@ -22,8 +22,9 @@ Second, implement your own custom User model in your application's
   class User(AbstractUser):
       pass
 
-Then, modify your ``settings.py`` to add the ``helusers`` app and
-point Django to use your custom User model.
+Then, modify your ``settings.py`` to add the ``helusers`` app as the
+first app (or at least before the ``django.contrib.admin`` app. You need
+to also point Django to use your custom User model.
 
 .. code:: python
 
