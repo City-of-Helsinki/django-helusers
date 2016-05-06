@@ -1,0 +1,17 @@
+{% extends "admin/login.html" %}
+{% load static %}
+
+{% block content %}
+<p>Kirjaudu sisään Helsingin kaupungin työntekijän tunnuksella:</p>
+<div style="margin-bottom: 2em;">
+    <a href="{% url 'helsinki_login' %}{% if redirect_path %}?next={{ redirect_path }}{% endif %}">
+        <button style="margin-left: 9em;" class="button">Helsinki Login</button>
+    </a>
+</div>
+<div>
+    Jos sinulla on erilliset ylläpitotunnukset, kirjaudu sisään käyttäjätunnuksella
+    ja salasanalla.
+</div>
+
+{{ block.super }}
+{% endblock %}
