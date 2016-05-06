@@ -1,11 +1,32 @@
 from django.utils.translation import ugettext as _
 from django.contrib.auth import get_user_model
+from django.conf import settings
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
+from rest_framework_jwt.settings import api_settings
 from rest_framework import exceptions
 import random
 
 User = get_user_model()
 
+
+def patch_jwt_settings():
+    """Patch rest_framework_jwt authentication settings from allauth"""
+    defaults = api_settings.defaults
+    defaults['JWT_PAYLOAD_GET_USER_ID_HANDLER'] = 'helusers.jwt.get_user_id_from_payload_handler'
+
+    if 'allauth.socialaccount' not in settings.INSTALLED_APPS:
+        return
+
+    from allauth.socialaccount.models import SocialApp
+    try:
+        app = SocialApp.objects.get(provider='helsinki')
+    except SocialApp.DoesNotExist:
+        return
+
+    defaults['JWT_SECRET_KEY'] = app.secret
+    defaults['JWT_AUDIENCE'] = app.client_id
+
+patch_jwt_settings()
 
 class JWTAuthentication(JSONWebTokenAuthentication):
 
