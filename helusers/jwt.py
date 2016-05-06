@@ -65,6 +65,30 @@ class JWTAuthentication(JSONWebTokenAuthentication):
         if changed:
             user.save()
 
+        # If allauth.socialaccount is installed, create the SocialAcount
+        # that corresponds to this user. Otherwise logins through
+        # allauth will not work for the user later on.
+        if 'allauth.socialaccount' in settings.INSTALLED_APPS:
+            from allauth.socialaccount.models import SocialAccount, EmailAddress
+
+            args = {'provider': 'helsinki', 'uid': user_id}
+            try:
+                account = SocialAccount.objects.get(**args)
+                assert account.user_id == user.id
+            except SocialAccount.DoesNotExist:
+                account = SocialAccount(**args)
+                account.extra_data = payload
+                account.user = user
+                account.save()
+
+                try:
+                    email = EmailAddress.objects.get(email__iexact=user.email)
+                    assert email.user == user
+                except EmailAddress.DoesNotExist:
+                    email = EmailAddress(email=user.email.lower(), primary=True, user=user,
+                                         verified=True)
+                    email.save()
+
         return super(JWTAuthentication, self).authenticate_credentials(payload)
 
 
