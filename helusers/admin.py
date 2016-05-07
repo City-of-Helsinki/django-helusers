@@ -36,8 +36,8 @@ site._registry.update(admin.site._registry)
 default_admin_site = admin.site
 admin.site = site
 
-# Copy the admin registrations from the default site
-site._registry.update(default_admin_site._registry)
-
 def autodiscover():
     autodiscover_modules('admin', register_to=site)
+    # Copy the admin registrations from the default site one more time,
+    # because some apps import the admin site in surprising ways.
+    site._registry.update(default_admin_site._registry)
