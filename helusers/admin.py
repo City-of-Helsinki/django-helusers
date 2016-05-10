@@ -31,6 +31,7 @@ class AdminSite(admin.AdminSite):
         ret = super(AdminSite, self).each_context(request)
         ret['site_type'] = getattr(settings, 'SITE_TYPE', 'dev')
         ret['redirect_path'] = request.GET.get('next', None)
+        ret['grappelli_installed'] = 'grappelli' in settings.INSTALLED_APPS
         return ret
 
 
