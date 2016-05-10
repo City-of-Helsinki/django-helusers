@@ -19,9 +19,13 @@ class AdminSite(admin.AdminSite):
 
     @property
     def site_header(self):
-        Site = apps.get_model(app_label='sites', model_name='Site')
-        site = Site.objects.get_current()
-        return ugettext_lazy("%(site_name)s admin") % {'site_name': site.name}
+        if 'django.contrib.sites' in settings.INSTALLED_APPS:
+            Site = apps.get_model(app_label='sites', model_name='Site')
+            site = Site.objects.get_current()
+            site_name = site.name
+        elif hasattr(settings, 'WAGTAIL_SITE_NAME'):
+            site_name = settings.WAGTAIL_SITE_NAME
+        return ugettext_lazy("%(site_name)s admin") % {'site_name': site_name}
 
     def each_context(self, request):
         ret = super(AdminSite, self).each_context(request)
@@ -32,9 +36,10 @@ class AdminSite(admin.AdminSite):
 
 site = AdminSite()
 site._registry.update(admin.site._registry)
-# Monkeypatch the default admin site with the custom one
 default_admin_site = admin.site
+# Monkeypatch the default admin site with the custom one
 admin.site = site
+admin.sites.site = site
 
 def autodiscover():
     autodiscover_modules('admin', register_to=site)
