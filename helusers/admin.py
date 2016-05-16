@@ -25,6 +25,8 @@ class AdminSite(admin.AdminSite):
             site_name = site.name
         elif hasattr(settings, 'WAGTAIL_SITE_NAME'):
             site_name = settings.WAGTAIL_SITE_NAME
+        else:
+            return ugettext_lazy("Django admin")
         return ugettext_lazy("%(site_name)s admin") % {'site_name': site_name}
 
     def each_context(self, request):
