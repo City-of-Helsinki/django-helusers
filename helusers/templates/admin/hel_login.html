@@ -2,6 +2,7 @@
 {% load static %}
 
 {% block content %}
+{% if helsinki_provider_installed %}
 <div id="helsinki-login"{% if grappelli_installed %} style="display: none;"{% endif %}>
     <p>Kirjaudu sisään Helsingin kaupungin työntekijän tunnuksella:</p>
     <div style="margin-bottom: 2em; margin-top: 1em;">
@@ -14,6 +15,7 @@
         ja salasanalla.
     </p>
 </div>
+{% endif %}
 {{ block.super }}
 {% if grappelli_installed %}
 <script type="text/javascript">

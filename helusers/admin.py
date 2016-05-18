@@ -34,6 +34,7 @@ class AdminSite(admin.AdminSite):
         ret['site_type'] = getattr(settings, 'SITE_TYPE', 'dev')
         ret['redirect_path'] = request.GET.get('next', None)
         ret['grappelli_installed'] = 'grappelli' in settings.INSTALLED_APPS
+        ret['helsinki_provider_installed'] = 'helusers.providers.helsinki' in settings.INSTALLED_APPS
         return ret
 
 
