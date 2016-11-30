@@ -10,9 +10,8 @@ from .provider import YleTunnusProvider
 
 class YleTunnusOAuth2Adapter(OAuth2Adapter):
     provider_id = YleTunnusProvider.id
-    access_token_url = 'https://auth.api-test.yle.fi/v1/token'
-    authorize_url = 'https://auth.api-test.yle.fi/v1/authorize'
-    profile_url = 'https://auth.api-test.yle.fi/v1/userinfo'
+    access_token_url = 'https://auth.api.yle.fi/v1/token'
+    authorize_url = 'https://auth.api.yle.fi/v1/authorize'
 
     def __init__(self, *args, **kwargs):
         self.auth_conf = settings.SOCIALACCOUNT_PROVIDERS['yletunnus']['AUTH_PARAMS']
