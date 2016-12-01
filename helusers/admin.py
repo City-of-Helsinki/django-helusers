@@ -35,6 +35,11 @@ class AdminSite(admin.AdminSite):
         ret['redirect_path'] = request.GET.get('next', None)
         ret['grappelli_installed'] = 'grappelli' in settings.INSTALLED_APPS
         ret['helsinki_provider_installed'] = 'helusers.providers.helsinki' in settings.INSTALLED_APPS
+        if ret['grappelli_installed']:
+            ret['grappelli_admin_title'] = self.site_header
+            ret['base_site_template'] = 'admin/base_site_grappelli.html'
+        else:
+            ret['base_site_template'] = 'admin/base_site_default.html'
         return ret
 
 
