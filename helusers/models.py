@@ -31,5 +31,17 @@ class AbstractUser(DjangoAbstractUser):
         self._make_sure_uuid_is_set()
         self.username = uuid_to_username(self.uuid)
 
+    def get_display_name(self):
+        if self.first_name and self.last_name:
+            return '{0} {1}'.format(self.first_name, self.last_name).strip()
+        else:
+            return self.email
+
+    def __str__(self):
+        if self.first_name and self.last_name:
+            return '%s %s (%s)' % (self.last_name, self.first_name, self.email)
+        else:
+            return self.email
+
     class Meta:
         abstract = True
