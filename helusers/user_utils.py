@@ -52,6 +52,10 @@ def get_or_create_user(payload):
                                      user=user, verified=True)
                 email.save()
 
+    if not user.is_active:
+        msg = _('User account is disabled.')
+        raise exceptions.AuthenticationFailed(msg)
+
     return user
 
 
