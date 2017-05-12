@@ -16,6 +16,8 @@ Second, implement your own custom User model in your application's
 
 .. code:: python
 
+  # users/models.py
+
   from helusers.models import AbstractUser
 
 
@@ -32,9 +34,10 @@ to also point Django to use your custom User model.
       ...
       'helusers',
       ...
+      'users'
   )
 
-  AUTH_USER_MODEL = 'myapp.User'
+  AUTH_USER_MODEL = 'users.User'
 
 
 OAuth2 provider

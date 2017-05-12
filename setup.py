@@ -10,13 +10,13 @@ os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 setup(
     name='django-helusers',
-    version='0.2.3',
+    version='0.2.4',
     packages=['helusers'],
     include_package_data=True,
     license='BSD License',
     description='Django app for the user infrastructure of the City of Helsinki',
     long_description=README,
-    url='https://github.com/City-of-Helsinki/helusers',
+    url='https://github.com/City-of-Helsinki/django-helusers',
     author='Juha Yrjölä',
     author_email='juha.yrjola@iki.fi',
     install_requires=[
