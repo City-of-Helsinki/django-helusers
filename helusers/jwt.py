@@ -66,6 +66,12 @@ class JWTAuthentication(JSONWebTokenAuthentication):
         if changed:
             user.save()
 
+        ad_groups = payload.get('ad_groups', None)
+        # Only update AD groups if it's a list of non-empty strings
+        if isinstance(ad_groups, list) and \
+                all([isinstance(x, str) and len(x) for x in ad_groups]):
+            user.update_ad_groups(ad_groups)
+
         # If allauth.socialaccount is installed, create the SocialAcount
         # that corresponds to this user. Otherwise logins through
         # allauth will not work for the user later on.

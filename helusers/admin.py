@@ -4,6 +4,7 @@ from django.conf import settings
 from django.utils.translation import ugettext_lazy
 from django.core.exceptions import ImproperlyConfigured
 from django.utils.module_loading import autodiscover_modules
+from .models import ADGroupMapping
 
 
 if hasattr(settings, 'SITE_TYPE'):
@@ -50,8 +51,14 @@ default_admin_site = admin.site
 admin.site = site
 admin.sites.site = site
 
+
 def autodiscover():
     autodiscover_modules('admin', register_to=site)
     # Copy the admin registrations from the default site one more time,
     # because some apps import the admin site in surprising ways.
     site._registry.update(default_admin_site._registry)
+
+
+class ADGroupMappingAdmin(admin.ModelAdmin):
+    pass
+site.register(ADGroupMapping, ADGroupMappingAdmin)
