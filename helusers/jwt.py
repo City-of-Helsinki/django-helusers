@@ -29,8 +29,13 @@ def patch_jwt_settings():
 # Disable automatic settings patching for now because it breaks Travis.
 # patch_jwt_settings()
 
-class JWTAuthentication(JSONWebTokenAuthentication):
 
+class JWTAuthentication(JSONWebTokenAuthentication):
+    def authenticate_credentials(self, payload):
+        return UserHandler().get_or_create_user(payload)
+
+
+class UserHandler(object):
     def populate_user(self, user, data):
         exclude_fields = ['is_staff', 'password', 'is_superuser', 'id']
         user_fields = [f.name for f in user._meta.fields if f.name not in exclude_fields]
@@ -50,7 +55,7 @@ class JWTAuthentication(JSONWebTokenAuthentication):
 
         return changed
 
-    def authenticate_credentials(self, payload):
+    def get_or_create_user(self, payload):
         user_id = payload.get('sub')
         if not user_id:
             msg = _('Invalid payload.')
