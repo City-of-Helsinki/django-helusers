@@ -6,6 +6,7 @@ from oidc_auth.authentication import JSONWebTokenAuthentication
 from rest_framework.authentication import get_authorization_header
 from rest_framework.exceptions import AuthenticationFailed
 
+from .authz import UserAuthorization
 from .settings import api_settings
 from .user_utils import get_or_create_user
 
@@ -34,8 +35,16 @@ class IdTokenAuthentication(JSONWebTokenAuthentication):
 
         user_resolver = self.settings.USER_RESOLVER  # Default: resolve_user
         user = user_resolver(request, payload)
+        auth = UserAuthorization(user, payload, self.settings)
 
-        return (user, payload)
+        if self.settings.REQUIRE_API_SCOPE_FOR_AUTHENTICATION:
+            api_scope = self.settings.API_SCOPE_PREFIX
+            if not auth.has_api_scope_with_prefix(api_scope):
+                raise AuthenticationFailed(
+                    _("Not authorized for API scope \"{api_scope}\"")
+                    .format(api_scope=api_scope))
+
+        return (user, auth)
 
     def get_jwt_value(self, request):
         auth = get_authorization_header(request).split()
