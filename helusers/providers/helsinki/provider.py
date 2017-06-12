@@ -54,6 +54,13 @@ class SocialAccountAdapter(DefaultSocialAccountAdapter):
             update_fields.append(field_name)
         if update_fields:
             user.save(update_fields=update_fields)
+
+        ad_groups = data.get('ad_groups', None)
+        # Only update AD groups if it's a list of non-empty strings
+        if isinstance(ad_groups, list) and \
+                all([isinstance(x, str) and len(x) for x in ad_groups]):
+            user.update_ad_groups(ad_groups)
+
         return
 
     def populate_user(self, request, sociallogin, data):
