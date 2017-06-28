@@ -1,6 +1,6 @@
 from django.utils.functional import cached_property
 
-from .settings import api_settings
+from .settings import api_token_auth_settings
 
 
 class UserAuthorization(object):
@@ -10,7 +10,7 @@ class UserAuthorization(object):
         """
         self.user = user
         self.data = api_token_payload
-        self.settings = settings or api_settings
+        self.settings = settings or api_token_auth_settings
 
     def has_api_scopes(self, *api_scopes):
         """
