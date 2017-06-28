@@ -27,7 +27,7 @@ _defaults = dict(
     API_AUTHORIZATION_FIELD='https://api.hel.fi/auth',
 
     # URL of the OpenID Provider
-    ISSUER='https://oma.hel.fi',
+    ISSUER='https://tunnistamo.hel.fi',
 
     # Auth scheme used in the Authorization header
     AUTH_SCHEME='Bearer',
