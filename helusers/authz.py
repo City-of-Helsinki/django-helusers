@@ -4,12 +4,12 @@ from .settings import api_settings
 
 
 class UserAuthorization(object):
-    def __init__(self, user, id_token_payload, settings=None):
+    def __init__(self, user, api_token_payload, settings=None):
         """
-        Initialize authorization info from user and ID token payload.
+        Initialize authorization info from user and API Token payload.
         """
         self.user = user
-        self.data = id_token_payload
+        self.data = api_token_payload
         self.settings = settings or api_settings
 
     def has_api_scopes(self, *api_scopes):
@@ -21,7 +21,7 @@ class UserAuthorization(object):
 
         :rtype: bool|None
         :return:
-          True or False, if the ID token has the API scopes field set,
+          True or False, if the API Token has the API scopes field set,
           otherwise None
         """
         if self._authorized_api_scopes is None:

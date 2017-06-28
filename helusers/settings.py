@@ -2,10 +2,10 @@ from django.conf import settings
 from rest_framework.settings import APISettings
 
 
-_user_settings = getattr(settings, 'HELSINKI_ID_TOKEN_AUTH', None)
+_user_settings = getattr(settings, 'OIDC_API_TOKEN_AUTH', None)
 
 _defaults = dict(
-    # Accepted audience, the ID token must have this in its aud field
+    # Accepted audience, the API Token must have this in its aud field
     AUDIENCE=None,
 
     # API scope prefix for permission checks
