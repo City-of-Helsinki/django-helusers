@@ -11,10 +11,10 @@ from .settings import api_settings
 from .user_utils import get_or_create_user
 
 
-class IdTokenAuthentication(JSONWebTokenAuthentication):
+class ApiTokenAuthentication(JSONWebTokenAuthentication):
     def __init__(self, settings=None, **kwargs):
         self.settings = settings or api_settings
-        super(IdTokenAuthentication, self).__init__(**kwargs)
+        super(ApiTokenAuthentication, self).__init__(**kwargs)
 
     @cached_property
     def auth_scheme(self):
@@ -67,36 +67,8 @@ class IdTokenAuthentication(JSONWebTokenAuthentication):
             auth_scheme=self.auth_scheme,
             realm=self.www_authenticate_realm)
 
-    def get_audiences(self, id_token):
+    def get_audiences(self, api_token):
         return {self.settings.AUDIENCE}
-
-    def validate_claims(self, id_token):
-        return super(IdTokenAuthentication, self).validate_claims(
-            self._simplify_id_token_azp_and_aud(id_token))
-
-    def _simplify_id_token_azp_and_aud(self, id_token):
-        """
-        Simplify ID token by removing azp and unknown audiences.
-
-        If id_token has azp, drf-oidc-auth checks it incorrectly against
-        OIDC_AUDIENCES.  This addresses it, until fix in PR #21 is
-        merged and released, see:
-        https://github.com/ByteInternet/drf-oidc-auth/pull/21
-        """
-        audiences = self.get_audiences(id_token)
-        if audiences and 'azp' in id_token:
-            # Take the first known aud and set is as the single aud
-            new_aud = [
-                aud for aud in _listify(id_token['aud'])
-                if aud in audiences
-            ][0:1]
-            # Return ID token with simplified aud and unset azp
-            return dict(id_token, aud=new_aud, azp=None)
-        return id_token
-
-
-def _listify(x):
-    return x if isinstance(x, list) else [x]
 
 
 def resolve_user(request, payload):
