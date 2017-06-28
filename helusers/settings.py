@@ -40,4 +40,5 @@ _import_strings = [
     'USER_RESOLVER',
 ]
 
-api_settings = APISettings(_user_settings, _defaults, _import_strings)
+api_token_auth_settings = APISettings(
+    _user_settings, _defaults, _import_strings)

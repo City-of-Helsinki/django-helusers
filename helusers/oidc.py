@@ -7,13 +7,13 @@ from rest_framework.authentication import get_authorization_header
 from rest_framework.exceptions import AuthenticationFailed
 
 from .authz import UserAuthorization
-from .settings import api_settings
+from .settings import api_token_auth_settings
 from .user_utils import get_or_create_user
 
 
 class ApiTokenAuthentication(JSONWebTokenAuthentication):
     def __init__(self, settings=None, **kwargs):
-        self.settings = settings or api_settings
+        self.settings = settings or api_token_auth_settings
         super(ApiTokenAuthentication, self).__init__(**kwargs)
 
     @cached_property
