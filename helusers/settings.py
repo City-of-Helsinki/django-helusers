@@ -34,6 +34,9 @@ _defaults = dict(
 
     # Function for resolving users
     USER_RESOLVER='helusers.oidc.resolve_user',
+
+    # OIDC config expiration time
+    OIDC_CONFIG_EXPIRATION_TIME=24 * 60 * 60
 )
 
 _import_strings = [

@@ -3,6 +3,7 @@ from django.utils.encoding import smart_text
 from django.utils.functional import cached_property
 from django.utils.translation import ugettext as _
 from oidc_auth.authentication import JSONWebTokenAuthentication
+from oidc_auth.util import cache
 from rest_framework.authentication import get_authorization_header
 from rest_framework.exceptions import AuthenticationFailed
 
@@ -20,8 +21,12 @@ class ApiTokenAuthentication(JSONWebTokenAuthentication):
     def auth_scheme(self):
         return self.settings.AUTH_SCHEME or 'Bearer'
 
-    @cached_property
+    @property
     def oidc_config(self):
+        return self.get_oidc_config()
+
+    @cache(ttl=api_token_auth_settings.OIDC_CONFIG_EXPIRATION_TIME)
+    def get_oidc_config(self):
         url = self.settings.ISSUER + '/.well-known/openid-configuration'
         return requests.get(url).json()
 
