@@ -77,4 +77,4 @@ class ApiTokenAuthentication(JSONWebTokenAuthentication):
 
 
 def resolve_user(request, payload):
-    return get_or_create_user(payload)
+    return get_or_create_user(payload, oidc=True)

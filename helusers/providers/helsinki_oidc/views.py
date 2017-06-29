@@ -13,7 +13,6 @@ class HelsinkiOIDCOAuth2Adapter(OAuth2Adapter):
     profile_url = 'https://api.hel.fi/sso-test/openid/userinfo/'
 
     def complete_login(self, request, app, token, **kwargs):
-        print(token.token)
         headers = {'Authorization': 'Bearer {0}'.format(token.token)}
         resp = requests.get(self.profile_url, headers=headers)
         assert resp.status_code == 200

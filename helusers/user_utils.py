@@ -4,7 +4,7 @@ from django.utils.translation import ugettext as _
 from rest_framework import exceptions
 
 
-def get_or_create_user(payload):
+def get_or_create_user(payload, oidc=False):
     user_id = payload.get('sub')
     if not user_id:
         msg = _('Invalid payload.')
@@ -34,7 +34,11 @@ def get_or_create_user(payload):
     if 'allauth.socialaccount' in settings.INSTALLED_APPS:
         from allauth.socialaccount.models import SocialAccount, EmailAddress
 
-        args = {'provider': 'helsinki', 'uid': user_id}
+        if oidc:
+            provider_name = 'helsinki_oidc'
+        else:
+            provider_name = 'helsinki'
+        args = {'provider': provider_name, 'uid': user_id}
         try:
             account = SocialAccount.objects.get(**args)
             assert account.user_id == user.id
