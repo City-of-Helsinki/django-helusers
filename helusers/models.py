@@ -69,8 +69,8 @@ class AbstractUser(DjangoAbstractUser):
     def sync_groups_from_ad(self):
         """Determine which Django groups to add or remove based on AD groups."""
 
-        l = ADGroupMapping.objects.values_list('ad_group', 'group')
-        mappings = {ad_group: group for ad_group, group in l}
+        ad_list = ADGroupMapping.objects.values_list('ad_group', 'group')
+        mappings = {ad_group: group for ad_group, group in ad_list}
 
         user_ad_groups = set(self.ad_groups.filter(groups__isnull=False).values_list(flat=True))
         all_mapped_groups = set(mappings.values())

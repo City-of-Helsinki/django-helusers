@@ -1,7 +1,8 @@
 from allauth.socialaccount import providers
 from allauth.socialaccount.providers.base import ProviderAccount
 from allauth.socialaccount.providers.oauth2.provider import OAuth2Provider
-from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
+
+from helusers.utils import uuid_to_username
 
 
 class HelsinkiAccount(ProviderAccount):
@@ -26,48 +27,12 @@ class HelsinkiProvider(OAuth2Provider):
         return str(data['uuid'])
 
     def extract_common_fields(self, data):
-        return data.copy()
+        ret = data.copy()
+        ret['username'] = uuid_to_username(data['sub'])
+        return ret
 
     def get_default_scope(self):
         return ['read']
 
+
 providers.registry.register(HelsinkiProvider)
-
-
-class SocialAccountAdapter(DefaultSocialAccountAdapter):
-
-    def pre_social_login(self, request, sociallogin):
-        # Update some fields based on profile data.
-        fields = ['username', 'department_name', 'first_name', 'last_name', 'email']
-        update_fields = []
-        data = sociallogin.account.extra_data
-        user = sociallogin.user
-        user_fields = [f.name for f in user._meta.fields]
-        for field_name in fields:
-            if field_name not in user_fields:
-                continue
-            val = getattr(user, field_name)
-            if field_name not in data or data[field_name] == val:
-                continue
-
-            setattr(user, field_name, data[field_name])
-            update_fields.append(field_name)
-        if update_fields:
-            user.save(update_fields=update_fields)
-
-        ad_groups = data.get('ad_groups', None)
-        # Only update AD groups if it's a list of non-empty strings
-        if isinstance(ad_groups, list) and \
-                all([isinstance(x, str) and len(x) for x in ad_groups]):
-            user.update_ad_groups(ad_groups)
-
-        return
-
-    def populate_user(self, request, sociallogin, data):
-        user = sociallogin.user
-        exclude_fields = ['is_staff', 'password', 'is_superuser']
-        user_fields = [f.name for f in user._meta.fields if f not in exclude_fields]
-        for field in user_fields:
-            if field in data:
-                setattr(user, field, data[field])
-        return user
