@@ -8,9 +8,9 @@ from .provider import HelsinkiOIDCProvider
 
 class HelsinkiOIDCOAuth2Adapter(OAuth2Adapter):
     provider_id = HelsinkiOIDCProvider.id
-    access_token_url = 'https://api.hel.fi/sso-test/openid/token/'
-    authorize_url = 'https://api.hel.fi/sso-test/openid/authorize/'
-    profile_url = 'https://api.hel.fi/sso-test/openid/userinfo/'
+    access_token_url = 'https://api.hel.fi/sso/openid/token/'
+    authorize_url = 'https://api.hel.fi/sso/openid/authorize/'
+    profile_url = 'https://api.hel.fi/sso/openid/userinfo/'
 
     def complete_login(self, request, app, token, **kwargs):
         headers = {'Authorization': 'Bearer {0}'.format(token.token)}
