@@ -1,3 +1,13 @@
+.. image:: https://travis-ci.org/City-of-Helsinki/django-helusers.svg
+   :target: https://travis-ci.org/City-of-Helsinki/django-helusers
+   :alt: Build status
+.. image:: https://codecov.io/gh/City-of-Helsinki/django-helusers/branch/master/graph/badge.svg
+   :target: https://codecov.io/gh/City-of-Helsinki/django-helusers
+   :alt: codecov
+.. image:: https://requires.io/github/City-of-Helsinki/django-helusers/requirements.svg?branch=master
+   :target: https://requires.io/github/City-of-Helsinki/django-helusers/requirements/?branch=master
+   :alt: Requirements
+
 ===================================================
 Django app for City of Helsinki user infrastructure
 ===================================================
