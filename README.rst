@@ -1,4 +1,4 @@
-.. image:: https://travis-ci.org/City-of-Helsinki/django-helusers.svg
+.. image:: https://travis-ci.org/City-of-Helsinki/django-helusers.svg?branch=master
    :target: https://travis-ci.org/City-of-Helsinki/django-helusers
    :alt: Build status
 .. image:: https://codecov.io/gh/City-of-Helsinki/django-helusers/branch/master/graph/badge.svg
