@@ -117,3 +117,4 @@ class AbstractUser(DjangoAbstractUser):
 
     class Meta:
         abstract = True
+        ordering = ('id',)
