@@ -28,7 +28,7 @@ class HelsinkiProvider(OAuth2Provider):
 
     def extract_common_fields(self, data):
         ret = data.copy()
-        ret['username'] = uuid_to_username(data['sub'])
+        ret['username'] = uuid_to_username(data['uuid'])
         return ret
 
     def get_default_scope(self):
