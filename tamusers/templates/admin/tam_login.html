@@ -2,12 +2,12 @@
 {% load static %}
 
 {% block content %}
-{% if helsinki_provider_installed %}
-<div id="helsinki-login"{% if grappelli_installed %} style="display: none;"{% endif %}>
-    <p>Kirjaudu sisään Helsingin kaupungin työntekijän tunnuksella:</p>
+{% if tampere_provider_installed %}
+<div id="tampere-login"{% if grappelli_installed %} style="display: none;"{% endif %}>
+    <p>Kirjaudu sisään Tampereen kaupungin työntekijän tunnuksella:</p>
     <div style="margin-bottom: 2em; margin-top: 1em;">
-        <a href="{{ helsinki_login_url }}{% if redirect_path %}?next={{ redirect_path }}{% endif %}">
-            <button style="margin-left: 9em; width: auto;" class="button grp-button grp-default" type="button">Helsinki Login</button>
+        <a href="{{ tampere_login_url }}{% if redirect_path %}?next={{ redirect_path }}{% endif %}">
+            <button style="margin-left: 9em; width: auto;" class="button grp-button grp-default" type="button">Tampere Login</button>
         </a>
     </div>
     <p>
@@ -22,7 +22,7 @@
 (function() {
     var $ = grp.jQuery;
 
-    $el = $("#helsinki-login");
+    $el = $("#tampere-login");
     $el.addClass('form-row grp-row');
     $el.prependTo($('div.module')).show();
 })();

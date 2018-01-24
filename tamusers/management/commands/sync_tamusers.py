@@ -3,22 +3,22 @@ from django.core.exceptions import ImproperlyConfigured
 from django.core.management.base import BaseCommand
 from django.contrib.sites.models import Site
 from allauth.socialaccount.models import SocialApp
-from helusers.providers.helsinki.provider import HelsinkiProvider
+from tamusers.providers.tampere.provider import TampereProvider
 
 
 class Command(BaseCommand):
-    help = 'Create or update helusers allauth SocialApp'
+    help = 'Create or update tamusers allauth SocialApp'
 
     def handle(self, *args, **options):
         changed = False
         try:
-            app = SocialApp.objects.get(provider=HelsinkiProvider.id)
+            app = SocialApp.objects.get(provider=TampereProvider.id)
         except SocialApp.DoesNotExist:
-            app = SocialApp(provider=HelsinkiProvider.id)
+            app = SocialApp(provider=TampereProvider.id)
             self.stdout.write(self.style.SUCCESS('Creating new SocialApp'))
 
         if not app.name:
-            app.name = 'Helsingin kaupungin työntekijät'
+            app.name = 'Tampereen kaupungin työntekijät'
             changed = True
 
         client_id = secret_key = None

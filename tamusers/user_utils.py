@@ -79,9 +79,9 @@ def get_or_create_user(payload, oidc=False):
         from allauth.socialaccount.models import SocialAccount, EmailAddress
 
         if oidc:
-            provider_name = 'helsinki_oidc'
+            provider_name = 'tampere_oidc'
         else:
-            provider_name = 'helsinki'
+            provider_name = 'tampere'
         args = {'provider': provider_name, 'uid': user_id}
         try:
             account = SocialAccount.objects.get(**args)

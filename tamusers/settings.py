@@ -24,16 +24,16 @@ _defaults = dict(
     REQUIRE_API_SCOPE_FOR_AUTHENTICATION=False,
 
     # Field name containing the API scopes authorized by the user
-    API_AUTHORIZATION_FIELD='https://api.hel.fi/auth',
+    API_AUTHORIZATION_FIELD='https://auth.tampere.fi/',
 
     # URL of the OpenID Provider
-    ISSUER='https://tunnistamo.hel.fi',
+    ISSUER='https://auth.tampere.fi',
 
     # Auth scheme used in the Authorization header
     AUTH_SCHEME='Bearer',
 
     # Function for resolving users
-    USER_RESOLVER='helusers.oidc.resolve_user',
+    USER_RESOLVER='tamusers.oidc.resolve_user',
 
     # OIDC config expiration time
     OIDC_CONFIG_EXPIRATION_TIME=24 * 60 * 60

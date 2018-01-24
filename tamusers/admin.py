@@ -14,12 +14,12 @@ if hasattr(settings, 'SITE_TYPE'):
 
 
 PROVIDERS = (
-    ('helusers.providers.helsinki', 'helsinki_login'),
-    ('helusers.providers.helsinki_oidc', 'helsinki_oidc_login')
+    ('tamusers.providers.tampere', 'tampere_login'),
+    ('tamusers.providers.tampere_oidc', 'tampere_oidc_login')
 )
 
 class AdminSite(admin.AdminSite):
-    login_template = "admin/hel_login.html"
+    login_template = "admin/tam_login.html"
 
     def __init__(self, *args, **kwargs):
         super(AdminSite, self).__init__(*args, **kwargs)
@@ -43,11 +43,11 @@ class AdminSite(admin.AdminSite):
         for provider, login_view in PROVIDERS:
             if provider not in settings.INSTALLED_APPS:
                 continue
-            ret['helsinki_provider_installed'] = True
-            ret['helsinki_login_url'] = reverse(login_view)
+            ret['tampere_provider_installed'] = True
+            ret['tampere_login_url'] = reverse(login_view)
             break
         else:
-            ret['helsinki_provider_installed'] = False
+            ret['tampere_provider_installed'] = False
 
         ret['grappelli_installed'] = 'grappelli' in settings.INSTALLED_APPS
         if ret['grappelli_installed']:

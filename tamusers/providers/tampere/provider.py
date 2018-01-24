@@ -2,10 +2,10 @@ from allauth.socialaccount import providers
 from allauth.socialaccount.providers.base import ProviderAccount
 from allauth.socialaccount.providers.oauth2.provider import OAuth2Provider
 
-from helusers.utils import uuid_to_username
+from tamusers.utils import uuid_to_username
 
 
-class HelsinkiAccount(ProviderAccount):
+class TampereAccount(ProviderAccount):
     def get_profile_url(self):
         return self.account.extra_data.get('html_url')
 
@@ -13,15 +13,15 @@ class HelsinkiAccount(ProviderAccount):
         return self.account.extra_data.get('avatar_url')
 
     def to_str(self):
-        dflt = super(HelsinkiAccount, self).to_str()
+        dflt = super(TampereAccount, self).to_str()
         return self.account.extra_data.get('name', dflt)
 
 
-class HelsinkiProvider(OAuth2Provider):
-    id = 'helsinki'
-    name = 'City of Helsinki employees'
-    package = 'helusers.providers.helsinki'
-    account_class = HelsinkiAccount
+class TampereProvider(OAuth2Provider):
+    id = 'tampere'
+    name = 'City of Tampere employees'
+    package = 'tamusers.providers.tampere'
+    account_class = TampereAccount
 
     def extract_uid(self, data):
         return str(data['uuid'])
@@ -35,4 +35,4 @@ class HelsinkiProvider(OAuth2Provider):
         return ['read']
 
 
-providers.registry.register(HelsinkiProvider)
+providers.registry.register(TampereProvider)

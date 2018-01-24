@@ -9,14 +9,14 @@ with open(os.path.join(os.path.dirname(__file__), 'README.rst')) as readme:
 os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 setup(
-    name='django-helusers',
+    name='django-tamusers',
     version='0.4.2',
-    packages=['helusers'],
+    packages=['tamusers'],
     include_package_data=True,
     license='BSD License',
-    description='Django app for the user infrastructure of the City of Helsinki',
+    description='Django app for the user infrastructure of the City of Tampere',
     long_description=README,
-    url='https://github.com/City-of-Helsinki/django-helusers',
+    url='https://github.com/Tampere/django-tamusers',
     author='Juha Yrjölä',
     author_email='juha.yrjola@iki.fi',
     install_requires=[

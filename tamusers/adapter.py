@@ -13,7 +13,7 @@ class SocialAccountAdapter(DefaultSocialAccountAdapter):
             return
 
         data = sociallogin.account.extra_data
-        oidc = sociallogin.account.provider == 'helsinki_oidc'
+        oidc = sociallogin.account.provider == 'tampere_oidc'
         update_user(user, data, oidc)
 
     def populate_user(self, request, sociallogin, data):
@@ -32,7 +32,7 @@ class SocialAccountAdapter(DefaultSocialAccountAdapter):
         sociallogin.save(request)
 
         data = sociallogin.account.extra_data
-        oidc = sociallogin.account.provider == 'helsinki_oidc'
+        oidc = sociallogin.account.provider == 'tampere_oidc'
         update_user(u, data, oidc)
 
         return u

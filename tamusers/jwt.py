@@ -16,7 +16,7 @@ def patch_jwt_settings():
 
     from allauth.socialaccount.models import SocialApp
     try:
-        app = SocialApp.objects.get(provider='helsinki')
+        app = SocialApp.objects.get(provider='tampere')
     except SocialApp.DoesNotExist:
         return
 

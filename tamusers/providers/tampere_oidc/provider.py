@@ -2,11 +2,11 @@ from allauth.socialaccount import providers
 from allauth.socialaccount.providers.base import ProviderAccount
 from allauth.socialaccount.providers.oauth2.provider import OAuth2Provider
 
-from helusers.user_utils import oidc_to_user_data
-from helusers.utils import uuid_to_username
+from tamusers.user_utils import oidc_to_user_data
+from tamusers.utils import uuid_to_username
 
 
-class HelsinkiOIDCAccount(ProviderAccount):
+class TampereOIDCAccount(ProviderAccount):
     def get_profile_url(self):
         return self.account.extra_data.get('html_url')
 
@@ -14,15 +14,15 @@ class HelsinkiOIDCAccount(ProviderAccount):
         return self.account.extra_data.get('avatar_url')
 
     def to_str(self):
-        dflt = super(HelsinkiOIDCAccount, self).to_str()
+        dflt = super(TampereOIDCAccount, self).to_str()
         return self.account.extra_data.get('name', dflt)
 
 
-class HelsinkiOIDCProvider(OAuth2Provider):
-    id = 'helsinki_oidc'
-    name = 'City of Helsinki employees (OIDC)'
-    package = 'helusers.providers.helsinki_oidc'
-    account_class = HelsinkiOIDCAccount
+class TampereOIDCProvider(OAuth2Provider):
+    id = 'tampere_oidc'
+    name = 'City of Tampere employees (OIDC)'
+    package = 'tamusers.providers.tampere_oidc'
+    account_class = TampereOIDCAccount
 
     def extract_uid(self, data):
         return str(data['sub'])
@@ -36,4 +36,4 @@ class HelsinkiOIDCProvider(OAuth2Provider):
         return ['openid profile email']
 
 
-providers.registry.register(HelsinkiOIDCProvider)
+providers.registry.register(TampereOIDCProvider)

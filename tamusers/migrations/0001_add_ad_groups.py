@@ -27,7 +27,7 @@ class Migration(migrations.Migration):
             name='ADGroupMapping',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('ad_group', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='groups', to='helusers.ADGroup')),
+                ('ad_group', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='groups', to='tamusers.ADGroup')),
                 ('group', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='ad_groups', to='auth.Group')),
             ],
             options={
