@@ -12,7 +12,7 @@
     </div>
     <p>
         Jos sinulla on erilliset ylläpitotunnukset, kirjaudu sisään käyttäjätunnuksella
-        ja salasanalla.
+        ja salasanalla{% if grappelli_installed %}<a href="javascript:" id="credentials-toggle"> tästä</a>{% endif %}.
     </p>
 </div>
 {% endif %}
@@ -22,9 +22,24 @@
 (function() {
     var $ = grp.jQuery;
 
+    var $credentialsForm = $("#id_password, #id_username, :submit").closest("div");
+    var $credentialsToggle = $("#credentials-toggle");
+
+    if ($(".errornote").length) {
+        $credentialsToggle.remove();
+    } else {
+        $credentialsForm.hide();
+    }
+
+    $credentialsToggle.click(function() {
+        $credentialsForm.show();
+        $(this).remove();
+    });
+
     $el = $("#tampere-login");
     $el.addClass('form-row grp-row');
     $el.prependTo($('div.module')).show();
+
 })();
 </script>
 {% endif %}
