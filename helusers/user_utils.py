@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.utils.translation import ugettext as _
-from django.db import transaction
+from django.db import transaction, IntegrityError
 from rest_framework import exceptions
 
 
@@ -56,14 +56,8 @@ def update_user(user, payload, oidc=False):
         user.update_ad_groups(ad_groups)
 
 
-def get_or_create_user(payload, oidc=False):
-    user_id = payload.get('sub')
-    if not user_id:
-        msg = _('Invalid payload.')
-        raise exceptions.AuthenticationFailed(msg)
-
+def _try_create_or_update(user_id, payload, oidc):
     user_model = get_user_model()
-
     with transaction.atomic():
         try:
             user = user_model.objects.select_for_update().get(uuid=user_id)
@@ -71,6 +65,26 @@ def get_or_create_user(payload, oidc=False):
             user = user_model(uuid=user_id)
             user.set_unusable_password()
         update_user(user, payload, oidc)
+    return user
+
+
+def get_or_create_user(payload, oidc=False):
+    user_id = payload.get('sub')
+    if not user_id:
+        msg = _('Invalid payload.')
+        raise exceptions.AuthenticationFailed(msg)
+
+    try_again = False
+    try:
+        user = _try_create_or_update(user_id, payload, oidc)
+    except IntegrityError:
+        # If we get an integrity error, it probably meant a race
+        # condition with another process. Another attempt should
+        # succeed.
+        try_again = True
+    if try_again:
+        # We try again without catching exceptions this time.
+        user = _try_create_or_update(user_id, payload, oidc)
 
     # If allauth.socialaccount is installed, create the SocialAcount
     # that corresponds to this user. Otherwise logins through
