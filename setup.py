@@ -2,7 +2,7 @@
 import os
 from setuptools import setup
 
-with open(os.path.join(os.path.dirname(__file__), 'README.rst')) as readme:
+with open(os.path.join(os.path.dirname(__file__), 'README.md')) as readme:
     README = readme.read()
 
 # allow setup.py to be run from any path
@@ -16,6 +16,7 @@ setup(
     license='BSD License',
     description='Django app for the user infrastructure of the City of Helsinki',
     long_description=README,
+    long_description_content_type='text/markdown',
     url='https://github.com/City-of-Helsinki/django-helusers',
     author='Juha Yrjölä',
     author_email='juha.yrjola@iki.fi',
