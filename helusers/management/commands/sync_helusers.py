@@ -1,7 +1,6 @@
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.core.management.base import BaseCommand
-from django.contrib.sites.models import Site
 from allauth.socialaccount.models import SocialApp
 from helusers.providers.helsinki.provider import HelsinkiProvider
 
@@ -43,6 +42,8 @@ class Command(BaseCommand):
             app.save()
 
         if not app.sites.exists():
+            from django.contrib.sites.models import Site
+
             app.sites.add(Site.objects.get(id=settings.SITE_ID))
             changed = True
 
