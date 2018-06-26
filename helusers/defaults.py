@@ -29,6 +29,7 @@ SOCIAL_AUTH_PIPELINE = (
     # specified by settings (and the default ones like access_token, etc).
     'social_core.pipeline.social_auth.load_extra_data',
 
-    # Update AD groups
-    #'users.pipeline.update_ad_groups',
+    # Store the end session URL in the user's session data so that
+    # we can format logout links properly.
+    'helusers.pipeline.store_end_session_url',
 )
