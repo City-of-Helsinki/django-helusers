@@ -1,8 +1,10 @@
 from django.contrib.auth.views import LogoutView as DjangoLogoutView
 from django.views.generic.base import RedirectView
+from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.http import HttpResponseRedirect
 from django.contrib import messages
 from django.utils.translation import gettext_lazy as _
+from django.urls import reverse
 
 
 class LogoutView(DjangoLogoutView):
@@ -27,4 +29,8 @@ class LoginView(RedirectView):
     permanent = False
 
     def get_redirect_url(self, *args, **kwargs):
-        pass
+        url = reverse('social:begin', kwargs=dict(backend='tunnistamo'))
+        redirect_to = self.request.GET.get(REDIRECT_FIELD_NAME)
+        if redirect_to:
+            url += '?%s=%s' % (REDIRECT_FIELD_NAME, redirect_to)
+        return url
