@@ -33,7 +33,7 @@ class User(AbstractUser):
 
 ```python
 INSTALLED_APPS = (
-	'helusers',
+    'helusers',
     ...
     'social_django',
     ...
@@ -69,9 +69,10 @@ urlpatterns = patterns('',
 - Configure your client ID, secret and OIDC endpoint locally (for example in `local_settins.py`):
 
 ```python
-SOCIAL_AUTH_HELSINKI_OIDC_KEY = 'abcd-12345-abcd-12356789'
-SOCIAL_AUTH_HELSINKI_OIDC_SECRET = 'abcd1234abcd1234abcd1234abcd1234'
-SOCIAL_AUTH_TUNNISTAMO_OIDC_ENDPOINT = 'https://example.com/openid'
+TUNNISTAMO_BASE_URL = 'https://tunnistamo.example.com'
+SOCIAL_AUTH_TUNNISTAMO_KEY = 'abcd-12345-abcd-12356789'
+SOCIAL_AUTH_TUNNISTAMO_SECRET = 'abcd1234abcd1234abcd1234abcd1234'
+SOCIAL_AUTH_TUNNISTAMO_OIDC_ENDPOINT = TUNNISTAMO_BASE_URL + '/openid'
 ```
 
 ### Configuration of the API authentication (using JWT tokens)
@@ -95,4 +96,21 @@ OIDC_API_TOKEN_AUTH = {
     'REQUIRE_API_SCOPE_FOR_AUTHENTICATION': True,
     'ISSUER': 'https://api.hel.fi/sso/openid'
 }
+```
+
+### Context processor
+
+If you need to access the Tunnistamo API from your JS code, you can include
+the Tunnistamo base URL in your template context using helusers's context processor:
+
+```python
+TEMPLATES = [
+    {
+        'OPTIONS': {
+            'context_processors': [
+                'helusers.context_processors.settings'
+            ]
+        }
+    }
+]
 ```
