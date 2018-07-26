@@ -32,4 +32,8 @@ SOCIAL_AUTH_PIPELINE = (
     # Store the end session URL in the user's session data so that
     # we can format logout links properly.
     'helusers.pipeline.store_end_session_url',
+
+    # If the access token gives access to external APIs, fetch the
+    # API tokens here.
+    'helusers.pipeline.fetch_api_tokens',
 )
