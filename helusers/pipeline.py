@@ -1,5 +1,6 @@
 import logging
 import requests
+from datetime import datetime, timedelta
 
 from django.contrib.auth import get_user_model
 from django.conf import settings
@@ -79,9 +80,18 @@ def fetch_api_tokens(details, backend, response, user=None, social=None, request
     if not user or not user.is_authenticated or not social:
         return
 
-    scopes = backend.get_scope()
+    scopes = set(backend.get_scope())
     # slightly ghetto-style filtering, but it works for now
-    api_scopes = [s for s in scopes if s.startswith('https://')]
+    api_scopes = {s for s in scopes if s.startswith('https://')}
+    tunnistamo_scopes = scopes - api_scopes
+
+    request.session['access_token_scope'] = list(tunnistamo_scopes)
+    request.session['access_token'] = response['access_token']
+    expires_at = datetime.now() + timedelta(seconds=response['expires_in'])
+    request.session['access_token_expires_at'] = expires_at
+    expires_at_ts = int(expires_at.timestamp()) * 1000
+    request.session['access_token_expires_at_ts'] = expires_at_ts
+
     if not api_scopes:
         return
 
