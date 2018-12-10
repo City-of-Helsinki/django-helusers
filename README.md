@@ -55,6 +55,19 @@ AUTHENTICATION_BACKENDS = (
 AUTH_USER_MODEL = 'users.User'
 LOGIN_REDIRECT_URL = '/'
 ```
+- If you need to be able to control Tunnistamo login process language, add also setting
+```python
+SOCIAL_AUTH_TUNNISTAMO_AUTH_EXTRA_ARGUMENTS = {'ui_locales': 'fi'}
+```
+`fi` there is the language code that will be used when no language is requested, so change it if you you prefer some
+other default language. If you don't want to set a default language at all, use an empty string `""` as the language
+code.
+
+When that setting is in place, languages can be requested using query param `ui_locales=<language code>` when starting
+the login process, for example in your template
+```
+<a href="{% url 'helusers:auth_login' %}?next=/foobar/&ui_locales=en">Login in English</a>
+```
 
 - Add URLs entries (to `<project>/urls.py`):
 
