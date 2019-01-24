@@ -18,6 +18,7 @@ PROVIDERS = (
     ('helusers.providers.helsinki_oidc', 'helsinki_oidc_login')
 )
 
+
 class AdminSite(admin.AdminSite):
     login_template = "admin/hel_login.html"
 
@@ -40,14 +41,21 @@ class AdminSite(admin.AdminSite):
         ret = super(AdminSite, self).each_context(request)
         ret['site_type'] = getattr(settings, 'SITE_TYPE', 'dev')
         ret['redirect_path'] = request.GET.get('next', None)
-        for provider, login_view in PROVIDERS:
-            if provider not in settings.INSTALLED_APPS:
-                continue
-            ret['helsinki_provider_installed'] = True
-            ret['helsinki_login_url'] = reverse(login_view)
-            break
+        provider_installed = False
+        if 'helusers.tunnistamo_oidc.TunnistamoOIDCAuth' in settings.AUTHENTICATION_BACKENDS:
+            provider_installed = True
+            login_url = reverse('social:begin', kwargs=dict(backend='tunnistamo'))
         else:
-            ret['helsinki_provider_installed'] = False
+            for provider, login_view in PROVIDERS:
+                if provider not in settings.INSTALLED_APPS:
+                    continue
+                provider_installed = True
+                login_url = reverse(login_view)
+                break
+
+        ret['helsinki_provider_installed'] = provider_installed
+        if provider_installed:
+            ret['helsinki_login_url'] = login_url
 
         ret['grappelli_installed'] = 'grappelli' in settings.INSTALLED_APPS
         if ret['grappelli_installed']:
