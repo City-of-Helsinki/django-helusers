@@ -45,10 +45,8 @@ INSTALLED_APPS = (
 - Configure the following settings:
 
 ```python
-SOCIAL_AUTH_POSTGRES_JSONFIELD = True
-
 AUTHENTICATION_BACKENDS = (
-    'helusers.helsinki_oidc.HelsinkiOIDCAuth',
+    'helusers.tunnistamo_oidc.TunnistamoOIDCAuth',
     'django.contrib.auth.backends.ModelBackend',
 )
 
@@ -79,13 +77,23 @@ urlpatterns = patterns('',
 )
 ```
 
-- Configure your client ID, secret and OIDC endpoint locally (for example in `local_settins.py`):
+- Configure your client ID, secret and OIDC endpoint locally (for example in `local_settings.py`):
 
 ```python
 TUNNISTAMO_BASE_URL = 'https://tunnistamo.example.com'
 SOCIAL_AUTH_TUNNISTAMO_KEY = 'abcd-12345-abcd-12356789'
 SOCIAL_AUTH_TUNNISTAMO_SECRET = 'abcd1234abcd1234abcd1234abcd1234'
 SOCIAL_AUTH_TUNNISTAMO_OIDC_ENDPOINT = TUNNISTAMO_BASE_URL + '/openid'
+```
+
+- Set the session serializer to PickleSerializer
+
+helusers stores the access token expiration time as a datetime which is not
+serializable to JSON, so Django needs to be configured to use the built-in
+PickeSerializer:
+
+```python
+SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 ```
 
 ### Configuration of the API authentication (using JWT tokens)
