@@ -66,6 +66,16 @@ class AbstractUser(DjangoAbstractUser):
         else:
             return self.email
 
+    def get_short_name(self):
+        if self.first_name:
+            return self.first_name
+        return self.email
+
+    def get_username(self):
+        if not self.username or self.username.startswith('u-'):
+            return self.email
+        return self.username
+
     def sync_groups_from_ad(self):
         """Determine which Django groups to add or remove based on AD groups."""
 
