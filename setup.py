@@ -18,8 +18,8 @@ setup(
     long_description=README,
     long_description_content_type='text/markdown',
     url='https://github.com/City-of-Helsinki/django-helusers',
-    author='Juha Yrjölä',
-    author_email='juha.yrjola@iki.fi',
+    author='City of Helsinki',
+    author_email='dev@hel.fi',
     install_requires=[
         'Django',
         'drf-oidc-auth>=0.9',
