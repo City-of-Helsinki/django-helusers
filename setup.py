@@ -24,6 +24,7 @@ setup(
         'Django',
         'drf-oidc-auth>=0.9',
         'requests',
+        'python-jose',
     ],
     classifiers=[
         'Environment :: Web Environment',
