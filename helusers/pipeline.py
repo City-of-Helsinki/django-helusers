@@ -13,13 +13,13 @@ User = get_user_model()
 logger = logging.getLogger(__name__)
 
 
-def ensure_uuid_match(details, backend, response, *args, **kwargs):
+def ensure_uuid_match(details, backend, response, user=None, *args, **kwargs):
     if not isinstance(backend, TunnistamoOIDCAuth):
         return
 
-    user = details.get('user')
+    user = user or details.get('user')
     if user is not None:
-        if user.uuid != details['uid']:
+        if user.uuid != details.get('uid') or response.get('sub'):
             return {'user': None}
 
 
