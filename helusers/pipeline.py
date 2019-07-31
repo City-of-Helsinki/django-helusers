@@ -82,7 +82,7 @@ def fetch_api_tokens(details, backend, response, user=None, social=None, request
 
     scopes = set(backend.get_scope())
     # slightly ghetto-style filtering, but it works for now
-    api_scopes = {s for s in scopes if s.startswith('https://')}
+    api_scopes = {s for s in scopes if s.startswith(('https://', 'http://'))}
     tunnistamo_scopes = scopes - api_scopes
 
     request.session['access_token_scope'] = list(tunnistamo_scopes)
