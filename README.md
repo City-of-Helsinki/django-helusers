@@ -135,3 +135,9 @@ TEMPLATES = [
     }
 ]
 ```
+
+### Disabling password logins
+
+If you're not allowing users to log in with passwords, you may disable the
+username/password form from Django admin login page by setting `HELUSERS_PASSWORD_LOGIN_DISABLED`
+to `True`.

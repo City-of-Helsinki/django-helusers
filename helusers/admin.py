@@ -63,6 +63,9 @@ class AdminSite(admin.AdminSite):
             ret['base_site_template'] = 'admin/base_site_grappelli.html'
         else:
             ret['base_site_template'] = 'admin/base_site_default.html'
+
+        ret['password_login_disabled'] = getattr(settings, 'HELUSERS_PASSWORD_LOGIN_DISABLED', False)
+
         return ret
 
 
