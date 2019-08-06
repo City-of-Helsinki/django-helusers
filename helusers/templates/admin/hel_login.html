@@ -1,6 +1,17 @@
 {% extends "admin/login.html" %}
 {% load static %}
 
+{% block extrastyle %}
+{{ block.super }}
+{% if password_login_disabled %}
+<style>
+    #content-main form {
+        display: none;
+    }
+</style>
+{% endif %}
+{% endblock %}
+
 {% block content %}
 {% if helsinki_provider_installed %}
 <div id="helsinki-login"{% if grappelli_installed %} style="display: none;"{% endif %}>
@@ -10,12 +21,15 @@
             <button style="margin-left: 9em; width: auto;" class="button grp-button grp-default" type="button">Helsinki Login</button>
         </a>
     </div>
+{% if not password_login_disabled %}
     <p>
         Jos sinulla on erilliset ylläpitotunnukset, kirjaudu sisään käyttäjätunnuksella
         ja salasanalla.
     </p>
+{% endif %}
 </div>
 {% endif %}
+
 {{ block.super }}
 {% if grappelli_installed %}
 <script type="text/javascript">
