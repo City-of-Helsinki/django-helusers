@@ -3,7 +3,7 @@ from urllib.parse import urlencode
 
 from django.contrib.auth.views import LogoutView as DjangoLogoutView
 from django.views.generic.base import RedirectView
-from django.contrib.auth import REDIRECT_FIELD_NAME
+from django.contrib.auth import logout, REDIRECT_FIELD_NAME
 from django.http import HttpResponseRedirect
 from django.contrib import messages
 from django.utils.translation import gettext_lazy as _
@@ -34,6 +34,11 @@ class LoginView(RedirectView):
     permanent = False
 
     def get_redirect_url(self, *args, **kwargs):
+        # We make sure the user is logged out first, because otherwise
+        # PSA will enter the connect flow where a new social authentication
+        # method is connected to an existing user account.
+        logout(self.request)
+
         url = reverse('social:begin', kwargs=dict(backend='tunnistamo'))
         redirect_to = self.request.GET.get(REDIRECT_FIELD_NAME)
         lang = self.request.GET.get(LANGUAGE_FIELD_NAME)
