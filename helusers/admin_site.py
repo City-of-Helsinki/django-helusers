@@ -2,9 +2,11 @@ import django
 from django.apps import apps
 from django.contrib import admin
 from django.conf import settings
+from django.core.exceptions import ImproperlyConfigured
+from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy
-from django.core.exceptions import ImproperlyConfigured
+from django.views.decorators.cache import never_cache
 
 
 if hasattr(settings, 'SITE_TYPE'):
@@ -43,7 +45,8 @@ class AdminSite(admin.AdminSite):
         provider_installed = False
         if 'helusers.tunnistamo_oidc.TunnistamoOIDCAuth' in settings.AUTHENTICATION_BACKENDS:
             provider_installed = True
-            login_url = reverse('social:begin', kwargs=dict(backend='tunnistamo'))
+            login_url = reverse('helusers:auth_login')
+            logout_url = reverse('helusers:auth_logout')
         else:
             for provider, login_view in PROVIDERS:
                 if provider not in settings.INSTALLED_APPS:
@@ -51,10 +54,12 @@ class AdminSite(admin.AdminSite):
                 provider_installed = True
                 login_url = reverse(login_view)
                 break
+            logout_url = None
 
         ret['helsinki_provider_installed'] = provider_installed
         if provider_installed:
             ret['helsinki_login_url'] = login_url
+            ret['helsinki_logout_url'] = logout_url
 
         ret['grappelli_installed'] = 'grappelli' in settings.INSTALLED_APPS
         if ret['grappelli_installed']:
@@ -66,6 +71,13 @@ class AdminSite(admin.AdminSite):
         ret['password_login_disabled'] = getattr(settings, 'HELUSERS_PASSWORD_LOGIN_DISABLED', False)
 
         return ret
+
+    @never_cache
+    def logout(self, request, extra_context=None):
+        if request.session and request.session.get('social_auth_end_session_url'):
+            logout_url = reverse('helusers:auth_logout')
+            return HttpResponseRedirect(logout_url)
+        super().logout(request, extra_context)
 
 
 # Django versions starting from 2.1 support overriding the default admin

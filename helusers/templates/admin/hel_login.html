@@ -31,6 +31,13 @@
 {% endif %}
 
 {{ block.super }}
+
+{% if request.user and request.user.is_authenticated and helsinki_logout_url %}
+<a href="{{ helsinki_logout_url }}">
+    <button style="margin-left: 9em; width: auto;" class="button grp-button grp-default" type="button">Kirjaudu ulos</button>
+</a>
+{% endif %}
+
 {% if grappelli_installed %}
 <script type="text/javascript">
 (function() {
