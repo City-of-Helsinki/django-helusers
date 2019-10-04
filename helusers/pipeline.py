@@ -65,6 +65,9 @@ def store_end_session_url(details, backend, response, user=None, *args, **kwargs
     if not hasattr(backend, 'get_end_session_url'):
         return
     request = kwargs['request']
+    if not request:
+        return
+
     end_session_url = backend.get_end_session_url(request, response['id_token'])
     if not end_session_url:
         return
@@ -77,7 +80,7 @@ def store_end_session_url(details, backend, response, user=None, *args, **kwargs
 def fetch_api_tokens(details, backend, response, user=None, social=None, request=None, *args, **kwargs):
     if not isinstance(backend, TunnistamoOIDCAuth):
         return
-    if not user or not user.is_authenticated or not social:
+    if not user or not user.is_authenticated or not social or not request:
         return
 
     scopes = set(backend.get_scope())
