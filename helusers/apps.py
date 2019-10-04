@@ -9,4 +9,4 @@ class HelusersConfig(AppConfig):
 
 
 class HelusersAdminConfig(AdminConfig):
-    default_site = 'helusers.admin.AdminSite'
+    default_site = 'helusers.admin_site.AdminSite'
