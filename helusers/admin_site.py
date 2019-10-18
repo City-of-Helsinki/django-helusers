@@ -77,7 +77,7 @@ class AdminSite(admin.AdminSite):
         if request.session and request.session.get('social_auth_end_session_url'):
             logout_url = reverse('helusers:auth_logout')
             return HttpResponseRedirect(logout_url)
-        super().logout(request, extra_context)
+        return super().logout(request, extra_context)
 
 
 # Django versions starting from 2.1 support overriding the default admin
