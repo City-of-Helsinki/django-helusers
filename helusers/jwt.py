@@ -1,4 +1,5 @@
 from django.conf import settings
+from rest_framework import exceptions
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from rest_framework_jwt.settings import api_settings
 
@@ -29,6 +30,12 @@ def patch_jwt_settings():
 
 class JWTAuthentication(JSONWebTokenAuthentication):
     def authenticate_credentials(self, payload):
+        user = super().authenticate_credentials(payload)
+
+        if user and not user.is_active:
+            msg = _('User account is disabled.')
+            raise exceptions.AuthenticationFailed(msg)
+
         return get_or_create_user(payload)
 
 
