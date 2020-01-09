@@ -34,7 +34,8 @@ class ADGroupMapping(models.Model):
 
     class Meta:
         unique_together = (('group', 'ad_group'),)
-        verbose_name = _("AD Group Mapping")
+        verbose_name = _("AD group mapping")
+        verbose_name_plural = _("AD group mappings")
 
 
 class AbstractUser(DjangoAbstractUser):

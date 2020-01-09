@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-09-16 11:28+0300\n"
+"POT-Creation-Date: 2020-01-09 12:32+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,48 +17,59 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-#: helusers/admin_site.py:38
+
+#: helusers/admin_site.py
 msgid "Django admin"
 msgstr "Ylläpito"
 
-#: helusers/admin_site.py:39
+#: helusers/admin_site.py
 #, python-format
 msgid "%(site_name)s admin"
 msgstr "Sivuston %(site_name)s ylläpito"
 
-#: helusers/apps.py:8
+#: helusers/apps.py
 msgid "Helsinki Users"
 msgstr "Käyttäjät"
 
-#: helusers/models.py:37
-msgid "AD Group Mapping"
+#: helusers/jwt.py
+msgid "User account is disabled."
+msgstr "Käyttäjätunnus on pois käytöstä."
+
+#: helusers/models.py
+#, fuzzy
+#| msgid "AD Group Mapping"
+msgid "AD group mapping"
 msgstr "AD-ryhmätaulu"
 
-#: helusers/oidc.py:49
+#: helusers/models.py
+msgid "AD group mappings"
+msgstr "AD-ryhmätaulut"
+
+#: helusers/oidc.py
 #, python-brace-format
 msgid "Not authorized for API scope \"{api_scope}\""
 msgstr ""
 
-#: helusers/oidc.py:62
+#: helusers/oidc.py
 msgid "Invalid Authorization header. No credentials provided"
 msgstr ""
 
-#: helusers/oidc.py:65
+#: helusers/oidc.py
 msgid "Invalid Authorization header. Credentials string should not contain spaces."
 msgstr ""
 
-#: helusers/templates/admin/base_site_default.html:3
+#: helusers/templates/admin/base_site_default.html
 msgid "Django site admin"
 msgstr "Sivuston ylläpito"
 
-#: helusers/templates/admin/base_site_default.html:32
+#: helusers/templates/admin/base_site_default.html
 msgid "Django administration"
 msgstr "Ylläpito"
 
-#: helusers/user_utils.py:74
+#: helusers/user_utils.py
 msgid "Invalid payload."
 msgstr ""
 
-#: helusers/views.py:24
+#: helusers/views.py
 msgid "You have been successfully logged out."
 msgstr "Sinut on nyt kirjattu ulos."
