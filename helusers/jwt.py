@@ -30,13 +30,13 @@ def patch_jwt_settings():
 
 class JWTAuthentication(JSONWebTokenAuthentication):
     def authenticate_credentials(self, payload):
-        user = super().authenticate_credentials(payload)
+        user = get_or_create_user(payload)
 
         if user and not user.is_active:
             msg = _('User account is disabled.')
             raise exceptions.AuthenticationFailed(msg)
 
-        return get_or_create_user(payload)
+        return user
 
 
 def get_user_id_from_payload_handler(payload):
