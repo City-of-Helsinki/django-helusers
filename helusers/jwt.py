@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.utils.translation import ugettext as _
 from rest_framework import exceptions
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from rest_framework_jwt.settings import api_settings
