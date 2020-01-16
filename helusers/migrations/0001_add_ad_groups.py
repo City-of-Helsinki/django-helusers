@@ -31,7 +31,7 @@ class Migration(migrations.Migration):
                 ('group', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='ad_groups', to='auth.Group')),
             ],
             options={
-                'verbose_name': 'AD Group Mapping',
+                'verbose_name': 'AD group mapping', 'verbose_name_plural': 'AD group mappings'
             },
         ),
         migrations.AlterUniqueTogether(
