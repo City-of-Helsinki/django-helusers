@@ -60,7 +60,7 @@ def _try_create_or_update(user_id, payload, oidc):
     user_model = get_user_model()
     with transaction.atomic():
         try:
-            user = user_model.objects.select_for_update().get(uuid=user_id)
+            user = user_model.objects.get(uuid=user_id)
         except user_model.DoesNotExist:
             user = user_model(uuid=user_id)
             user.set_unusable_password()
