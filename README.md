@@ -16,16 +16,17 @@ django-helusers is your friendly app for bolting authentication into Django proj
 ## Adding django-helusers your Django project
 
 Add:
+
 * `django-helusers`
 * `social-auth-app-django`
+
 to your dependency management list. Django-helusers depends on
 `social-auth-app-django` for implementation of the OIDC dance.
 
 ### Adding user model
 
 helusers provides a baseline user model adding fields for Helsinki
-specific information. As per Django [best practice]
-(https://docs.djangoproject.com/en/3.0/topics/auth/customizing/#using-a-custom-user-model-when-starting-a-project)
+specific information. As per Django [best practice](https://docs.djangoproject.com/en/3.0/topics/auth/customizing/#using-a-custom-user-model-when-starting-a-project)
 you should subclass this model to make future customization easier:
 
 ```python
@@ -93,7 +94,7 @@ LOGIN_REDIRECT_URL = '/'
 `LOGIN_REDIRECT_URL` is the default landing URL after succesful login, if your
 form did not specify anything else.
 
-You will also need to add `python-social-auth` URLS to your URL dispatcher
+You will also need to add `python-social-auth` URLs to your URL dispatcher
 configuration (`urls.py`):
 
 ```python
@@ -184,7 +185,7 @@ matching configuration in your project config file. Usually three pieces of info
 
 Additionally you will need to provide your "callback URL" to the folks configuring Tunnistamo.
 This is implemented by `python-social-auth` and will, by default, be
-`https://app.domain/auth/complete/tunnistamo/`. During development on your own laptor, your
+`https://app.domain/auth/complete/tunnistamo/`. During development on your own laptor your
 `app.domain` would be `localhost`.
 
 After you've received your client ID, client secret and Tunnistamo OIDC endpoint you would
