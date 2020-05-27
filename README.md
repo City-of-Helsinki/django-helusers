@@ -246,3 +246,16 @@ the login process, for example in your template
 If you're not allowing users to log in with passwords, you may disable the
 username/password form from Django admin login page by setting `HELUSERS_PASSWORD_LOGIN_DISABLED`
 to `True`.
+
+## Switching from OAuth2 to OIDC (and from Allauth to Python Social Auth)
+
+In version v0.4.3 django-helusers added OIDC backend for talking to
+Tunnistamo. This in fact means, that django-helusers is not specific to
+Tunnistamo anymore.
+
+Switching from OAuth2 to OIDC consists of:
+
+* Changing the authentication backend configured in `AUTHENTICATION_BACKENDS`
+* Removing `SOCIALACCOUNT_ADAPTER` setting (only used by Allauth)
+* Changing `REST_FRAMEWORK['DEFAULT_AUTHENTICATION_CLASSES']` to use pysocial based class
+* Changing `INSTALLED_APPS` to use separate admin and base applications
