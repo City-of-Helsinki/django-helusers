@@ -251,11 +251,54 @@ to `True`.
 
 In version v0.4.3 django-helusers added OIDC backend for talking to
 Tunnistamo. This in fact means, that django-helusers is not specific to
-Tunnistamo anymore.
+Tunnistamo anymore. Instead it can talk to any provider supporting OIDC.
 
 Switching from OAuth2 to OIDC consists of:
 
 * Changing the authentication backend configured in `AUTHENTICATION_BACKENDS`
-* Removing `SOCIALACCOUNT_ADAPTER` setting (only used by Allauth)
+* Removing Allauth specific settings
 * Changing `REST_FRAMEWORK['DEFAULT_AUTHENTICATION_CLASSES']` to use pysocial based class
 * Changing `INSTALLED_APPS` to use separate admin and base applications
+* Removing Allauth apps from `INSTALLED_APPS`
+* Cleaning up Allauth tables from database
+* Migrating settings from Allauth tables to Django settings
+
+More detailed steps below. Note that you should check installation
+instructions above too, as these upgrade instructions could be out of sync
+with newer changes.
+
+
+`AUTHENTICATION_BACKENDS` will contain AllAuth backend:
+* `allauth.account.auth_backends.AuthenticationBackend`
+replace this with pysocial based backend
+* 'helusers.tunnistamo_oidc.TunnistamoOIDCAuth',
+
+Allauth will also have needed several settings. These should be removed:
+
+* `SOCIALACCOUNT_PROVIDERS`
+* `SOCIALACCOUNT_ADAPTER`
+* generally anything beginning with `SOCIALACCOUNT`
+
+Rest framework authentication classes will contain:
+* `helusers.jwt.JWTAuthentication`
+replace this with:
+* `helusers.oidc.ApiTokenAuthentication`
+
+Originally django-helusers used only a single app called `helusers` in
+`INSTALLED_APPS`. This app monkeypatched Django admin to add login buttons
+to admin login template. Moderner Django versions allow overriding this
+cleanly, but you will need two apps. Thus replace:
+* `helusers`
+with
+* `helusers.apps.HelusersConfig` and
+* `helusers.apps.HelusersAdminConfig`
+
+Allauth will have needed several apps in `INSTALLED_APPS`. Remove these:
+* `allauth`
+* `allauth.account`
+* `allauth.socialaccount`
+* also anything else beginning with `allauth`
+
+Allauth will have generated several tables in the database for its own
+models.  Pysocial will not use these.  You will, however, need to migrate
+the user links from those tables to the ones used by pysocial.
