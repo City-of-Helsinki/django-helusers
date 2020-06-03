@@ -52,8 +52,8 @@ AUTH_USER_MODEL = 'users.User'
 
 Django-helusers provides two Django apps: `HelusersConfig` provides the
 models and templates needed for helusers to work and `HelusersAdminConfig`
-reconfigures Django admin to work with helusers. Latter includes adding
-Tunnistamo login button to admin login screen.
+reconfigures Django admin to work with helusers. The latter includes adding
+a Tunnistamo login button to the admin login screen.
 
 Additionally `social_django` app is needed for the underlying python-social-auth.
 
@@ -75,7 +75,7 @@ Unless, of course, you wish to override the admin templates provided here.
 
 One possible gotcha is, if you've added custom views to admin without
 forwarding context from `each_context` to the your template.  Helusers
-templates except variables from `each_context` and will break if they are
+templates expect variables from `each_context` and will break if they are
 missing.
 
 ### Adding Tunnistamo authentication
