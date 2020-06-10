@@ -1,3 +1,4 @@
+import logging
 import requests
 from django.utils.encoding import smart_text
 from django.utils.functional import cached_property
@@ -10,6 +11,8 @@ from rest_framework.exceptions import AuthenticationFailed
 from .authz import UserAuthorization
 from .settings import api_token_auth_settings
 from .user_utils import get_or_create_user
+
+logger = logging.getLogger(__name__)
 
 
 class ApiTokenAuthentication(JSONWebTokenAuthentication):
@@ -53,6 +56,8 @@ class ApiTokenAuthentication(JSONWebTokenAuthentication):
 
     def get_jwt_value(self, request):
         auth = get_authorization_header(request).split()
+
+        logger.debug("Authorization header: {}".format(auth))
 
         if not auth or smart_text(auth[0]).lower() != self.auth_scheme.lower():
             return None
