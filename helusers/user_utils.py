@@ -1,9 +1,12 @@
+import logging
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.utils.translation import ugettext as _
 from django.db import transaction, IntegrityError
 from rest_framework import exceptions
+from uuid import UUID, uuid5
 
+logger = logging.getLogger(__name__)
 
 def oidc_to_user_data(payload):
     """
@@ -45,17 +48,25 @@ def update_user(user, payload, oidc=False):
     if oidc:
         payload = oidc_to_user_data(payload)
 
+    # Default is for Tunnistamo, Azure uses 'groups'
+    group_claim_name = getattr(settings, 'HELUSERS_ADGROUPS_CLAIM', 'ad_groups')
+
     changed = populate_user(user, payload)
     if changed or not user.pk:
         user.save()
 
-    ad_groups = payload.get('ad_groups', None)
+    logger.debug("checking for AD groups in claim `%s`", group_claim_name)
+
+    ad_groups = payload.get(group_claim_name, None)
+    logger.debug("AD groups found in claim: %s", ad_groups)
     # Only update AD groups if it's a list of non-empty strings
     if isinstance(ad_groups, list) and (
             all([isinstance(x, str) and x for x in ad_groups])):
         user.update_ad_groups(ad_groups)
 
-
+# Critical section for user creation. It is quite possible that,
+# for a new user, the first requests fired toward the API will race
+# for creating the user. All but one of these will then fail.
 def _try_create_or_update(user_id, payload, oidc):
     user_model = get_user_model()
     with transaction.atomic():
@@ -67,12 +78,36 @@ def _try_create_or_update(user_id, payload, oidc):
         update_user(user, payload, oidc)
     return user
 
+def is_valid_uuid(uuid_to_test, version=4):
+    try:
+        uuid_obj = UUID(uuid_to_test, version=version)
+    except ValueError:
+        return False
+
+    return str(uuid_obj) == uuid_to_test
 
 def get_or_create_user(payload, oidc=False):
     user_id = payload.get('sub')
     if not user_id:
-        msg = _('Invalid payload.')
+        msg = _('Invalid payload. sub missing')
         raise exceptions.AuthenticationFailed(msg)
+
+    # django-helusers uses UUID as the primary key for the user
+    # If the incoming token does not have UUID in the sub field,
+    # we must synthesize one
+    if not is_valid_uuid(user_id):
+        # Maybe we have an Azure pairwise ID? Check for Azure tenant ID
+        # in token and use that as UUID namespace if available
+        namespace = UUID(payload.get('tid'))
+        # Otherwise use our default, arbitrary, namespace
+        if namespace is None:
+            namespace = UUID('126c8382-ab0c-11ea-be22-8c8590573044')
+
+        logger.debug("set namespace to %s", namespace)
+
+        user_id = uuid5(namespace, user_id)
+
+        logger.debug("generated UUID: %s to stand for non-UUID: %s", user_id, payload.get('sub'))
 
     try_again = False
     try:

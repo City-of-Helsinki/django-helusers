@@ -38,7 +38,14 @@ class ApiTokenAuthentication(JSONWebTokenAuthentication):
         if jwt_value is None:
             return None
 
-        payload = self.decode_jwt(jwt_value)
+        try:
+            payload = self.decode_jwt(jwt_value)
+        except AuthenticationFailed as e:
+            logger.debug("Invalid token signature")
+            raise
+
+        logger.debug("Token payload decoded as: {}".format(payload))
+
         self.validate_claims(payload)
 
         user_resolver = self.settings.USER_RESOLVER  # Default: resolve_user
