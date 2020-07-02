@@ -15,6 +15,17 @@ class TunnistamoOIDCAuth(OpenIdConnectAuth):
         # Allow OIDC endpoint to be overridden through local settings
         self.OIDC_ENDPOINT = self.setting('OIDC_ENDPOINT', self.OIDC_ENDPOINT)
 
+    # Workaround for the cases where jwks-endpoint does not specify
+    # alg for keys. Default to RS256 per:
+    # https://openid.net/specs/openid-connect-core-1_0.html#IDTokenValidation
+    def get_remote_jwks_keys(self):
+        keys = super().get_remote_jwks_keys()
+        for key in keys:
+            if 'alg' not in key:
+                key['alg'] = 'RS256'
+
+        return keys 
+
     def get_end_session_url(self, request, id_token):
         url = self.END_SESSION_URL or \
             self.oidc_config().get('end_session_endpoint')
