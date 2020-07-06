@@ -1,8 +1,11 @@
+import logging
 import urllib.parse as urlparse
 
 from social_core.backends.open_id_connect import OpenIdConnectAuth
 from django.urls import reverse
 from django.urls.exceptions import NoReverseMatch
+
+logger = logging.getLogger(__name__)
 
 
 class TunnistamoOIDCAuth(OpenIdConnectAuth):
@@ -25,6 +28,13 @@ class TunnistamoOIDCAuth(OpenIdConnectAuth):
                 key['alg'] = 'RS256'
 
         return keys 
+
+    # Override for logging
+    def request_access_token(self, *args, **kwargs):
+        response = super().request_access_token(*args, **kwargs)
+        logger.debug(f"Token response: {response}")
+
+        return response
 
     def get_end_session_url(self, request, id_token):
         url = self.END_SESSION_URL or \
