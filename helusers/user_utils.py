@@ -78,13 +78,30 @@ def _try_create_or_update(user_id, payload, oidc):
         update_user(user, payload, oidc)
     return user
 
-def is_valid_uuid(uuid_to_test, version=4):
+def is_valid_uuid(uuid_to_test, version=None):
     try:
         uuid_obj = UUID(uuid_to_test, version=version)
     except ValueError:
         return False
 
     return str(uuid_obj) == uuid_to_test
+
+def convert_to_uuid(convertable, namespace=None):
+    # Our default, arbitrary, namespace
+    if namespace is None:
+        namespace = UUID('126c8382-ab0c-11ea-be22-8c8590573044')
+    else:
+        namespace = UUID(namespace)
+
+    logger.debug("set namespace to %s", namespace)
+
+    # several users expect this to be string, as if read
+    # from a 'sub' field of a token
+    generated_uuid = str(uuid5(namespace, convertable))
+
+    logger.debug("generated UUID: %s to stand for non-UUID: %s", generated_uuid, convertable)
+
+    return generated_uuid
 
 def get_or_create_user(payload, oidc=False):
     user_id = payload.get('sub')
@@ -99,15 +116,7 @@ def get_or_create_user(payload, oidc=False):
         # Maybe we have an Azure pairwise ID? Check for Azure tenant ID
         # in token and use that as UUID namespace if available
         namespace = UUID(payload.get('tid'))
-        # Otherwise use our default, arbitrary, namespace
-        if namespace is None:
-            namespace = UUID('126c8382-ab0c-11ea-be22-8c8590573044')
-
-        logger.debug("set namespace to %s", namespace)
-
-        user_id = uuid5(namespace, user_id)
-
-        logger.debug("generated UUID: %s to stand for non-UUID: %s", user_id, payload.get('sub'))
+        user_id = convert_to_uuid(user_id, namespace)
 
     try_again = False
     try:

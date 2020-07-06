@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 
 from django.contrib.auth import get_user_model
 from django.conf import settings
-from .user_utils import get_or_create_user
+from .user_utils import convert_to_uuid, get_or_create_user, is_valid_uuid
 from .utils import uuid_to_username
 from .tunnistamo_oidc import TunnistamoOIDCAuth
 
@@ -12,6 +12,25 @@ from .tunnistamo_oidc import TunnistamoOIDCAuth
 User = get_user_model()
 logger = logging.getLogger(__name__)
 
+
+def ensure_uid_is_uuid(details, backend, response, user=None, *args, **kwargs):
+
+    uid = kwargs.get('uid')
+
+    if is_valid_uuid(uid):
+        return None
+
+    # django-helusers uses UUID as the primary key for the user.
+    # If the incoming token does not have UUID in the sub field,
+    # we must synthesize one
+    if not is_valid_uuid(uid):
+        # Maybe we have an Azure pairwise ID? Check for Azure tenant ID
+        # in token and use that as UUID namespace if available
+        # otherwise convert_to_uuid will supply a default
+        namespace = backend.id_token.get('tid')
+        uid = convert_to_uuid(uid, namespace)
+
+    return {'uid': uid}
 
 def ensure_uuid_match(details, backend, response, user=None, *args, **kwargs):
     if not isinstance(backend, TunnistamoOIDCAuth):
@@ -49,8 +68,14 @@ def get_username(details, backend, response, *args, **kwargs):
 def create_or_update_user(details, backend, response, user=None, *args, **kwargs):
     response = response.copy()
     username = kwargs.get('username')
+    uid = kwargs.get('uid')
     if username:
         response['username'] = username
+    # Earlier stages might have generated user identifier different
+    # from 'sub' in token. Callchain starting from get_or_create_user
+    # reads 'sub' from response in several places. Fix that here for now.
+    if uid:
+        response['sub'] = uid
 
     user = get_or_create_user(response, oidc=True)
     return {
