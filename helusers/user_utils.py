@@ -115,7 +115,7 @@ def get_or_create_user(payload, oidc=False):
     if not is_valid_uuid(user_id):
         # Maybe we have an Azure pairwise ID? Check for Azure tenant ID
         # in token and use that as UUID namespace if available
-        namespace = UUID(payload.get('tid'))
+        namespace = payload.get('tid')
         user_id = convert_to_uuid(user_id, namespace)
 
     try_again = False
