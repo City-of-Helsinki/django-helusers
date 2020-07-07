@@ -40,7 +40,13 @@ class TunnistamoOIDCAuth(OpenIdConnectAuth):
         url = self.END_SESSION_URL or \
             self.oidc_config().get('end_session_endpoint')
 
-        params = dict(id_token_hint=id_token)
+        params = {}
+
+        # Sadly Azure AD does not like having ID token included
+        # in end_session request. Allow configuring the inclusion.
+        if self.setting('ID_TOKEN_IN_END_SESSION', True):
+            params = dict(id_token_hint=id_token)
+
         try:
             post_logout_url = reverse('helusers:auth_logout_complete')
         except NoReverseMatch:
