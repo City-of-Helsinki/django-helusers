@@ -66,6 +66,9 @@ def get_username(details, backend, response, *args, **kwargs):
 
 
 def create_or_update_user(details, backend, response, user=None, *args, **kwargs):
+    # get_or_create_user is really written to deal with incoming token
+    # instead of social-auth response. Thus these mappings to try and
+    # make the response look like a parsed token
     response = response.copy()
     username = kwargs.get('username')
     uid = kwargs.get('uid')
@@ -76,6 +79,10 @@ def create_or_update_user(details, backend, response, user=None, *args, **kwargs
     # reads 'sub' from response in several places. Fix that here for now.
     if uid:
         response['sub'] = uid
+    # Pull groups from the id_token to response root.
+    # FIXME, replication with user_utils
+    group_claim_name = getattr(settings, 'HELUSERS_ADGROUPS_CLAIM', 'ad_groups')
+    response[group_claim_name] = backend.id_token.get(group_claim_name, None)
 
     user = get_or_create_user(response, oidc=True)
     return {
