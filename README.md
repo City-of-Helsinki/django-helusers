@@ -91,26 +91,33 @@ you've delegated permissions to users coming through OIDC.
 Add backend configuration to your `settings.py`:
 
 ```python
-AUTHENTICATION_BACKENDS = (
+AUTHENTICATION_BACKENDS = [
     'helusers.tunnistamo_oidc.TunnistamoOIDCAuth',
     'django.contrib.auth.backends.ModelBackend',
-)
+]
 LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
 ```
 
 `LOGIN_REDIRECT_URL` is the default landing URL after succesful login, if your
 form did not specify anything else.
 
-You will also need to add `python-social-auth` URLs to your URL dispatcher
-configuration (`urls.py`):
+`LOGOUT_REDIRECT_URL` is the same for logout. django-helusers requires this
+to be set.
+
+You will also need to add URLs for `social_django` & `helusers` to your URL
+dispatcher configuration (`urls.py`):
 
 ```python
-urlpatterns = patterns('',
+urlpatterns = [
     ...
-    path('', include('social_django.urls', namespace='social'))
+    path('pysocial/', include('social_django.urls', namespace='social')),
+    path('helauth/', include('helusers.urls')),
     ...
-)
+]
 ```
+
+You can change the paths if they conflict with your application.
 
 Finally, you will need to configure your SESSION_SERIALIZER. helusers stores
 the access token expiration time as a datetime which is not serializable
@@ -121,7 +128,44 @@ PickleSerializer:
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 ```
 
+## Configuration
+
+### Django session login
+
+Django session login is the usual login to Django that sets up a session
+and is typically implemented using a browser cookie. After authentication
+is completed everything proceeds, as if the user had logged in using
+username and password in the login form. For us, the main use case has been
+allowing logins to Django admin.
+
+Each installation ("client" in OIDC parlance) will need its own configuration in Tunnistamo and
+matching configuration in your project settings file. Usually three pieces of information are needed:
+* client ID
+* client secret
+* Tunnistamo OIDC endpoint
+
+Additionally you will need to provide your "callback URL" to the folks configuring Tunnistamo.
+This is implemented by `python-social-auth` and will, by default, be
+`https://app.domain/auth/complete/tunnistamo/`. During development on your own
+laptop your `app.domain` would be `localhost`.
+
+After you've received your client ID, client secret and Tunnistamo OIDC endpoint you would
+configure them as follows:
+```python
+SOCIAL_AUTH_TUNNISTAMO_KEY = 'https://i/am/clientid/in/url/style'
+SOCIAL_AUTH_TUNNISTAMO_SECRET = 'iamyoursecret'
+SOCIAL_AUTH_TUNNISTAMO_OIDC_ENDPOINT = 'https://tunnistamo.example.com/'
+```
+
+Note that `client ID` becomes `KEY` and `client secret` becomes `SECRET`.
+
 ### Configuration of the DRF API authentication (using JWT tokens)
+
+DRF API authentication is somewhat orthogonal to the session authentication.
+It is a stateless authentication method, where every request is
+authenticated by checking the signature of the included JWT token. It still
+creates a persistent Django user, which is updated with the information
+from the token with every request.
 
 - Configure REST framework to use the `ApiTokenAuthentication` class in `settings.py`:
 
@@ -137,10 +181,21 @@ REST_FRAMEWORK = {
 
 ```python
 OIDC_API_TOKEN_AUTH = {
+    # Audience that must be present in the token for the request to be
+    # accepted. Value must be agreed between your SSO service and your
+    # application instance. Essentially this allows your application to
+    # know that the token in meant to be used with it.
     'AUDIENCE': 'https://api.hel.fi/auth/projects',
+    # Who we trust to sign the tokens. The library will request the
+    # public signature keys from standard locations below this URL
+    'ISSUER': 'https://api.hel.fi/sso'
+    # The following can be used if you need certain OAuth2 scopes
+    # for any functionality of the API. The request will the denied
+    # if scopes starting with API_SCOPE_PREFIX are not present
+    # in the token claims. Usually this is not needed, as checking
+    # the audience is enough.
+     REQUIRE_API_SCOPE_FOR_AUTHENTICATION': True,
     'API_SCOPE_PREFIX': 'projects',
-    'REQUIRE_API_SCOPE_FOR_AUTHENTICATION': True,
-    'ISSUER': 'https://api.hel.fi/sso/openid'
 }
 ```
 
@@ -181,29 +236,6 @@ the login process, for example in your template
 ```
 <a href="{% url 'helusers:auth_login' %}?next=/foobar/&ui_locales=en">Login in English</a>
 ```
-
-## Configuring your installation
-
-Each installation ("client" in OIDC parlance) will need its own configuration in Tunnistamo and
-matching configuration in your project config file. Usually three pieces of information are needed:
-* client ID
-* client secret
-* Tunnistamo OIDC endpoint
-
-Additionally you will need to provide your "callback URL" to the folks configuring Tunnistamo.
-This is implemented by `python-social-auth` and will, by default, be
-`https://app.domain/auth/complete/tunnistamo/`. During development on your own laptor your
-`app.domain` would be `localhost`.
-
-After you've received your client ID, client secret and Tunnistamo OIDC endpoint you would
-configure them as follows:
-```python
-SOCIAL_AUTH_TUNNISTAMO_KEY = 'abcd-12345-abcd-12356789'
-SOCIAL_AUTH_TUNNISTAMO_SECRET = 'abcd1234abcd1234abcd1234abcd1234'
-SOCIAL_AUTH_TUNNISTAMO_OIDC_ENDPOINT = https://tunnistamo.example.com/
-```
-
-Note that `client ID` becomes `KEY` and `client secret` becomes `SECRET`.
 
 ### Disabling password logins
 
