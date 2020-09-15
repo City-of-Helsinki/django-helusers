@@ -57,7 +57,12 @@ a Tunnistamo login button to the admin login screen.
 
 Additionally `social_django` app is needed for the underlying python-social-auth.
 
-Add these apps to your `INSTALLED_APPS` in settings.py:
+Before adding the apps, you will need to remove `django.contrib.admin`, as
+`HelusersAdminConfig` is implementation of same functionality. You will get
+`django.core.exceptions.ImproperlyConfigured: Application labels aren't unique, duplicates:
+admin`-error, if you forget this step.
+
+Then proceed by adding these apps to your `INSTALLED_APPS` in settings.py:
 
 ```python
 INSTALLED_APPS = (
