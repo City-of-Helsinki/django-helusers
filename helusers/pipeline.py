@@ -17,9 +17,6 @@ def ensure_uid_is_uuid(details, backend, response, user=None, *args, **kwargs):
 
     uid = kwargs.get('uid')
 
-    if is_valid_uuid(uid):
-        return None
-
     # django-helusers uses UUID as the primary key for the user.
     # If the incoming token does not have UUID in the sub field,
     # we must synthesize one
@@ -29,8 +26,10 @@ def ensure_uid_is_uuid(details, backend, response, user=None, *args, **kwargs):
         # otherwise convert_to_uuid will supply a default
         namespace = backend.id_token.get('tid')
         uid = convert_to_uuid(uid, namespace)
+        return {'uid': uid}
 
-    return {'uid': uid}
+    # We did not need to change anything
+    return None
 
 def ensure_uuid_match(details, backend, response, user=None, *args, **kwargs):
     if not isinstance(backend, TunnistamoOIDCAuth):
