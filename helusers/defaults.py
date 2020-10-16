@@ -10,6 +10,9 @@ SOCIAL_AUTH_PIPELINE = (
     # the unique identifier of the given user in the provider.
     'social_core.pipeline.social_auth.social_uid',
 
+    # Ensure the UID is in UUID format and reformat it, if not.
+    'helusers.pipeline.ensure_uid_is_uuid',
+
     # Reset logged-in user if UUID differs
     'helusers.pipeline.ensure_uuid_match',
 
