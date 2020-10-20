@@ -3,3 +3,5 @@
 /dist
 /build
 /django_helusers.egg-info
+.venv/
+.vscode/
