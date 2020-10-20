@@ -4,6 +4,8 @@ python:
 
 cache: pip
 
-install: 'python setup.py install'
+install:
+  - pip install -e .
+  - pip install -r requirements-dev.txt
 
 script: pytest
