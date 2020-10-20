@@ -251,3 +251,30 @@ the login process, for example in your template
 If you're not allowing users to log in with passwords, you may disable the
 username/password form from Django admin login page by setting `HELUSERS_PASSWORD_LOGIN_DISABLED`
 to `True`.
+
+# Development
+
+Virtual Python environment can be used. For example:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+Install package requirements:
+
+```bash
+pip install -e .
+```
+
+Install development requirements:
+
+```bash
+pip install -r requirements-dev.txt
+```
+
+## Running tests
+
+```bash
+pytest
+```
