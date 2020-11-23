@@ -11,7 +11,7 @@ from .keys import rsa_key
 
 ISSUER = "test_issuer"
 
-class TestableApiTokenAuthentication(ApiTokenAuthentication):
+class _TestableApiTokenAuthentication(ApiTokenAuthentication):
     @property
     def oidc_config(self):
         return {
@@ -24,7 +24,7 @@ class TestableApiTokenAuthentication(ApiTokenAuthentication):
 
 @pytest.mark.django_db
 def test_valid_jwt_is_accepted(rf):
-    sut = TestableApiTokenAuthentication()
+    sut = _TestableApiTokenAuthentication()
 
     unix_timestamp_now = int(time.time())
 
