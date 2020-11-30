@@ -176,6 +176,7 @@ authenticated by checking the signature of the included JWT token. It still
 creates a persistent Django user, which is updated with the information
 from the token with every request.
 
+- Include `drf-oidc-auth` in your project's dependencies.
 - Configure REST framework to use the `ApiTokenAuthentication` class in `settings.py`:
 
 ```python

@@ -6,13 +6,16 @@
 #
 asgiref==3.2.10           # via django
 attrs==20.2.0             # via pytest
+authlib==0.15.2           # via drf-oidc-auth
 certifi==2020.6.20        # via requests
 cffi==1.14.3              # via cryptography
 chardet==3.0.4            # via requests
-cryptography==3.1.1       # via pyjwt
+cryptography==3.1.1       # via authlib, drf-oidc-auth, pyjwt
 defusedxml==0.6.0         # via python3-openid
 django-allauth==0.43.0    # via -r requirements-dev.in
-django==3.1.2             # via django-allauth
+django==3.1.2             # via django-allauth, djangorestframework, drf-oidc-auth
+djangorestframework==3.12.2  # via drf-oidc-auth
+drf-oidc-auth==1.0.0      # via -r requirements-dev.in
 idna==2.10                # via requests
 iniconfig==1.1.1          # via pytest
 oauthlib==3.1.0           # via requests-oauthlib
@@ -27,7 +30,7 @@ pytest==6.1.1             # via -r requirements-dev.in, pytest-django
 python3-openid==3.2.0     # via django-allauth
 pytz==2020.1              # via django
 requests-oauthlib==1.3.0  # via django-allauth
-requests==2.24.0          # via django-allauth, requests-oauthlib
+requests==2.24.0          # via django-allauth, drf-oidc-auth, requests-oauthlib
 six==1.15.0               # via cryptography, packaging
 sqlparse==0.4.1           # via django
 toml==0.10.1              # via pytest
