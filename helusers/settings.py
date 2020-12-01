@@ -1,5 +1,4 @@
 from django.conf import settings
-from rest_framework.settings import APISettings
 
 
 _user_settings = getattr(settings, 'OIDC_API_TOKEN_AUTH', None)
@@ -43,5 +42,26 @@ _import_strings = [
     'USER_RESOLVER',
 ]
 
-api_token_auth_settings = APISettings(
-    _user_settings, _defaults, _import_strings)
+def _compile_settings():
+    class Settings:
+        def __init__(self):
+            self._settings = _defaults.copy()
+            self._settings.update(_user_settings)
+
+        def __getattr__(self, name):
+            from django.utils.module_loading import import_string
+
+            try:
+                attr = self._settings[name]
+
+                if name in _import_strings and isinstance(attr, str):
+                    attr = import_string(attr)
+                    self._settings[name] = attr
+
+                return attr
+            except KeyError:
+                raise AttributeError("Setting '{}' not found".format(name))
+
+    return Settings()
+
+api_token_auth_settings = _compile_settings()
