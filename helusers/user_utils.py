@@ -3,7 +3,6 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.utils.translation import ugettext as _
 from django.db import transaction, IntegrityError
-from rest_framework import exceptions
 from uuid import UUID, uuid5
 
 logger = logging.getLogger(__name__)
@@ -107,7 +106,7 @@ def get_or_create_user(payload, oidc=False):
     user_id = payload.get('sub')
     if not user_id:
         msg = _('Invalid payload. sub missing')
-        raise exceptions.AuthenticationFailed(msg)
+        raise ValueError(msg)
 
     # django-helusers uses UUID as the primary key for the user
     # If the incoming token does not have UUID in the sub field,

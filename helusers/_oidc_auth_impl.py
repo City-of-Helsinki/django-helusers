@@ -49,7 +49,10 @@ class ApiTokenAuthentication(JSONWebTokenAuthentication):
         self.validate_claims(payload)
 
         user_resolver = self.settings.USER_RESOLVER  # Default: resolve_user
-        user = user_resolver(request, payload)
+        try:
+            user = user_resolver(request, payload)
+        except ValueError as e:
+            raise AuthenticationFailed(str(e)) from e
         auth = UserAuthorization(user, payload, self.settings)
 
         if self.settings.REQUIRE_API_SCOPE_FOR_AUTHENTICATION:
