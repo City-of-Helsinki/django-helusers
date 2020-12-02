@@ -12,10 +12,17 @@ class JWT:
     def __init__(self, encoded_jwt):
         self._encoded_jwt = encoded_jwt
 
-    def validate(self, keys):
+    def validate(self, keys, audience):
         """Verifies the JWT's signature using the provided keys,
         and validates the claims, raising an exception if anything fails."""
-        self._claims = jwt.decode(self._encoded_jwt, keys)
+
+        options = {
+            "require_aud": True,
+        }
+
+        self._claims = jwt.decode(
+            self._encoded_jwt, keys, options=options, audience=audience
+        )
 
     @property
     def issuer(self):

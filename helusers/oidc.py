@@ -16,6 +16,14 @@ from .user_utils import get_or_create_user
 def _build_defaults():
     class _Defaults:
         @cached_property
+        def audience(self):
+            if not api_token_auth_settings.AUDIENCE:
+                raise ImproperlyConfigured(
+                    "You must set OIDC_API_TOKEN_AUTH['AUDIENCE'] setting to the accepted JWT audience."
+                )
+            return api_token_auth_settings.AUDIENCE
+
+        @cached_property
         def issuers(self):
             issuers = api_token_auth_settings.ISSUER
             if not issuers:
@@ -64,7 +72,7 @@ class RequestJWTAuthentication:
 
         keys = self._key_provider(issuer)
         try:
-            jwt.validate(keys)
+            jwt.validate(keys, _defaults.audience)
         except Exception:
             raise AuthenticationError("JWT verification failed.")
 
