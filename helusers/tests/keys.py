@@ -2,10 +2,21 @@ from jose import jwk
 from jose.constants import ALGORITHMS
 
 
-class rsa_key:
-    jose_algorithm = ALGORITHMS.RS256
+def _build_key(private_pem, public_pem):
+    class _Key:
+        pass
 
-    private_key_pem = """-----BEGIN PRIVATE KEY-----
+    key = _Key()
+    key.jose_algorithm = ALGORITHMS.RS256
+    key.private_key_pem = private_pem
+    key.public_key_pem = public_pem
+    key.public_key_jwk = jwk.construct(public_pem, key.jose_algorithm).to_dict()
+
+    return key
+
+
+rsa_key = _build_key(
+    """-----BEGIN PRIVATE KEY-----
 MIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQDUeT3OFPatye6I
 tmArvjR+f0lZu4QEOxtGxHj1UWzLiUbONygTrWCVXh5OFaH+GFPOfqax2iJSWc+7
 6JYy2y2XxdG1Tehcvpsv/gKqRJG2afVKY+qCCmtRwksWan4kRU6F9UKDHJl6emkE
@@ -32,9 +43,8 @@ cdFYNk9B+gJ8YoGlRKtGk3vvoRTDTDx+Ntnlib6xjbCWk2MShDVPqkJqgL6ZTlP4
 6Po5IhRvBAiNJg/N7mirkdb7NyB6I4aA1ztoimizDrJPn7edVKUTluNw2Fk3QsLS
 va0XlEJu3URaqHLcKi6J74dlSt+3W4pSTJF7eseyFMI64bWSEho1tvChLSCq6lUE
 zyIWjEHazLOEdBArFsgWsg==
------END PRIVATE KEY-----"""
-
-    public_key_pem = """-----BEGIN PUBLIC KEY-----
+-----END PRIVATE KEY-----""",
+    """-----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA1Hk9zhT2rcnuiLZgK740
 fn9JWbuEBDsbRsR49VFsy4lGzjcoE61glV4eThWh/hhTzn6msdoiUlnPu+iWMtst
 l8XRtU3oXL6bL/4CqkSRtmn1SmPqggprUcJLFmp+JEVOhfVCgxyZenppBHvcQP/g
@@ -42,6 +52,46 @@ l8XRtU3oXL6bL/4CqkSRtmn1SmPqggprUcJLFmp+JEVOhfVCgxyZenppBHvcQP/g
 9qGcoNEJZ1NrU3GTBtg9e9sBccjPIxn8ux5vF/jEB+Tf2hXim+3/+nkwO+GuYVuZ
 3EU2rGh+XYwnARUsgGkvBeFAmWLEXbYdZaeJwYvfOg2y9bmlW7plNjqOhWvyt7hk
 RQIDAQAB
------END PUBLIC KEY-----"""
+-----END PUBLIC KEY-----""",
+)
 
-    public_key_jwk = jwk.construct(public_key_pem, jose_algorithm).to_dict()
+
+rsa_key2 = _build_key(
+    """-----BEGIN PRIVATE KEY-----
+MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDOzPIvae8JdGmY
+W17EkdzLQ+pURgkN891RHWDy/6FeZSwxK6bVmhq76tHcGOM4S7mMs0XIt5BGFUkp
+yool4HymqD8F+sbi0mxRNYh435lGKNscl83BQgl+VsEDUSGKlMc4A3KIU2E1DeMl
+WuTU7Y8IjgKMtbLELC/YZwpEHeZKYtRM8Q25JNaPvO0963dw/2FU+JUQft8FG4GN
+ThWd7dCTeAfDWz+/CM8IlX6LLIjqePOcBd/nmfDJMK7sFpIJ+pT9mCSXIOd7hL4h
+zyP8z8fJhv2OyOopUvBWFI/QIDQFhmQsOb3YE731F1pMjjSXM+VMdY86BfMFvtbN
+JbPGzpErAgMBAAECggEAIbDn/+t9QwgRL/4qyVGOLBtrcMFcNka1lsJ3if81lgBb
+m8Ml0gTiOB1AhWAUnJZRq2eFhfbJ7XEIU2Oo8BTLmgctBVde0ZNAjFZxXmfnO7Pq
+RpVAsyyECW4u0dCE62PjtO9y2FzlKFST3gEZ6MqvE9C2/5+WeTlNri7TUFeirhly
+qpx7wqC5HRFPyJRQCDybIwd9jVPWAzVF4LMobVZDgfR1dlQsGa0n5VqVHuBxOYFO
+ZEbicCHIaUCvF4STGnkvOV/FwGz6D9FtaBvZ1A3Fx4pGGKRoxGKnTAxaqqTBR6sJ
+wJC88nH3M3kI33Mn7V35ad3SgRJqjZbNTa41s+MHiQKBgQD0jyexBoZsZJD0xvlB
+Xx3R5r1e+tZbqxWZyi+bHxspsFW1OQiqBoaC32W//c1aaCCJzLCXci01AMOAefxE
+OIJCxTtNjR9nbpDCTC0VExv4CnPtAPjb5FN1PxvX6YAMeYgXwDTYJBdEQVCMex/E
+emsE2zQlzsAziETPmhW+WpjNvQKBgQDYeZfRMr01BGQgs0T24LzFXPP2W9Q278Zv
+zppjLZjS2vuXBehbgj5PRAFKOtqvAH+YBevvmbJAziF0W23AkeaS2SCC7H85Ayin
+wlNYEX1K1exNjYlvMEWe2KPrWucgp8ZZwzX9SrTROx6rqd547GDAOLBLpHV+qCWV
+okc9bDFFBwKBgQC3wKBYGMkDxIROBvrdrXQgdLixFtPdSK0QQqSGb1bfegjMA7CI
+4CJNT0GKgk67sSVRpKTDBh0FiC9c50sujy8AsGUgnfqMorzN4KK3BQas1l3IJETY
+I7S5kdN/5Yg61030WozaIjQBKvo0s4ZpAHpMyc9i4Pf1QFxDiEjyH+xUGQKBgFNI
+xK4JtV22aMdj8T6CTF4qWvoHbmgMa+4MML3Dhy5oba826KR8QXjBkzV52zTFHlHg
+xVsTaM8h/yEDJACYoXsR6j40uuW2X2fbjbEuWWP3VciokZ2jlsV8V+RuvsmDgv55
+6kWe/l4ZPr2QxzUCzF5n8PvJNCMckgk1u+7Xt0T1AoGBANWQD9ukbEXDGzvN84zd
+3Yf4aHtxg0IMEoUmgsYemhZp7PkBNS0CKkXg6ZedJLq6Q1yOHIxMT7N+y2V7S99Z
+0uBTKAQn5oaj/WU7tCYEdnqc7jAzWvhVKT2MvvxkxeWNHAGKnxzsj+uape6nDTAw
+y5RDdDKjlM1hcSqn31RhjRml
+-----END PRIVATE KEY-----""",
+    """-----BEGIN PUBLIC KEY-----
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAzszyL2nvCXRpmFtexJHc
+y0PqVEYJDfPdUR1g8v+hXmUsMSum1Zoau+rR3BjjOEu5jLNFyLeQRhVJKcqKJeB8
+pqg/BfrG4tJsUTWIeN+ZRijbHJfNwUIJflbBA1EhipTHOANyiFNhNQ3jJVrk1O2P
+CI4CjLWyxCwv2GcKRB3mSmLUTPENuSTWj7ztPet3cP9hVPiVEH7fBRuBjU4Vne3Q
+k3gHw1s/vwjPCJV+iyyI6njznAXf55nwyTCu7BaSCfqU/ZgklyDne4S+Ic8j/M/H
+yYb9jsjqKVLwVhSP0CA0BYZkLDm92BO99RdaTI40lzPlTHWPOgXzBb7WzSWzxs6R
+KwIDAQAB
+-----END PUBLIC KEY-----""",
+)
