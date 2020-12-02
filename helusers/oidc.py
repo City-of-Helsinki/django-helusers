@@ -4,9 +4,32 @@ except ImportError:
     pass
 
 
+from django.core.exceptions import ImproperlyConfigured
+from django.utils.functional import cached_property
+
 from .authz import UserAuthorization
 from .jwt import JWT
+from .settings import api_token_auth_settings
 from .user_utils import get_or_create_user
+
+
+def _build_defaults():
+    class _Defaults:
+        @cached_property
+        def issuers(self):
+            issuers = api_token_auth_settings.ISSUER
+            if not issuers:
+                raise ImproperlyConfigured(
+                    "You must set OIDC_API_TOKEN_AUTH['ISSUER'] setting to one or to a list of accepted JWT issuers."
+                )
+            if isinstance(issuers, str):
+                issuers = [issuers]
+            return issuers
+
+    return _Defaults()
+
+
+_defaults = _build_defaults()
 
 
 class AuthenticationError(Exception):
@@ -30,7 +53,16 @@ class RequestJWTAuthentication:
         jwt_value = auth[1]
 
         jwt = JWT(jwt_value)
-        keys = self._key_provider(jwt.issuer)
+
+        try:
+            issuer = jwt.issuer
+        except KeyError:
+            raise AuthenticationError('Required "iss" claim is missing.')
+
+        if issuer not in _defaults.issuers:
+            raise AuthenticationError("Unknown JWT issuer {}.".format(issuer))
+
+        keys = self._key_provider(issuer)
         try:
             jwt.validate(keys)
         except Exception:

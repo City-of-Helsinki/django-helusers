@@ -14,4 +14,5 @@ AUTH_USER_MODEL = "tests.User"
 
 OIDC_API_TOKEN_AUTH = {
     "AUDIENCE": "test_audience",
+    "ISSUER": ["https://test_issuer_1", "https://test_issuer_2"]
 }
