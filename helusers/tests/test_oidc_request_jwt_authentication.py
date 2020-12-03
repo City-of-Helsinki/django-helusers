@@ -7,6 +7,7 @@ from jose import jwt
 from helusers.oidc import AuthenticationError, RequestJWTAuthentication
 from helusers.settings import api_token_auth_settings
 
+from .conftest import unix_timestamp_now
 from .keys import rsa_key, rsa_key2
 
 ISSUER = api_token_auth_settings.ISSUER[0]
@@ -17,7 +18,9 @@ def public_key_provider(issuer):
     return [rsa_key.public_key_jwk]
 
 
-def do_authentication(issuer=ISSUER, audience=AUDIENCE, signing_key=rsa_key):
+def do_authentication(
+    issuer=ISSUER, audience=AUDIENCE, signing_key=rsa_key, expiration=-1
+):
     sut = RequestJWTAuthentication(key_provider=public_key_provider)
 
     user_uuid = uuid.UUID("b7a35517-eb1f-46c9-88bf-3206fb659c3c")
@@ -30,6 +33,10 @@ def do_authentication(issuer=ISSUER, audience=AUDIENCE, signing_key=rsa_key):
 
     if audience:
         jwt_data["aud"] = audience
+
+    if expiration:
+        expiration = unix_timestamp_now() + 2 if expiration == -1 else expiration
+        jwt_data["exp"] = expiration
 
     encoded_jwt = jwt.encode(
         jwt_data, key=signing_key.private_key_pem, algorithm=rsa_key.jose_algorithm
@@ -90,3 +97,16 @@ def test_audience_from_settings_is_accepted():
 
 def test_audience_not_found_from_settings_is_not_accepted():
     authentication_does_not_pass(audience="unknown_audience")
+
+
+def test_expiration_is_required():
+    authentication_does_not_pass(expiration=None)
+
+
+@pytest.mark.django_db
+def test_expiration_in_the_future_is_accepted(unix_timestamp_now):
+    authentication_passes(expiration=unix_timestamp_now + 2)
+
+
+def test_expiration_in_the_past_is_not_accepted(unix_timestamp_now):
+    authentication_does_not_pass(expiration=unix_timestamp_now - 1)

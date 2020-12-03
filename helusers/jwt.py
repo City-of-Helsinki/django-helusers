@@ -18,6 +18,7 @@ class JWT:
 
         options = {
             "require_aud": True,
+            "require_exp": True,
         }
 
         self._claims = jwt.decode(
