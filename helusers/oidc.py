@@ -4,6 +4,7 @@ except ImportError:
     pass
 
 
+import requests
 from django.core.exceptions import ImproperlyConfigured
 from django.utils.functional import cached_property
 
@@ -11,6 +12,18 @@ from .authz import UserAuthorization
 from .jwt import JWT
 from .settings import api_token_auth_settings
 from .user_utils import get_or_create_user
+
+
+class OIDCConfig:
+    def __init__(self, issuer):
+        self._issuer = issuer
+
+    def keys(self):
+        config_url = self._issuer + "/.well-known/openid-configuration"
+        config = requests.get(config_url).json()
+
+        keys_url = config["jwks_uri"]
+        return requests.get(keys_url).json()
 
 
 def _build_defaults():

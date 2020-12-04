@@ -2,3 +2,4 @@ django-allauth
 drf-oidc-auth
 pytest
 pytest-django
+responses

@@ -1,6 +1,13 @@
 from datetime import datetime, timezone
 
 import pytest
+import responses
+
+
+@pytest.fixture
+def mock_responses():
+    with responses.RequestsMock() as mock_resps:
+        yield mock_resps
 
 
 def unix_timestamp_now():
