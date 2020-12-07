@@ -19,7 +19,11 @@ def public_key_provider(issuer):
 
 
 def do_authentication(
-    issuer=ISSUER, audience=AUDIENCE, signing_key=rsa_key, expiration=-1
+    issuer=ISSUER,
+    audience=AUDIENCE,
+    signing_key=rsa_key,
+    expiration=-1,
+    not_before=None,
 ):
     sut = RequestJWTAuthentication(key_provider=public_key_provider)
 
@@ -37,6 +41,9 @@ def do_authentication(
     if expiration:
         expiration = unix_timestamp_now() + 2 if expiration == -1 else expiration
         jwt_data["exp"] = expiration
+
+    if not_before:
+        jwt_data["nbf"] = not_before
 
     encoded_jwt = jwt.encode(
         jwt_data, key=signing_key.private_key_pem, algorithm=rsa_key.jose_algorithm
@@ -110,3 +117,17 @@ def test_expiration_in_the_future_is_accepted(unix_timestamp_now):
 
 def test_expiration_in_the_past_is_not_accepted(unix_timestamp_now):
     authentication_does_not_pass(expiration=unix_timestamp_now - 1)
+
+
+@pytest.mark.django_db
+def test_not_before_is_not_required():
+    authentication_passes(not_before=None)
+
+
+def test_not_before_in_the_future_is_not_accepted(unix_timestamp_now):
+    authentication_does_not_pass(not_before=unix_timestamp_now + 2)
+
+
+@pytest.mark.django_db
+def test_not_before_in_the_past_is_accepted(unix_timestamp_now):
+    authentication_passes(not_before=unix_timestamp_now - 1)
