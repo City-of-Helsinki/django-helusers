@@ -47,6 +47,22 @@ def _build_defaults():
                 issuers = [issuers]
             return issuers
 
+        @cached_property
+        def configs(self):
+            configs = dict()
+            for issuer in self.issuers:
+                configs[issuer] = OIDCConfig(issuer)
+            return configs
+
+        @cached_property
+        def key_provider(self):
+            confs = self.configs
+
+            def _key_provider(issuer):
+                return confs[issuer].keys()
+
+            return _key_provider
+
     return _Defaults()
 
 
@@ -60,9 +76,11 @@ class AuthenticationError(Exception):
 class RequestJWTAuthentication:
     def __init__(self, key_provider=None):
         """
-        key_provider: a callable that provides public keys for an issuer.
+        key_provider: a callable that provides public keys for an issuer. If omitted,
+                      the default is used, which fetches keys from the issuer server
+                      using the OIDC standard configuration URL.
         """
-        self._key_provider = key_provider
+        self._key_provider = key_provider or _defaults.key_provider
 
     def authenticate(self, request):
         """Looks for a JWT from the request's "Authorization" header and verifies it.
