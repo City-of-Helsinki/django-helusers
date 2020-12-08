@@ -1,5 +1,6 @@
 import json
 import time
+import uuid
 
 import pytest
 from jose import jwt
@@ -8,8 +9,8 @@ from helusers.oidc import ApiTokenAuthentication
 
 from .keys import rsa_key
 
-
 ISSUER = "test_issuer"
+
 
 class _TestableApiTokenAuthentication(ApiTokenAuthentication):
     @property
@@ -28,13 +29,13 @@ def test_valid_jwt_is_accepted(rf):
 
     unix_timestamp_now = int(time.time())
 
-    user_uuid = "b7a35517-eb1f-46c9-88bf-3206fb659c3c"
+    user_uuid = uuid.UUID("b7a35517-eb1f-46c9-88bf-3206fb659c3c")
     jwt_data = {
         "iss": ISSUER,
         "aud": "test_audience",
         "iat": unix_timestamp_now - 10,
         "exp": unix_timestamp_now + 1000,
-        "sub": user_uuid,
+        "sub": str(user_uuid),
     }
 
     encoded_jwt = jwt.encode(

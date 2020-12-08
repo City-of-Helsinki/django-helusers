@@ -67,6 +67,7 @@ def update_user(user, payload, oidc=False):
 # for a new user, the first requests fired toward the API will race
 # for creating the user. All but one of these will then fail.
 def _try_create_or_update(user_id, payload, oidc):
+    user_id = UUID(user_id)
     user_model = get_user_model()
     with transaction.atomic():
         try:
