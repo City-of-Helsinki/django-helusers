@@ -107,6 +107,13 @@ class RequestJWTAuthentication:
         except Exception:
             raise AuthenticationError("JWT verification failed.")
 
+        if api_token_auth_settings.REQUIRE_API_SCOPE_FOR_AUTHENTICATION:
+            api_scope = api_token_auth_settings.API_SCOPE_PREFIX
+            if not jwt.has_api_scope_with_prefix(api_scope):
+                raise AuthenticationError(
+                    'Not authorized for API scope "{}"'.format(api_scope)
+                )
+
         claims = jwt.claims
         user = get_or_create_user(claims, oidc=True)
         auth = UserAuthorization(user, claims)

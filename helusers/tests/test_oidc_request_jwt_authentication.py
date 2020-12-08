@@ -25,6 +25,7 @@ def do_authentication(
     expiration=-1,
     not_before=None,
     key_provider=public_key_provider,
+    **kwargs,
 ):
     sut = RequestJWTAuthentication(key_provider=key_provider)
 
@@ -45,6 +46,9 @@ def do_authentication(
 
     if not_before:
         jwt_data["nbf"] = not_before
+
+    for k, v in kwargs.items():
+        jwt_data[k] = v
 
     encoded_jwt = jwt.encode(
         jwt_data, key=signing_key.private_key_pem, algorithm=rsa_key.jose_algorithm
@@ -149,3 +153,39 @@ def test_default_key_provider_fetches_keys_from_issuer_server(mock_responses):
     mock_responses.add(method="GET", url=JWKS_URL, json=KEYS)
 
     authentication_passes(key_provider=None)
+
+
+class TestApiScopeChecking:
+    @staticmethod
+    def enable_api_scope_checking(settings):
+        oidc_settings = settings.OIDC_API_TOKEN_AUTH.copy()
+        oidc_settings["REQUIRE_API_SCOPE_FOR_AUTHENTICATION"] = True
+        oidc_settings["API_AUTHORIZATION_FIELD"] = "authorization"
+        oidc_settings["API_SCOPE_PREFIX"] = "api_scope"
+        settings.OIDC_API_TOKEN_AUTH = oidc_settings
+
+    @pytest.mark.django_db
+    def test_if_required_api_scope_is_found_as_is_then_authentication_passes(
+        self, settings
+    ):
+        self.enable_api_scope_checking(settings)
+        authentication_passes(authorization=["api_scope", "another_api_scope"])
+
+    @pytest.mark.django_db
+    def test_if_required_api_scope_is_found_as_a_prefix_then_authentication_passes(
+        self, settings
+    ):
+        self.enable_api_scope_checking(settings)
+        authentication_passes(authorization=["api_scope.read"])
+
+    def test_if_required_api_authorization_field_is_missing_then_authentication_fails(
+        self, settings
+    ):
+        self.enable_api_scope_checking(settings)
+        authentication_does_not_pass()
+
+    def test_if_required_api_scope_is_not_found_then_authentication_fails(
+        self, settings
+    ):
+        self.enable_api_scope_checking(settings)
+        authentication_does_not_pass(authorization=["another_api_scope"])

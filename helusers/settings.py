@@ -1,7 +1,6 @@
 from django.conf import settings
-
-
-_user_settings = getattr(settings, 'OIDC_API_TOKEN_AUTH', None)
+from django.core.signals import setting_changed
+from django.dispatch import receiver
 
 _defaults = dict(
     # Accepted audience, the API Token must have this in its aud field
@@ -45,8 +44,7 @@ _import_strings = [
 def _compile_settings():
     class Settings:
         def __init__(self):
-            self._settings = _defaults.copy()
-            self._settings.update(_user_settings)
+            self._load()
 
         def __getattr__(self, name):
             from django.utils.module_loading import import_string
@@ -62,6 +60,18 @@ def _compile_settings():
             except KeyError:
                 raise AttributeError("Setting '{}' not found".format(name))
 
+        def _load(self):
+            self._settings = _defaults.copy()
+
+            user_settings = getattr(settings, "OIDC_API_TOKEN_AUTH", None)
+            self._settings.update(user_settings)
+
     return Settings()
 
 api_token_auth_settings = _compile_settings()
+
+
+@receiver(setting_changed)
+def _reload_settings(setting, **kwargs):
+    if setting == "OIDC_API_TOKEN_AUTH":
+        api_token_auth_settings._load()
