@@ -13,7 +13,11 @@ from .settings import api_token_auth_settings
 
 class JWT:
     def __init__(self, encoded_jwt):
+        """The constructor checks that a JWT can be extracted from the
+        provided input but it doesn't validate it in any way. If the
+        input is invalid, an exception is raised."""
         self._encoded_jwt = encoded_jwt
+        self._claims = jwt.get_unverified_claims(encoded_jwt)
 
     def validate(self, keys, audience):
         """Verifies the JWT's signature using the provided keys,
@@ -24,7 +28,7 @@ class JWT:
             "require_exp": True,
         }
 
-        self._claims = jwt.decode(
+        jwt.decode(
             self._encoded_jwt, keys, options=options, audience=audience
         )
 
@@ -36,8 +40,6 @@ class JWT:
     @property
     def claims(self):
         """Returns all the claims of the JWT as a dictionary."""
-        if not hasattr(self, "_claims"):
-            self._claims = jwt.get_unverified_claims(self._encoded_jwt)
         return self._claims
 
     def has_api_scope_with_prefix(self, prefix):

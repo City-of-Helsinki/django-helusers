@@ -84,7 +84,7 @@ class RequestJWTAuthentication:
 
     def authenticate(self, request):
         """Looks for a JWT from the request's "Authorization" header. If the header
-        is not found, returns None.
+        is not found, or it doesn't contain a JWT, returns None.
 
         If the header is found and contains a JWT then the JWT gets verified.
         If verification passes, takes a user's id from the JWT's "sub" claim.
@@ -92,13 +92,11 @@ class RequestJWTAuthentication:
         and a UserAuthorization object as a (User, UserAuthorization) tuple.
         Raises an AuthenticationError on authentication failure."""
         try:
-            auth = request.headers["Authorization"].split()
-        except KeyError:
+            auth_header = request.headers["Authorization"]
+            auth_scheme, jwt_value = auth_header.split()
+            jwt = JWT(jwt_value)
+        except Exception:
             return None
-
-        jwt_value = auth[1]
-
-        jwt = JWT(jwt_value)
 
         try:
             issuer = jwt.issuer

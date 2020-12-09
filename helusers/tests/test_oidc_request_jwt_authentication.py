@@ -194,3 +194,11 @@ class TestApiScopeChecking:
 def test_if_authorization_header_is_missing_returns_none(rf):
     request = rf.get("/path")
     assert RequestJWTAuthentication().authenticate(request) is None
+
+
+@pytest.mark.parametrize(
+    "auth", ["TooShort", "Unknown scheme", "Bearer not_a_jwt", "Too many parts"]
+)
+def test_if_authorization_header_does_not_contain_a_jwt_returns_none(rf, auth):
+    request = rf.get("/path", HTTP_AUTHORIZATION=auth)
+    assert RequestJWTAuthentication().authenticate(request) is None
