@@ -12,6 +12,7 @@ from .keys import rsa_key, rsa_key2
 
 ISSUER = api_token_auth_settings.ISSUER[0]
 AUDIENCE = api_token_auth_settings.AUDIENCE
+USER_UUID = uuid.UUID("b7a35517-eb1f-46c9-88bf-3206fb659c3c")
 
 
 def public_key_provider(issuer):
@@ -25,13 +26,13 @@ def do_authentication(
     expiration=-1,
     not_before=None,
     key_provider=public_key_provider,
+    auth_scheme="Bearer",
     **kwargs,
 ):
     sut = RequestJWTAuthentication(key_provider=key_provider)
 
-    user_uuid = uuid.UUID("b7a35517-eb1f-46c9-88bf-3206fb659c3c")
     jwt_data = {
-        "sub": str(user_uuid),
+        "sub": str(USER_UUID),
     }
 
     if issuer:
@@ -55,21 +56,24 @@ def do_authentication(
     )
 
     rf = RequestFactory()
-    request = rf.get("/path", HTTP_AUTHORIZATION=f"Bearer {encoded_jwt}")
+    request = rf.get("/path", HTTP_AUTHORIZATION=f"{auth_scheme} {encoded_jwt}")
 
-    (user, auth) = sut.authenticate(request)
-
-    assert user.uuid == user_uuid
-    assert auth.user == user
+    return sut.authenticate(request)
 
 
 def authentication_passes(**kwargs):
-    do_authentication(**kwargs)
+    (user, auth) = do_authentication(**kwargs)
+    assert user.uuid == USER_UUID
+    assert auth.user == user
 
 
 def authentication_does_not_pass(**kwargs):
     with pytest.raises(AuthenticationError):
         do_authentication(**kwargs)
+
+
+def authentication_is_skipped(**kwargs):
+    assert do_authentication(**kwargs) is None
 
 
 @pytest.mark.django_db
@@ -202,3 +206,12 @@ def test_if_authorization_header_is_missing_returns_none(rf):
 def test_if_authorization_header_does_not_contain_a_jwt_returns_none(rf, auth):
     request = rf.get("/path", HTTP_AUTHORIZATION=auth)
     assert RequestJWTAuthentication().authenticate(request) is None
+
+
+@pytest.mark.django_db
+def test_bearer_authentication_scheme_is_accepted():
+    authentication_passes(auth_scheme="Bearer")
+
+
+def test_other_than_bearer_authentication_scheme_makes_authentication_skip():
+    authentication_is_skipped(auth_scheme="Auth")
