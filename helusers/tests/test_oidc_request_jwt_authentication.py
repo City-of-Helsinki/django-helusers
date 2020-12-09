@@ -189,3 +189,8 @@ class TestApiScopeChecking:
     ):
         self.enable_api_scope_checking(settings)
         authentication_does_not_pass(authorization=["another_api_scope"])
+
+
+def test_if_authorization_header_is_missing_returns_none(rf):
+    request = rf.get("/path")
+    assert RequestJWTAuthentication().authenticate(request) is None

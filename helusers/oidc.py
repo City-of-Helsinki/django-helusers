@@ -83,12 +83,19 @@ class RequestJWTAuthentication:
         self._key_provider = key_provider or _defaults.key_provider
 
     def authenticate(self, request):
-        """Looks for a JWT from the request's "Authorization" header and verifies it.
+        """Looks for a JWT from the request's "Authorization" header. If the header
+        is not found, returns None.
+
+        If the header is found and contains a JWT then the JWT gets verified.
         If verification passes, takes a user's id from the JWT's "sub" claim.
         Creates a User if it doesn't already exist. On success returns the User
         and a UserAuthorization object as a (User, UserAuthorization) tuple.
         Raises an AuthenticationError on authentication failure."""
-        auth = request.headers["Authorization"].split()
+        try:
+            auth = request.headers["Authorization"].split()
+        except KeyError:
+            return None
+
         jwt_value = auth[1]
 
         jwt = JWT(jwt_value)
