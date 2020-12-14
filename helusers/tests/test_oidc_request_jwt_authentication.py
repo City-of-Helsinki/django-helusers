@@ -52,7 +52,7 @@ def do_authentication(
         jwt_data[k] = v
 
     encoded_jwt = jwt.encode(
-        jwt_data, key=signing_key.private_key_pem, algorithm=rsa_key.jose_algorithm
+        jwt_data, key=signing_key.private_key_pem, algorithm=signing_key.jose_algorithm
     )
 
     rf = RequestFactory()
