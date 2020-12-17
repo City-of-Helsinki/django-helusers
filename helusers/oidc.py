@@ -19,7 +19,7 @@ class OIDCConfig:
     def __init__(self, issuer):
         self._issuer = issuer
 
-    @ttl_cache()
+    @ttl_cache(ttl=api_token_auth_settings.OIDC_CONFIG_EXPIRATION_TIME)
     def keys(self):
         config_url = self._issuer + "/.well-known/openid-configuration"
         config = requests.get(config_url).json()
