@@ -24,10 +24,14 @@ KEYS = {
 }
 
 
-def test_keys_are_returned(mock_responses):
+def test_keys_are_returned_and_cached(mock_responses):
     mock_responses.add(method="GET", url=CONFIG_URL, json=CONFIGURATION)
     mock_responses.add(method="GET", url=JWKS_URL, json=KEYS)
 
     config = OIDCConfig(ISSUER)
 
     assert config.keys() == KEYS
+    assert config.keys() == KEYS
+
+    assert mock_responses.assert_call_count(CONFIG_URL, 1) is True
+    assert mock_responses.assert_call_count(JWKS_URL, 1) is True

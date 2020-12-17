@@ -5,6 +5,7 @@ except ImportError:
 
 
 import requests
+from cachetools.func import ttl_cache
 from django.core.exceptions import ImproperlyConfigured
 from django.utils.functional import cached_property
 
@@ -18,6 +19,7 @@ class OIDCConfig:
     def __init__(self, issuer):
         self._issuer = issuer
 
+    @ttl_cache()
     def keys(self):
         config_url = self._issuer + "/.well-known/openid-configuration"
         config = requests.get(config_url).json()

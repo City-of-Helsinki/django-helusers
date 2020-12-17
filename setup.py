@@ -24,6 +24,7 @@ setup(
         'Django',
         'requests',
         'python-jose',
+        'cachetools>=3.0.0',
     ],
     classifiers=[
         'Environment :: Web Environment',
