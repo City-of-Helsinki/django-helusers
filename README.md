@@ -4,14 +4,20 @@
 
 # Django app for City of Helsinki user infrastructure
 
-django-helusers is your friendly app for bolting authentication into Django projects for City of Helsinki. It provides the following functionalities:
+Django-helusers is your friendly app for bolting authentication into Django projects for City of Helsinki. Authentication schemes are based on [OAuth2](https://oauth.net/2/) and [OpenID Connect (OIDC)](https://openid.net/connect/).
 
-* baseline User model
-* authentication against Tunnistamo, an OIDC service for authenticating against multiple backends
-* augmented login template for for Django admin, allowing tunnistamo login
-* mapping from Tunnistamo provided AD groups to Django groups
-* integration with Django Rest Framework authentication
-* authenticating DRF requests using a Tunnnistamo specific "API Token"
+A baseline `User` model is provided that can be used with the various authentication use cases that are supported. The model supports mapping from AD groups to Django groups based on the authentication data.
+
+Additionally there are **optional** functionalities that can be used as needed.
+
+Functionalities for server needing (API) access token verification:
+
+* For servers using Django REST Framework
+
+Functionalities for server needing to authenticate against OIDC or OAuth2 server:
+
+* support Django session login against OIDC or OAuth2 server, including Helsinki Tunnistus service and Azure AD
+* augmented login template for Django admin, adding OIDC/OAuth2 login button
 
 ## Adding django-helusers your Django project
 
