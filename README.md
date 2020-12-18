@@ -89,6 +89,49 @@ and reference it in settings.py:
 AUTH_USER_MODEL = 'users.User'
 ```
 
+## Optional features
+
+### Configuration of the DRF API authentication (using JWT tokens)
+
+DRF API authentication is somewhat orthogonal to the session authentication.
+It is a stateless authentication method, where every request is
+authenticated by checking the signature of the included JWT token. It still
+creates a persistent Django user, which is updated with the information
+from the token with every request.
+
+- Include `drf-oidc-auth` in your project's dependencies.
+- Configure REST framework to use the `ApiTokenAuthentication` class in `settings.py`:
+
+```python
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'helusers.oidc.ApiTokenAuthentication',
+    ),
+}
+```
+
+- Set your deployment-specific variables in `local_settings.py`, e.g.:
+
+```python
+OIDC_API_TOKEN_AUTH = {
+    # Audience that must be present in the token for the request to be
+    # accepted. Value must be agreed between your SSO service and your
+    # application instance. Essentially this allows your application to
+    # know that the token in meant to be used with it.
+    'AUDIENCE': 'https://api.hel.fi/auth/projects',
+    # Who we trust to sign the tokens. The library will request the
+    # public signature keys from standard locations below this URL
+    'ISSUER': 'https://api.hel.fi/sso/openid'
+    # The following can be used if you need certain OAuth2 scopes
+    # for any functionality of the API. The request will be denied
+    # if scopes starting with API_SCOPE_PREFIX are not present
+    # in the token claims. Usually this is not needed, as checking
+    # the audience is enough.
+    'REQUIRE_API_SCOPE_FOR_AUTHENTICATION': True,
+    'API_SCOPE_PREFIX': 'projects',
+}
+```
+
 ### Adding Tunnistamo authentication
 
 django-helusers ships with backend for authenticating against Tunnistamo
@@ -139,9 +182,7 @@ PickleSerializer:
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 ```
 
-## Configuration
-
-### Django session login
+#### Django session login
 
 Django session login is the usual login to Django that sets up a session
 and is typically implemented using a browser cookie. This is usually done
@@ -174,48 +215,7 @@ SOCIAL_AUTH_TUNNISTAMO_OIDC_ENDPOINT = 'https://tunnistamo.example.com/'
 
 Note that `client ID` becomes `KEY` and `client secret` becomes `SECRET`.
 
-### Configuration of the DRF API authentication (using JWT tokens)
-
-DRF API authentication is somewhat orthogonal to the session authentication.
-It is a stateless authentication method, where every request is
-authenticated by checking the signature of the included JWT token. It still
-creates a persistent Django user, which is updated with the information
-from the token with every request.
-
-- Include `drf-oidc-auth` in your project's dependencies.
-- Configure REST framework to use the `ApiTokenAuthentication` class in `settings.py`:
-
-```python
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'helusers.oidc.ApiTokenAuthentication',
-    ),
-}
-```
-
-- Set your deployment-specific variables in `local_settings.py`, e.g.:
-
-```python
-OIDC_API_TOKEN_AUTH = {
-    # Audience that must be present in the token for the request to be
-    # accepted. Value must be agreed between your SSO service and your
-    # application instance. Essentially this allows your application to
-    # know that the token in meant to be used with it.
-    'AUDIENCE': 'https://api.hel.fi/auth/projects',
-    # Who we trust to sign the tokens. The library will request the
-    # public signature keys from standard locations below this URL
-    'ISSUER': 'https://api.hel.fi/sso'
-    # The following can be used if you need certain OAuth2 scopes
-    # for any functionality of the API. The request will be denied
-    # if scopes starting with API_SCOPE_PREFIX are not present
-    # in the token claims. Usually this is not needed, as checking
-    # the audience is enough.
-     REQUIRE_API_SCOPE_FOR_AUTHENTICATION': True,
-    'API_SCOPE_PREFIX': 'projects',
-}
-```
-
-### Adding tunnistamo URL to template context
+#### Adding tunnistamo URL to template context
 
 If you need to access the Tunnistamo API from your JS code, you can include
 the Tunnistamo base URL in your template context using helusers's context processor:
@@ -232,7 +232,7 @@ TEMPLATES = [
 ]
 ```
 
-### Carrying language preference from your application to Tunnistamo
+#### Carrying language preference from your application to Tunnistamo
 
 Tunnistamo (per the OIDC specs) allows clients to specify the language used for
 the login process. This allows you to carry your applications language setting
@@ -253,7 +253,7 @@ the login process, for example in your template
 <a href="{% url 'helusers:auth_login' %}?next=/foobar/&ui_locales=en">Login in English</a>
 ```
 
-### Disabling password logins
+#### Disabling password logins
 
 If you're not allowing users to log in with passwords, you may disable the
 username/password form from Django admin login page by setting `HELUSERS_PASSWORD_LOGIN_DISABLED`
