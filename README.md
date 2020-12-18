@@ -83,10 +83,11 @@ AUTH_USER_MODEL = 'users.User'
 
 ## Optional features
 
-### Configuration of the DRF API authentication (using JWT tokens)
+### Django REST Framework API authentication using JWT
 
-DRF API authentication is somewhat orthogonal to the session authentication.
-It is a stateless authentication method, where every request is
+If you have a REST API implemented using Django REST Framework and you want to authorize access to your API using JWTs, then this might be useful to you.
+
+API token authentication is a stateless authentication method, where every request is
 authenticated by checking the signature of the included JWT token. It still
 creates a persistent Django user, which is updated with the information
 from the token with every request.
