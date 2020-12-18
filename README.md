@@ -21,22 +21,16 @@ Functionalities for server needing to authenticate against OIDC or OAuth2 server
 
 ## Adding django-helusers your Django project
 
-Add:
+Add `django-helusers` in your project's dependencies.
 
-* `django-helusers`
-* `social-auth-app-django`
-
-to your dependency management list. Django-helusers depends on
-`social-auth-app-django` for implementation of the OIDC dance.
+Some optional features of `django-helusers` have additional dependencies.
+These are mentioned in their relevant sections.
 
 ### Adding django-helusers Django apps
 
 Django-helusers provides two Django apps: `HelusersConfig` provides the
 models and templates needed for helusers to work and `HelusersAdminConfig`
-reconfigures Django admin to work with helusers. The latter includes adding
-a Tunnistamo login button to the admin login screen.
-
-Additionally `social_django` app is needed for the underlying python-social-auth.
+reconfigures Django admin to work with helusers.
 
 Before adding the apps, you will need to remove `django.contrib.admin`, as
 `HelusersAdminConfig` is implementation of same functionality. You will get
@@ -49,8 +43,6 @@ Then proceed by adding these apps to your `INSTALLED_APPS` in settings.py:
 INSTALLED_APPS = (
     'helusers.apps.HelusersConfig',
     'helusers.apps.HelusersAdminConfig',
-    ...
-    'social_django',
     ...
 )
 ```
@@ -135,8 +127,23 @@ OIDC_API_TOKEN_AUTH = {
 ### Adding Tunnistamo authentication
 
 django-helusers ships with backend for authenticating against Tunnistamo
-using OIDC. There is also a deprecated legacy OAuth2 backend using
+using OIDC. Configuring this includes a Tunnistamo login button to the admin login screen.
+
+There is also a deprecated legacy OAuth2 backend using
 allauth framework.
+
+Include `social-auth-app-django` in your project's dependencies.
+
+Add `social_django` into your `INSTALLED_APPS` setting:
+
+```python
+# myproject/settings.py
+INSTALLED_APPS = (
+    ...
+    'social_django',
+    ...
+)
+```
 
 Typically you would want to support authenticating using both OIDC and local
 database tables. Local users are useful for initial django admin login, before
