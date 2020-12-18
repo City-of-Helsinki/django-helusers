@@ -29,31 +29,6 @@ Add:
 to your dependency management list. Django-helusers depends on
 `social-auth-app-django` for implementation of the OIDC dance.
 
-### Adding user model
-
-helusers provides a baseline user model adding fields for Helsinki
-specific information. As per Django [best practice](https://docs.djangoproject.com/en/3.0/topics/auth/customizing/#using-a-custom-user-model-when-starting-a-project)
-you should subclass this model to make future customization easier:
-
-```python
-
-# users/models.py
-
-from helusers.models import AbstractUser
-
-
-class User(AbstractUser):
-    pass
-```
-
-and reference it in settings.py:
-
-```python
-# myproject/settings.py
-
-AUTH_USER_MODEL = 'users.User'
-```
-
 ### Adding django-helusers Django apps
 
 Django-helusers provides two Django apps: `HelusersConfig` provides the
@@ -88,6 +63,31 @@ One possible gotcha is, if you've added custom views to admin without
 forwarding context from `each_context` to the your template.  Helusers
 templates expect variables from `each_context` and will break if they are
 missing.
+
+### Adding user model
+
+helusers provides a baseline user model adding fields for Helsinki
+specific information. As per Django [best practice](https://docs.djangoproject.com/en/3.0/topics/auth/customizing/#using-a-custom-user-model-when-starting-a-project)
+you should subclass this model to make future customization easier:
+
+```python
+
+# users/models.py
+
+from helusers.models import AbstractUser
+
+
+class User(AbstractUser):
+    pass
+```
+
+and reference it in settings.py:
+
+```python
+# myproject/settings.py
+
+AUTH_USER_MODEL = 'users.User'
+```
 
 ### Adding Tunnistamo authentication
 
