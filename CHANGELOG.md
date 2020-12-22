@@ -2,6 +2,10 @@
 
 ## [Unreleased] - YYYY-MM-DD
 
+### Added
+
+- An authentication/JWT validation service with minimal external dependencies: `helusers.oidc.RequestJWTAuthentication`.
+
 ### Changed
 
 - Supported Python versions: 3.6-3.9.
