@@ -15,6 +15,12 @@ AUDIENCE = api_token_auth_settings.AUDIENCE
 USER_UUID = uuid.UUID("b7a35517-eb1f-46c9-88bf-3206fb659c3c")
 
 
+def update_oidc_settings(settings, updates):
+    oidc_settings = settings.OIDC_API_TOKEN_AUTH.copy()
+    oidc_settings.update(updates)
+    settings.OIDC_API_TOKEN_AUTH = oidc_settings
+
+
 def public_key_provider(issuer):
     return [rsa_key.public_key_jwk]
 
@@ -168,11 +174,14 @@ def test_default_key_provider_fetches_keys_from_issuer_server(mock_responses):
 class TestApiScopeChecking:
     @staticmethod
     def enable_api_scope_checking(settings):
-        oidc_settings = settings.OIDC_API_TOKEN_AUTH.copy()
-        oidc_settings["REQUIRE_API_SCOPE_FOR_AUTHENTICATION"] = True
-        oidc_settings["API_AUTHORIZATION_FIELD"] = "authorization"
-        oidc_settings["API_SCOPE_PREFIX"] = "api_scope"
-        settings.OIDC_API_TOKEN_AUTH = oidc_settings
+        update_oidc_settings(
+            settings,
+            {
+                "REQUIRE_API_SCOPE_FOR_AUTHENTICATION": True,
+                "API_AUTHORIZATION_FIELD": "authorization",
+                "API_SCOPE_PREFIX": "api_scope",
+            },
+        )
 
     @pytest.mark.django_db
     def test_if_required_api_scope_is_found_as_is_then_authentication_passes(
