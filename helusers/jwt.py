@@ -11,6 +11,10 @@ from jose import jwt
 from .settings import api_token_auth_settings
 
 
+class ValidationError(Exception):
+    pass
+
+
 class JWT:
     def __init__(self, encoded_jwt):
         """The constructor checks that a JWT can be extracted from the
@@ -24,13 +28,24 @@ class JWT:
         and validates the claims, raising an exception if anything fails."""
 
         options = {
-            "require_aud": True,
+            "verify_aud": False,
             "require_exp": True,
         }
 
-        jwt.decode(
-            self._encoded_jwt, keys, options=options, audience=audience
-        )
+        jwt.decode(self._encoded_jwt, keys, options=options)
+
+        claims = self.claims
+
+        if "aud" not in claims:
+            raise ValidationError("Missing required 'aud' claim.")
+
+        claim_audiences = claims["aud"]
+        if isinstance(claim_audiences, str):
+            claim_audiences = {claim_audiences}
+        if isinstance(audience, str):
+            audience = {audience}
+        if len(set(audience).intersection(claim_audiences)) == 0:
+            raise ValidationError("Invalid audience.")
 
     @property
     def issuer(self):

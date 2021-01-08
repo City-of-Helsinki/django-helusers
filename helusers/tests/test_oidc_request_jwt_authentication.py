@@ -127,6 +127,24 @@ def test_audience_not_found_from_settings_is_not_accepted():
     authentication_does_not_pass(audience="unknown_audience")
 
 
+@pytest.mark.django_db
+def test_audiences_setting_can_be_multi_valued(settings):
+    audiences = ["test_audience1", "test_audience2"]
+
+    update_oidc_settings(
+        settings,
+        {
+            "AUDIENCE": audiences,
+        },
+    )
+
+    for audience in audiences:
+        authentication_passes(audience=audience)
+        authentication_passes(audience=["some_audience", audience, "another_audience"])
+
+    authentication_does_not_pass(audience="unknown_audience")
+
+
 def test_expiration_is_required():
     authentication_does_not_pass(expiration=None)
 
