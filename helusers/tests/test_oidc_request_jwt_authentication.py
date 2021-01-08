@@ -110,6 +110,13 @@ def test_audience_from_settings_is_accepted():
     authentication_passes(audience=AUDIENCE)
 
 
+@pytest.mark.django_db
+def test_audience_in_token_can_be_a_list():
+    authentication_passes(audience=["some_audience", AUDIENCE, "another_audience"])
+
+    authentication_does_not_pass(audience=["some_audience", "another_audience"])
+
+
 def test_audience_not_found_from_settings_is_not_accepted():
     authentication_does_not_pass(audience="unknown_audience")
 
