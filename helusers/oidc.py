@@ -90,9 +90,9 @@ class RequestJWTAuthentication:
 
         If the header is found and contains a JWT then the JWT gets verified.
         If verification passes, takes a user's id from the JWT's "sub" claim.
-        Creates a User if it doesn't already exist. On success returns the User
-        and a UserAuthorization object as a (User, UserAuthorization) tuple.
-        Raises an AuthenticationError on authentication failure."""
+        Creates a User if it doesn't already exist. On success returns a
+        UserAuthorization object. Raises an AuthenticationError on authentication
+        failure."""
         try:
             auth_header = request.headers["Authorization"]
             auth_scheme, jwt_value = auth_header.split()
@@ -125,6 +125,4 @@ class RequestJWTAuthentication:
 
         claims = jwt.claims
         user = get_or_create_user(claims, oidc=True)
-        auth = UserAuthorization(user, claims)
-
-        return (user, auth)
+        return UserAuthorization(user, claims)

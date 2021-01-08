@@ -62,9 +62,8 @@ def do_authentication(
 
 
 def authentication_passes(**kwargs):
-    (user, auth) = do_authentication(**kwargs)
-    assert user.uuid == USER_UUID
-    assert auth.user == user
+    auth = do_authentication(**kwargs)
+    assert auth.user.uuid == USER_UUID
 
 
 def authentication_does_not_pass(**kwargs):
