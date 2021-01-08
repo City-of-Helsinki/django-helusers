@@ -146,6 +146,8 @@ OIDC_API_TOKEN_AUTH = {
     # accepted. Value must be agreed between your SSO service and your
     # application instance. Essentially this allows your application to
     # know that the token is meant to be used with it.
+    # RequestJWTAuthentication supports multiple acceptable audiences,
+    # so this setting can also be a list of strings.
     # This setting is required.
     'AUDIENCE': 'https://api.hel.fi/auth/projects',
 
