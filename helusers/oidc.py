@@ -7,6 +7,8 @@ except ImportError:
 import requests
 from cachetools.func import ttl_cache
 from django.core.exceptions import ImproperlyConfigured
+from django.core.signals import setting_changed
+from django.dispatch import receiver
 from django.utils.functional import cached_property
 
 from .authz import UserAuthorization
@@ -69,6 +71,13 @@ def _build_defaults():
 
 
 _defaults = _build_defaults()
+
+
+@receiver(setting_changed)
+def _reload_settings(setting, **kwargs):
+    if setting == "OIDC_API_TOKEN_AUTH":
+        global _defaults
+        _defaults = _build_defaults()
 
 
 class AuthenticationError(Exception):
