@@ -105,7 +105,7 @@ class RequestJWTAuthentication:
         try:
             auth_header = request.headers["Authorization"]
             auth_scheme, jwt_value = auth_header.split()
-            if auth_scheme != "Bearer":
+            if auth_scheme.lower() != "bearer":
                 return None
             jwt = JWT(jwt_value)
         except Exception:

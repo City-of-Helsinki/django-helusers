@@ -242,8 +242,9 @@ def test_if_authorization_header_does_not_contain_a_jwt_returns_none(rf, auth):
 
 
 @pytest.mark.django_db
-def test_bearer_authentication_scheme_is_accepted():
-    authentication_passes(auth_scheme="Bearer")
+@pytest.mark.parametrize("scheme", ["Bearer", "bearer", "BEARER", "BeArEr"])
+def test_bearer_authentication_scheme_is_accepted(scheme):
+    authentication_passes(auth_scheme=scheme)
 
 
 def test_other_than_bearer_authentication_scheme_makes_authentication_skip():
