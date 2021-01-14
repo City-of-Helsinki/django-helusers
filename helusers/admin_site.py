@@ -5,7 +5,7 @@ from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.http import HttpResponseRedirect
 from django.urls import reverse
-from django.utils.translation import ugettext_lazy
+from django.utils.translation import gettext_lazy as _
 from django.views.decorators.cache import never_cache
 
 
@@ -35,8 +35,8 @@ class AdminSite(admin.AdminSite):
         elif hasattr(settings, 'WAGTAIL_SITE_NAME'):
             site_name = settings.WAGTAIL_SITE_NAME
         else:
-            return ugettext_lazy("Django admin")
-        return ugettext_lazy("%(site_name)s admin") % {'site_name': site_name}
+            return _("Django admin")
+        return _("%(site_name)s admin") % {'site_name': site_name}
 
     def each_context(self, request):
         ret = super(AdminSite, self).each_context(request)

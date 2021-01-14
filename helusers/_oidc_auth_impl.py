@@ -2,7 +2,7 @@ import logging
 import requests
 from django.utils.encoding import smart_text
 from django.utils.functional import cached_property
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from oidc_auth.authentication import JSONWebTokenAuthentication
 from oidc_auth.util import cache
 from rest_framework.authentication import get_authorization_header
