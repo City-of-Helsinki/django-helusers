@@ -1,6 +1,6 @@
 import logging
 import requests
-from django.utils.encoding import smart_text
+from django.utils.encoding import smart_str
 from django.utils.functional import cached_property
 from django.utils.translation import gettext as _
 from oidc_auth.authentication import JSONWebTokenAuthentication
@@ -69,7 +69,7 @@ class ApiTokenAuthentication(JSONWebTokenAuthentication):
 
         logger.debug("Authorization header: {}".format(auth))
 
-        if not auth or smart_text(auth[0]).lower() != self.auth_scheme.lower():
+        if not auth or smart_str(auth[0]).lower() != self.auth_scheme.lower():
             return None
 
         if len(auth) == 1:
