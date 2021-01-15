@@ -22,9 +22,10 @@ setup(
     author_email='dev@hel.fi',
     install_requires=[
         'Django',
+        'cachetools>=3.0.0',
+        'deprecation>=2',
         'requests',
         'python-jose',
-        'cachetools>=3.0.0',
     ],
     classifiers=[
         'Environment :: Web Environment',
