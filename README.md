@@ -258,6 +258,7 @@ The settings are:
 * client ID
 * client secret
 * Tunnistamo OIDC endpoint
+
 `Client` is OAuth2 / OIDC name for anything wanting to authenticate
 users. Thus your application would be a `client`
 
