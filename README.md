@@ -400,6 +400,8 @@ pip install -e .
 Install development requirements:
 
 ```bash
+pip install pip-tools
+pip-compile requirements-dev.in
 pip install -r requirements-dev.txt
 ```
 
