@@ -9,19 +9,24 @@ app_name = "helusers"
 
 urlpatterns = []
 
-if not settings.LOGOUT_REDIRECT_URL:
-    raise ImproperlyConfigured(
-        "You must configure LOGOUT_REDIRECT_URL to use helusers views."
-    )
+if (
+    "social_django" in settings.INSTALLED_APPS
+    and "helusers.tunnistamo_oidc.TunnistamoOIDCAuth"
+    in settings.AUTHENTICATION_BACKENDS
+):
+    if not settings.LOGOUT_REDIRECT_URL:
+        raise ImproperlyConfigured(
+            "You must configure LOGOUT_REDIRECT_URL to use helusers views."
+        )
 
-urlpatterns.extend(
-    [
-        path("logout/", views.LogoutView.as_view(), name="auth_logout"),
-        path(
-            "logout/complete/",
-            views.LogoutCompleteView.as_view(),
-            name="auth_logout_complete",
-        ),
-        path("login/", views.LoginView.as_view(), name="auth_login"),
-    ]
-)
+    urlpatterns.extend(
+        [
+            path("logout/", views.LogoutView.as_view(), name="auth_logout"),
+            path(
+                "logout/complete/",
+                views.LogoutCompleteView.as_view(),
+                name="auth_logout_complete",
+            ),
+            path("login/", views.LoginView.as_view(), name="auth_login"),
+        ]
+    )
