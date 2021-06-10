@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.6.1 - 2021-06-10
+
+### Added
+
+- Set django-heluers' default auto field to be `django.db.models.AutoField` for [Django versions >=3.2](https://docs.djangoproject.com/en/3.2/releases/3.2/#customizing-type-of-auto-created-primary-keys) to avoid unwanted migrations.
+
 ## 0.6.0 - 2021-01-18
 
 ### Added
