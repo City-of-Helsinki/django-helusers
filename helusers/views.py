@@ -9,14 +9,14 @@ from django.contrib import messages
 from django.utils.translation import gettext_lazy as _
 from django.urls import reverse
 
-LANGUAGE_FIELD_NAME = 'ui_locales'
+LANGUAGE_FIELD_NAME = "ui_locales"
 
 
 class LogoutView(DjangoLogoutView):
     def dispatch(self, request, *args, **kwargs):
         was_authenticated = request.user.is_authenticated
         session = request.session
-        end_session_url = session.get('social_auth_end_session_url')
+        end_session_url = session.get("social_auth_end_session_url")
         if end_session_url:
             self.next_page = end_session_url
         ret = super().dispatch(request, *args, **kwargs)
@@ -39,7 +39,7 @@ class LoginView(RedirectView):
         # method is connected to an existing user account.
         logout(self.request)
 
-        url = reverse('social:begin', kwargs=dict(backend='tunnistamo'))
+        url = reverse("social:begin", kwargs=dict(backend="tunnistamo"))
         redirect_to = self.request.GET.get(REDIRECT_FIELD_NAME)
         lang = self.request.GET.get(LANGUAGE_FIELD_NAME)
 
@@ -49,6 +49,6 @@ class LoginView(RedirectView):
         if lang:
             query_params[LANGUAGE_FIELD_NAME] = lang
         if query_params:
-            url += '?' + urlencode(query_params)
+            url += "?" + urlencode(query_params)
 
         return url
