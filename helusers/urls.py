@@ -2,6 +2,7 @@
 from django.urls import path
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
+from django.views.decorators.csrf import csrf_exempt
 from . import views
 
 
@@ -28,5 +29,16 @@ if (
                 name="auth_logout_complete",
             ),
             path("login/", views.LoginView.as_view(), name="auth_login"),
+        ]
+    )
+
+
+if getattr(settings, "HELUSERS_BACK_CHANNEL_LOGOUT_ENABLED", False):
+    urlpatterns.extend(
+        [
+            path(
+                "logout/oidc/backchannel/",
+                csrf_exempt(views.OIDCBackChannelLogout.as_view()),
+            ),
         ]
     )

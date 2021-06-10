@@ -2,9 +2,10 @@ from collections import OrderedDict
 from urllib.parse import urlencode
 
 from django.contrib.auth.views import LogoutView as DjangoLogoutView
+from django.views import View
 from django.views.generic.base import RedirectView
 from django.contrib.auth import logout, REDIRECT_FIELD_NAME
-from django.http import HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib import messages
 from django.utils.translation import gettext_lazy as _
 from django.urls import reverse
@@ -52,3 +53,8 @@ class LoginView(RedirectView):
             url += "?" + urlencode(query_params)
 
         return url
+
+
+class OIDCBackChannelLogout(View):
+    def post(self, request, *args, **kwargs):
+        return HttpResponse()
