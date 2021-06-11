@@ -5,7 +5,7 @@ from django.contrib.auth.views import LogoutView as DjangoLogoutView
 from django.views import View
 from django.views.generic.base import RedirectView
 from django.contrib.auth import logout, REDIRECT_FIELD_NAME
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect
 from django.contrib import messages
 from django.utils.translation import gettext_lazy as _
 from django.urls import reverse
@@ -57,4 +57,7 @@ class LoginView(RedirectView):
 
 class OIDCBackChannelLogout(View):
     def post(self, request, *args, **kwargs):
+        if request.content_type != "application/x-www-form-urlencoded":
+            return HttpResponseBadRequest()
+
         return HttpResponse()
