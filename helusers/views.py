@@ -56,6 +56,8 @@ class LoginView(RedirectView):
 
 
 class OIDCBackChannelLogout(View):
+    http_method_names = ["post"]
+
     def post(self, request, *args, **kwargs):
         if request.content_type != "application/x-www-form-urlencoded":
             return HttpResponseBadRequest()
