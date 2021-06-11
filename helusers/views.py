@@ -60,4 +60,9 @@ class OIDCBackChannelLogout(View):
         if request.content_type != "application/x-www-form-urlencoded":
             return HttpResponseBadRequest()
 
+        try:
+            logout_token = request.POST["logout_token"]
+        except KeyError:
+            return HttpResponseBadRequest()
+
         return HttpResponse()
