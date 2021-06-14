@@ -23,7 +23,12 @@ def execute_back_channel_logout(
     params = {}
 
     if overwrite_token is not None:
-        token = build_logout_token(**kwargs)
+        token = (
+            build_logout_token(**kwargs)
+            if overwrite_token is _NOT_PROVIDED
+            else overwrite_token
+        )
+
         if content_type == "application/x-www-form-urlencoded":
             params["data"] = f"logout_token={token}"
         else:
@@ -61,6 +66,11 @@ def test_require_application_x_www_form_urlencoded_content_type():
 
 def test_require_logout_token_parameter():
     response = execute_back_channel_logout(overwrite_token=None)
+    assert response.status_code == 400
+
+
+def test_handle_undecodable_logout_token():
+    response = execute_back_channel_logout(overwrite_token="invalid_token")
     assert response.status_code == 400
 
 

@@ -9,6 +9,7 @@ from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedire
 from django.contrib import messages
 from django.utils.translation import gettext_lazy as _
 from django.urls import reverse
+from jose import JOSEError
 
 from .jwt import JWT
 
@@ -68,7 +69,7 @@ class OIDCBackChannelLogout(View):
             logout_token = request.POST["logout_token"]
             jwt = JWT(logout_token)
             jwt.issuer
-        except KeyError:
+        except (JOSEError, KeyError):
             return HttpResponseBadRequest()
 
         return HttpResponse()
