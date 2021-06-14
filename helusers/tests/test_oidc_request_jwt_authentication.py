@@ -2,12 +2,11 @@ import uuid
 
 import pytest
 from django.test.client import RequestFactory
-from jose import jwt
 
 from helusers.oidc import AuthenticationError, RequestJWTAuthentication
 from helusers.settings import api_token_auth_settings
 
-from .conftest import unix_timestamp_now
+from .conftest import encoded_jwt_factory, unix_timestamp_now
 from .keys import rsa_key, rsa_key2
 
 ISSUER = api_token_auth_settings.ISSUER[0]
@@ -37,28 +36,17 @@ def do_authentication(
 ):
     sut = RequestJWTAuthentication(key_provider=key_provider)
 
-    jwt_data = {
-        "sub": str(USER_UUID),
-    }
+    if expiration == -1:
+        expiration = unix_timestamp_now() + 2
 
-    if issuer:
-        jwt_data["iss"] = issuer
-
-    if audience:
-        jwt_data["aud"] = audience
-
-    if expiration:
-        expiration = unix_timestamp_now() + 2 if expiration == -1 else expiration
-        jwt_data["exp"] = expiration
-
-    if not_before:
-        jwt_data["nbf"] = not_before
-
-    for k, v in kwargs.items():
-        jwt_data[k] = v
-
-    encoded_jwt = jwt.encode(
-        jwt_data, key=signing_key.private_key_pem, algorithm=signing_key.jose_algorithm
+    encoded_jwt = encoded_jwt_factory(
+        iss=issuer,
+        sub=str(USER_UUID),
+        aud=audience,
+        exp=expiration,
+        nbf=not_before,
+        signing_key=signing_key,
+        **kwargs,
     )
 
     rf = RequestFactory()

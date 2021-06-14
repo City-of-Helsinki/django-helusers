@@ -2,6 +2,9 @@ from datetime import datetime, timezone
 
 import pytest
 import responses
+from jose import jwt
+
+from .keys import rsa_key
 
 
 @pytest.fixture
@@ -18,3 +21,15 @@ def unix_timestamp_now():
 @pytest.fixture(name="unix_timestamp_now")
 def unix_timestamp_now_fixture():
     return unix_timestamp_now()
+
+
+def encoded_jwt_factory(signing_key=rsa_key, **claims):
+    jwt_data = {}
+
+    for name, value in claims.items():
+        if value is not None:
+            jwt_data[name] = value
+
+    return jwt.encode(
+        jwt_data, key=signing_key.private_key_pem, algorithm=signing_key.jose_algorithm
+    )
