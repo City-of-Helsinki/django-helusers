@@ -1,22 +1,33 @@
 import pytest
 from django.test import Client
 
+from .conftest import encoded_jwt_factory, ISSUER1
+
 
 _NOT_PROVIDED = object()
+
+
+def build_logout_token(**kwargs):
+    if "iss" not in kwargs:
+        kwargs["iss"] = ISSUER1
+
+    return encoded_jwt_factory(**kwargs)
 
 
 def execute_back_channel_logout(
     http_method="post",
     content_type="application/x-www-form-urlencoded",
     overwrite_token=_NOT_PROVIDED,
+    **kwargs,
 ):
     params = {}
 
     if overwrite_token is not None:
+        token = build_logout_token(**kwargs)
         if content_type == "application/x-www-form-urlencoded":
-            params["data"] = "logout_token=token"
+            params["data"] = f"logout_token={token}"
         else:
-            params["data"] = {"logout_token": "token"}
+            params["data"] = {"logout_token": token}
 
     if content_type:
         params["content_type"] = content_type
@@ -50,4 +61,9 @@ def test_require_application_x_www_form_urlencoded_content_type():
 
 def test_require_logout_token_parameter():
     response = execute_back_channel_logout(overwrite_token=None)
+    assert response.status_code == 400
+
+
+def test_issuer_is_required():
+    response = execute_back_channel_logout(iss=None)
     assert response.status_code == 400

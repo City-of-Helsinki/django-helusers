@@ -10,6 +10,8 @@ from django.contrib import messages
 from django.utils.translation import gettext_lazy as _
 from django.urls import reverse
 
+from .jwt import JWT
+
 LANGUAGE_FIELD_NAME = "ui_locales"
 
 
@@ -64,6 +66,8 @@ class OIDCBackChannelLogout(View):
 
         try:
             logout_token = request.POST["logout_token"]
+            jwt = JWT(logout_token)
+            jwt.issuer
         except KeyError:
             return HttpResponseBadRequest()
 
