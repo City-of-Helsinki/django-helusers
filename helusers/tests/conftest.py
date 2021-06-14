@@ -4,7 +4,12 @@ import pytest
 import responses
 from jose import jwt
 
+from helusers.settings import api_token_auth_settings
+
 from .keys import rsa_key
+
+ISSUER1 = api_token_auth_settings.ISSUER[0]
+ISSUER2 = api_token_auth_settings.ISSUER[1]
 
 
 @pytest.fixture

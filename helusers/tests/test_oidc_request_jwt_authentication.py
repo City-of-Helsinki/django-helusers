@@ -6,10 +6,9 @@ from django.test.client import RequestFactory
 from helusers.oidc import AuthenticationError, RequestJWTAuthentication
 from helusers.settings import api_token_auth_settings
 
-from .conftest import encoded_jwt_factory, unix_timestamp_now
+from .conftest import encoded_jwt_factory, ISSUER1, ISSUER2, unix_timestamp_now
 from .keys import rsa_key, rsa_key2
 
-ISSUER = api_token_auth_settings.ISSUER[0]
 AUDIENCE = api_token_auth_settings.AUDIENCE
 USER_UUID = uuid.UUID("b7a35517-eb1f-46c9-88bf-3206fb659c3c")
 
@@ -25,7 +24,7 @@ def public_key_provider(issuer):
 
 
 def do_authentication(
-    issuer=ISSUER,
+    issuer=ISSUER1,
     audience=AUDIENCE,
     signing_key=rsa_key,
     expiration=-1,
@@ -84,7 +83,7 @@ def test_issuer_is_required():
 
 @pytest.mark.parametrize(
     "issuer",
-    api_token_auth_settings.ISSUER,
+    [ISSUER1, ISSUER2],
 )
 @pytest.mark.django_db
 def test_any_issuer_from_settings_is_accepted(issuer):
@@ -162,8 +161,8 @@ def test_not_before_in_the_past_is_accepted(unix_timestamp_now):
 
 @pytest.mark.django_db
 def test_default_key_provider_fetches_keys_from_issuer_server(mock_responses):
-    CONFIG_URL = f"{ISSUER}/.well-known/openid-configuration"
-    JWKS_URL = f"{ISSUER}/jwks"
+    CONFIG_URL = f"{ISSUER1}/.well-known/openid-configuration"
+    JWKS_URL = f"{ISSUER1}/jwks"
 
     CONFIGURATION = {
         "jwks_uri": JWKS_URL,

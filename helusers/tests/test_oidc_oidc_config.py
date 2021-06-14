@@ -1,13 +1,12 @@
 import time
 
-import pytest
-
 from helusers.oidc import OIDCConfig
 from helusers.settings import api_token_auth_settings
 
-ISSUER = "https://test_issuer"
-CONFIG_URL = f"{ISSUER}/.well-known/openid-configuration"
-JWKS_URL = f"{ISSUER}/jwks"
+from .conftest import ISSUER1
+
+CONFIG_URL = f"{ISSUER1}/.well-known/openid-configuration"
+JWKS_URL = f"{ISSUER1}/jwks"
 
 # This isn't a full OIDC configuration object. It contains only parts relevant for the tests.
 CONFIGURATION = {
@@ -35,7 +34,7 @@ def test_keys_are_returned_and_cached_with_an_expiration_time(mock_responses):
     mock_responses.add(method="GET", url=CONFIG_URL, json=CONFIGURATION)
     mock_responses.add(method="GET", url=JWKS_URL, json=KEYS)
 
-    config = OIDCConfig(ISSUER)
+    config = OIDCConfig(ISSUER1)
 
     assert config.keys() == KEYS
     time.sleep(ttl - 1)
