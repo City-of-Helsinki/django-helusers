@@ -1,15 +1,24 @@
 import pytest
 from django.test import Client
 
-from .conftest import encoded_jwt_factory, ISSUER1
+from .conftest import AUDIENCE, encoded_jwt_factory, ISSUER1
+from .keys import rsa_key2
 
 
 _NOT_PROVIDED = object()
 
 
+@pytest.fixture(autouse=True)
+def auto_auth_server(auth_server):
+    return auth_server
+
+
 def build_logout_token(**kwargs):
     if "iss" not in kwargs:
         kwargs["iss"] = ISSUER1
+
+    if "aud" not in kwargs:
+        kwargs["aud"] = AUDIENCE
 
     return encoded_jwt_factory(**kwargs)
 
@@ -76,6 +85,11 @@ def test_handle_undecodable_logout_token():
     assert response.status_code == 400
 
 
+def test_invalid_signature_is_not_accepted():
+    response = execute_back_channel_logout(signing_key=rsa_key2)
+    assert response.status_code == 400
+
+
 def test_issuer_is_required():
     response = execute_back_channel_logout(iss=None)
     assert response.status_code == 400
@@ -83,4 +97,21 @@ def test_issuer_is_required():
 
 def test_issuer_not_found_from_settings_is_not_accepted():
     response = execute_back_channel_logout(iss="unknown_issuer")
+    assert response.status_code == 400
+
+
+def test_audience_is_required():
+    response = execute_back_channel_logout(aud=None)
+    assert response.status_code == 400
+
+
+def test_audience_in_token_can_be_a_list():
+    response = execute_back_channel_logout(
+        aud=["some_audience", AUDIENCE, "another_audience"]
+    )
+    assert response.status_code == 200
+
+
+def test_audience_not_found_from_settings_is_not_accepted():
+    response = execute_back_channel_logout(aud="unknown_audience")
     assert response.status_code == 400

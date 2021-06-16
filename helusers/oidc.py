@@ -84,6 +84,10 @@ def get_keys(issuer):
     return _defaults.key_provider(issuer)
 
 
+def accepted_audience():
+    return _defaults.audience
+
+
 class AuthenticationError(Exception):
     pass
 

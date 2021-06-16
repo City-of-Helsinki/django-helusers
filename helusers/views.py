@@ -11,7 +11,7 @@ from django.utils.translation import gettext_lazy as _
 from django.urls import reverse
 from jose import JOSEError
 
-from .jwt import JWT
+from .jwt import JWT, ValidationError
 from . import oidc
 
 LANGUAGE_FIELD_NAME = "ui_locales"
@@ -73,7 +73,8 @@ class OIDCBackChannelLogout(View):
             issuer = jwt.issuer
 
             keys = oidc.get_keys(issuer)
-        except (JOSEError, KeyError):
+            jwt.validate(keys, oidc.accepted_audience(), required_claims={"aud"})
+        except (JOSEError, KeyError, ValidationError):
             return HttpResponseBadRequest()
 
         return HttpResponse()
