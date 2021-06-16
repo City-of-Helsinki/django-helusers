@@ -23,6 +23,9 @@ def build_logout_token(**kwargs):
     if "iat" not in kwargs:
         kwargs["iat"] = unix_timestamp_now() - 1
 
+    if "sub" not in kwargs:
+        kwargs["sub"] = "sub_value"
+
     return encoded_jwt_factory(**kwargs)
 
 
@@ -127,4 +130,20 @@ def test_iat_claim_is_required():
 
 def test_iat_claim_must_be_a_number():
     response = execute_back_channel_logout(iat="not_number")
+    assert response.status_code == 400
+
+
+@pytest.mark.parametrize(
+    "sub,sid", [("sub_only", None), (None, "sid_only"), ("both_sub", "and_sid")]
+)
+def test_accepted_sub_and_sid_claim_combinations(sub, sid):
+    response = execute_back_channel_logout(sub=sub, sid=sid)
+    assert response.status_code == 200
+
+
+@pytest.mark.parametrize(
+    "sub,sid", [(None, None), ("non_string_sid", 123), (123, "non_string_sub")]
+)
+def test_rejected_sub_and_sid_claim_combinations(sub, sid):
+    response = execute_back_channel_logout(sub=sub, sid=sid)
     assert response.status_code == 400
