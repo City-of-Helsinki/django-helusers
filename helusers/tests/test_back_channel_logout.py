@@ -1,7 +1,7 @@
 import pytest
 from django.test import Client
 
-from .conftest import AUDIENCE, encoded_jwt_factory, ISSUER1
+from .conftest import AUDIENCE, encoded_jwt_factory, ISSUER1, unix_timestamp_now
 from .keys import rsa_key2
 
 
@@ -19,6 +19,9 @@ def build_logout_token(**kwargs):
 
     if "aud" not in kwargs:
         kwargs["aud"] = AUDIENCE
+
+    if "iat" not in kwargs:
+        kwargs["iat"] = unix_timestamp_now() - 1
 
     return encoded_jwt_factory(**kwargs)
 
@@ -114,4 +117,14 @@ def test_audience_in_token_can_be_a_list():
 
 def test_audience_not_found_from_settings_is_not_accepted():
     response = execute_back_channel_logout(aud="unknown_audience")
+    assert response.status_code == 400
+
+
+def test_iat_claim_is_required():
+    response = execute_back_channel_logout(iat=None)
+    assert response.status_code == 400
+
+
+def test_iat_claim_must_be_a_number():
+    response = execute_back_channel_logout(iat="not_number")
     assert response.status_code == 400

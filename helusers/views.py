@@ -73,7 +73,7 @@ class OIDCBackChannelLogout(View):
             issuer = jwt.issuer
 
             keys = oidc.get_keys(issuer)
-            jwt.validate(keys, oidc.accepted_audience(), required_claims={"aud"})
+            jwt.validate(keys, oidc.accepted_audience(), required_claims={"aud", "iat"})
         except (JOSEError, KeyError, ValidationError):
             return HttpResponseBadRequest()
 
