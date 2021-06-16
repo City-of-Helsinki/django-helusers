@@ -4,12 +4,10 @@ import pytest
 from django.test.client import RequestFactory
 
 from helusers.oidc import AuthenticationError, RequestJWTAuthentication
-from helusers.settings import api_token_auth_settings
 
-from .conftest import encoded_jwt_factory, ISSUER1, unix_timestamp_now
+from .conftest import AUDIENCE, encoded_jwt_factory, ISSUER1, unix_timestamp_now
 from .keys import rsa_key, rsa_key2
 
-AUDIENCE = api_token_auth_settings.AUDIENCE
 USER_UUID = uuid.UUID("b7a35517-eb1f-46c9-88bf-3206fb659c3c")
 
 

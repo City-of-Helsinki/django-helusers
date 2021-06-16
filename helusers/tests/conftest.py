@@ -10,6 +10,7 @@ from .keys import rsa_key, rsa_key2
 
 ISSUER1 = api_token_auth_settings.ISSUER[0]
 ISSUER2 = api_token_auth_settings.ISSUER[1]
+AUDIENCE = api_token_auth_settings.AUDIENCE
 
 
 class AuthServer:
