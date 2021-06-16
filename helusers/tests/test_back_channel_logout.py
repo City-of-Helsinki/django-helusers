@@ -41,8 +41,10 @@ def execute_back_channel_logout(
     return getattr(client, http_method)("/logout/oidc/backchannel/", **params)
 
 
-def test_valid_logout_token_is_accepted():
-    response = execute_back_channel_logout()
+def test_valid_logout_token_is_accepted(all_auth_servers):
+    response = execute_back_channel_logout(
+        iss=all_auth_servers.issuer, signing_key=all_auth_servers.key
+    )
     assert response.status_code == 200
 
 
@@ -76,4 +78,9 @@ def test_handle_undecodable_logout_token():
 
 def test_issuer_is_required():
     response = execute_back_channel_logout(iss=None)
+    assert response.status_code == 400
+
+
+def test_issuer_not_found_from_settings_is_not_accepted():
+    response = execute_back_channel_logout(iss="unknown_issuer")
     assert response.status_code == 400

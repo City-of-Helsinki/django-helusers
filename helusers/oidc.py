@@ -80,6 +80,10 @@ def _reload_settings(setting, **kwargs):
         _defaults = _build_defaults()
 
 
+def get_keys(issuer):
+    return _defaults.key_provider(issuer)
+
+
 class AuthenticationError(Exception):
     pass
 
