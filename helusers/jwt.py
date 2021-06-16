@@ -11,6 +11,9 @@ from jose import jwt
 from .settings import api_token_auth_settings
 
 
+_NOT_PROVIDED = object()
+
+
 class ValidationError(Exception):
     pass
 
@@ -23,29 +26,39 @@ class JWT:
         self._encoded_jwt = encoded_jwt
         self._claims = jwt.get_unverified_claims(encoded_jwt)
 
-    def validate(self, keys, audience):
+    def validate(self, keys, audience, required_claims=_NOT_PROVIDED):
         """Verifies the JWT's signature using the provided keys,
-        and validates the claims, raising an exception if anything fails."""
+        and validates the claims, raising an exception if anything fails.
+        Required claims can be specified using the required_claims argument
+        and it defaults to ["aud", "exp"]."""
+
+        if required_claims is _NOT_PROVIDED:
+            required_claims = ["aud", "exp"]
 
         options = {
             "verify_aud": False,
-            "require_exp": True,
         }
+
+        require_aud = "aud" in required_claims
+        required_claims.remove("aud")
+
+        for required_claim in required_claims:
+            options[f"require_{required_claim}"] = True
 
         jwt.decode(self._encoded_jwt, keys, options=options)
 
         claims = self.claims
-
-        if "aud" not in claims:
+        if require_aud and "aud" not in claims:
             raise ValidationError("Missing required 'aud' claim.")
 
-        claim_audiences = claims["aud"]
-        if isinstance(claim_audiences, str):
-            claim_audiences = {claim_audiences}
-        if isinstance(audience, str):
-            audience = {audience}
-        if len(set(audience).intersection(claim_audiences)) == 0:
-            raise ValidationError("Invalid audience.")
+        if "aud" in claims:
+            claim_audiences = claims["aud"]
+            if isinstance(claim_audiences, str):
+                claim_audiences = {claim_audiences}
+            if isinstance(audience, str):
+                audience = {audience}
+            if len(set(audience).intersection(claim_audiences)) == 0:
+                raise ValidationError("Invalid audience.")
 
     @property
     def issuer(self):
