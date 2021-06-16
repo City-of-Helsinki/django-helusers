@@ -13,9 +13,9 @@ ISSUER2 = api_token_auth_settings.ISSUER[1]
 
 
 @pytest.fixture
-def mock_responses():
-    with responses.RequestsMock() as mock_resps:
-        yield mock_resps
+def stub_responses():
+    with responses.RequestsMock(assert_all_requests_are_fired=False) as stub_resps:
+        yield stub_resps
 
 
 def unix_timestamp_now():

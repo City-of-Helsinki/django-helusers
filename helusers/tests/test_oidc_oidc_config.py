@@ -28,11 +28,11 @@ KEYS = {
 }
 
 
-def test_keys_are_returned_and_cached_with_an_expiration_time(mock_responses):
+def test_keys_are_returned_and_cached_with_an_expiration_time(stub_responses):
     ttl = api_token_auth_settings.OIDC_CONFIG_EXPIRATION_TIME
 
-    mock_responses.add(method="GET", url=CONFIG_URL, json=CONFIGURATION)
-    mock_responses.add(method="GET", url=JWKS_URL, json=KEYS)
+    stub_responses.add(method="GET", url=CONFIG_URL, json=CONFIGURATION)
+    stub_responses.add(method="GET", url=JWKS_URL, json=KEYS)
 
     config = OIDCConfig(ISSUER1)
 
@@ -40,11 +40,11 @@ def test_keys_are_returned_and_cached_with_an_expiration_time(mock_responses):
     time.sleep(ttl - 1)
     assert config.keys() == KEYS
 
-    assert mock_responses.assert_call_count(CONFIG_URL, 1) is True
-    assert mock_responses.assert_call_count(JWKS_URL, 1) is True
+    assert stub_responses.assert_call_count(CONFIG_URL, 1) is True
+    assert stub_responses.assert_call_count(JWKS_URL, 1) is True
 
     time.sleep(1)
     assert config.keys() == KEYS
 
-    assert mock_responses.assert_call_count(CONFIG_URL, 2) is True
-    assert mock_responses.assert_call_count(JWKS_URL, 2) is True
+    assert stub_responses.assert_call_count(CONFIG_URL, 2) is True
+    assert stub_responses.assert_call_count(JWKS_URL, 2) is True

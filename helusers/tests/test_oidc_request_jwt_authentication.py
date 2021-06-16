@@ -160,7 +160,7 @@ def test_not_before_in_the_past_is_accepted(unix_timestamp_now):
 
 
 @pytest.mark.django_db
-def test_default_key_provider_fetches_keys_from_issuer_server(mock_responses):
+def test_default_key_provider_fetches_keys_from_issuer_server(stub_responses):
     CONFIG_URL = f"{ISSUER1}/.well-known/openid-configuration"
     JWKS_URL = f"{ISSUER1}/jwks"
 
@@ -170,8 +170,8 @@ def test_default_key_provider_fetches_keys_from_issuer_server(mock_responses):
 
     KEYS = {"keys": [rsa_key.public_key_jwk]}
 
-    mock_responses.add(method="GET", url=CONFIG_URL, json=CONFIGURATION)
-    mock_responses.add(method="GET", url=JWKS_URL, json=KEYS)
+    stub_responses.add(method="GET", url=CONFIG_URL, json=CONFIGURATION)
+    stub_responses.add(method="GET", url=JWKS_URL, json=KEYS)
 
     authentication_passes(key_provider=None)
 
