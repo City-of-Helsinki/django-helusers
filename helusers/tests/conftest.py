@@ -57,11 +57,20 @@ def encoded_jwt_factory(signing_key=rsa_key, **claims):
     )
 
 
-@pytest.fixture
-def auth_server(stub_responses):
-    server = AuthServer(ISSUER1)
+def _configure_auth_server(issuer, stub_responses):
+    server = AuthServer(issuer)
 
     stub_responses.add(method="GET", url=server.config_url, json=server.configuration)
     stub_responses.add(method="GET", url=server.jwks_url, json=server.keys_response)
 
     return server
+
+
+@pytest.fixture
+def auth_server(stub_responses):
+    return _configure_auth_server(ISSUER1, stub_responses)
+
+
+@pytest.fixture(params=[ISSUER1, ISSUER2])
+def all_auth_servers(stub_responses, request):
+    return _configure_auth_server(request.param, stub_responses)

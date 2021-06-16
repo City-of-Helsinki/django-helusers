@@ -6,11 +6,16 @@ from django.test.client import RequestFactory
 from helusers.oidc import AuthenticationError, RequestJWTAuthentication
 from helusers.settings import api_token_auth_settings
 
-from .conftest import encoded_jwt_factory, ISSUER1, ISSUER2, unix_timestamp_now
+from .conftest import encoded_jwt_factory, ISSUER1, unix_timestamp_now
 from .keys import rsa_key, rsa_key2
 
 AUDIENCE = api_token_auth_settings.AUDIENCE
 USER_UUID = uuid.UUID("b7a35517-eb1f-46c9-88bf-3206fb659c3c")
+
+
+@pytest.fixture(autouse=True)
+def auto_auth_server(auth_server):
+    return auth_server
 
 
 def update_oidc_settings(settings, updates):
@@ -19,21 +24,16 @@ def update_oidc_settings(settings, updates):
     settings.OIDC_API_TOKEN_AUTH = oidc_settings
 
 
-def public_key_provider(issuer):
-    return [rsa_key.public_key_jwk]
-
-
 def do_authentication(
     issuer=ISSUER1,
     audience=AUDIENCE,
     signing_key=rsa_key,
     expiration=-1,
     not_before=None,
-    key_provider=public_key_provider,
     auth_scheme="Bearer",
     **kwargs,
 ):
-    sut = RequestJWTAuthentication(key_provider=key_provider)
+    sut = RequestJWTAuthentication()
 
     if expiration == -1:
         expiration = unix_timestamp_now() + 2
@@ -81,13 +81,10 @@ def test_issuer_is_required():
     authentication_does_not_pass(issuer=None)
 
 
-@pytest.mark.parametrize(
-    "issuer",
-    [ISSUER1, ISSUER2],
-)
 @pytest.mark.django_db
-def test_any_issuer_from_settings_is_accepted(issuer):
-    authentication_passes(issuer=issuer)
+def test_any_issuer_from_settings_is_accepted(all_auth_servers):
+    signing_key = all_auth_servers.key
+    authentication_passes(issuer=all_auth_servers.issuer, signing_key=signing_key)
 
 
 def test_issuer_not_found_from_settings_is_not_accepted():
@@ -157,23 +154,6 @@ def test_not_before_in_the_future_is_not_accepted(unix_timestamp_now):
 @pytest.mark.django_db
 def test_not_before_in_the_past_is_accepted(unix_timestamp_now):
     authentication_passes(not_before=unix_timestamp_now - 1)
-
-
-@pytest.mark.django_db
-def test_default_key_provider_fetches_keys_from_issuer_server(stub_responses):
-    CONFIG_URL = f"{ISSUER1}/.well-known/openid-configuration"
-    JWKS_URL = f"{ISSUER1}/jwks"
-
-    CONFIGURATION = {
-        "jwks_uri": JWKS_URL,
-    }
-
-    KEYS = {"keys": [rsa_key.public_key_jwk]}
-
-    stub_responses.add(method="GET", url=CONFIG_URL, json=CONFIGURATION)
-    stub_responses.add(method="GET", url=JWKS_URL, json=KEYS)
-
-    authentication_passes(key_provider=None)
 
 
 class TestApiScopeChecking:

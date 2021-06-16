@@ -84,14 +84,19 @@ class AuthenticationError(Exception):
     pass
 
 
+_NOT_PROVIDED = object()
+
+
 class RequestJWTAuthentication:
-    def __init__(self, key_provider=None):
-        """
-        key_provider: a callable that provides public keys for an issuer. If omitted,
-                      the default is used, which fetches keys from the issuer server
-                      using the OIDC standard configuration URL.
-        """
-        self._key_provider = key_provider or _defaults.key_provider
+    def __init__(self, key_provider=_NOT_PROVIDED):
+        if key_provider is not _NOT_PROVIDED:
+            import warnings
+
+            warnings.warn(
+                "The 'key_provider' argument to RequestJWTAuthentication is obsolete. "
+                "Providing one has no effect any more.",
+                DeprecationWarning,
+            )
 
     def authenticate(self, request):
         """Looks for a JWT from the request's "Authorization" header. If the header
@@ -119,7 +124,7 @@ class RequestJWTAuthentication:
         if issuer not in _defaults.issuers:
             raise AuthenticationError("Unknown JWT issuer {}.".format(issuer))
 
-        keys = self._key_provider(issuer)
+        keys = _defaults.key_provider(issuer)
         try:
             jwt.validate(keys, _defaults.audience)
         except Exception:

@@ -1,5 +1,11 @@
 # Changelog
 
+## x.x.x
+
+### Removed
+
+- The `key_provider` argument of `helusers.oidc.RequestJWTAuthentication.__init__` method was removed. It existed only for test support, but tests have been modified in a way that it's not needed any more.
+
 ## 0.6.1 - 2021-06-10
 
 ### Added
