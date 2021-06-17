@@ -164,3 +164,8 @@ def test_rejected_sub_and_sid_claim_combinations(sub, sid):
 def test_rejected_events_claim_values(value):
     response = execute_back_channel_logout(events=value)
     assert response.status_code == 400
+
+
+def test_nonce_claim_is_not_allowed():
+    response = execute_back_channel_logout(nonce="not allowed")
+    assert response.status_code == 400

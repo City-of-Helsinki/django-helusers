@@ -93,6 +93,9 @@ class OIDCBackChannelLogout(View):
             ]
             if not isinstance(logout_event_value, dict):
                 raise ValidationError()
+
+            if "nonce" in jwt.claims:
+                raise ValidationError()
         except (JOSEError, KeyError, ValidationError):
             return HttpResponseBadRequest()
 
