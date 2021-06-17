@@ -62,9 +62,9 @@ class LoginView(RedirectView):
 class OIDCBackChannelLogout(View):
     http_method_names = ["post"]
 
-    def post(self, request, *args, **kwargs):
+    def _validate_request(self, request):
         if request.content_type != "application/x-www-form-urlencoded":
-            return HttpResponseBadRequest()
+            return None
 
         try:
             logout_token = request.POST["logout_token"]
@@ -99,6 +99,22 @@ class OIDCBackChannelLogout(View):
             if "nonce" in jwt.claims:
                 raise ValidationError()
         except (JOSEError, KeyError, ValidationError):
+            return None
+
+        return jwt
+
+    def _handle_request(self, request):
+        jwt = self._validate_request(request)
+
+        if jwt is None:
             return HttpResponseBadRequest()
 
         return HttpResponse()
+
+    def post(self, request, *args, **kwargs):
+        response = self._handle_request(request)
+
+        response["Cache-Control"] = "no-cache, no-store"
+        response["Pragma"] = "no-cache"
+
+        return response

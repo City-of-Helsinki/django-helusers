@@ -1,3 +1,5 @@
+import re
+
 import pytest
 from django.test import Client
 
@@ -85,6 +87,19 @@ def test_require_application_x_www_form_urlencoded_content_type():
     # Test client uses multipart/form-data content type by default for POST requests
     response = execute_back_channel_logout(content_type=None)
     assert response.status_code == 400
+
+
+def test_include_cache_prevention_response_headers():
+    response = execute_back_channel_logout()
+
+    cache_control_header = response.get("Cache-Control", "")
+    cache_controls = {
+        v.lower() for v in re.split(r"\s*,\s*", cache_control_header) if v
+    }
+    assert cache_controls == {"no-cache", "no-store"}
+
+    pragma_header = response.get("Pragma", "")
+    assert pragma_header == "no-cache"
 
 
 def test_require_logout_token_parameter():
