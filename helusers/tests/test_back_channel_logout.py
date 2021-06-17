@@ -26,6 +26,9 @@ def build_logout_token(**kwargs):
     if "sub" not in kwargs:
         kwargs["sub"] = "sub_value"
 
+    if "events" not in kwargs:
+        kwargs["events"] = {"http://schemas.openid.net/event/backchannel-logout": {}}
+
     return encoded_jwt_factory(**kwargs)
 
 
@@ -146,4 +149,18 @@ def test_accepted_sub_and_sid_claim_combinations(sub, sid):
 )
 def test_rejected_sub_and_sid_claim_combinations(sub, sid):
     response = execute_back_channel_logout(sub=sub, sid=sid)
+    assert response.status_code == 400
+
+
+@pytest.mark.parametrize(
+    "value",
+    [
+        None,
+        "not_object",
+        {"no_required_member": {}},
+        {"http://schemas.openid.net/event/backchannel-logout": "not_object"},
+    ],
+)
+def test_rejected_events_claim_values(value):
+    response = execute_back_channel_logout(events=value)
     assert response.status_code == 400

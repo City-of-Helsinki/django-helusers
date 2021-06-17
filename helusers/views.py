@@ -84,6 +84,15 @@ class OIDCBackChannelLogout(View):
                     sub_or_sid_present = True
             if not sub_or_sid_present:
                 raise ValidationError()
+
+            events_value = jwt.claims["events"]
+            if not isinstance(events_value, dict):
+                raise ValidationError()
+            logout_event_value = events_value[
+                "http://schemas.openid.net/event/backchannel-logout"
+            ]
+            if not isinstance(logout_event_value, dict):
+                raise ValidationError()
         except (JOSEError, KeyError, ValidationError):
             return HttpResponseBadRequest()
 
