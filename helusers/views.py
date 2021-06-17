@@ -73,7 +73,9 @@ class OIDCBackChannelLogout(View):
             issuer = jwt.issuer
 
             keys = oidc.get_keys(issuer)
-            jwt.validate(keys, oidc.accepted_audience(), required_claims={"aud", "iat"})
+            jwt.validate(
+                keys, oidc.accepted_audience(), required_claims={"aud", "iat", "jti"}
+            )
 
             sub_or_sid_present = False
             for claim_name in ["sub", "sid"]:

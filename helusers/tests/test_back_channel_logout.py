@@ -23,6 +23,9 @@ def build_logout_token(**kwargs):
     if "iat" not in kwargs:
         kwargs["iat"] = unix_timestamp_now() - 1
 
+    if "jti" not in kwargs:
+        kwargs["jti"] = "jwt_id"
+
     if "sub" not in kwargs:
         kwargs["sub"] = "sub_value"
 
@@ -168,4 +171,15 @@ def test_rejected_events_claim_values(value):
 
 def test_nonce_claim_is_not_allowed():
     response = execute_back_channel_logout(nonce="not allowed")
+    assert response.status_code == 400
+
+
+def test_jti_claim_is_required():
+    response = execute_back_channel_logout(jti=None)
+    assert response.status_code == 400
+
+
+@pytest.mark.parametrize("value", [123, {}, []])
+def test_jti_claim_must_be_a_string(value):
+    response = execute_back_channel_logout(jti=value)
     assert response.status_code == 400
