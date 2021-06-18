@@ -5,6 +5,7 @@ DATABASES = {"default": {"ENGINE": "django.db.backends.sqlite3", "NAME": ":memor
 INSTALLED_APPS = (
     "django.contrib.auth",
     "django.contrib.contenttypes",
+    "django.contrib.messages",
     "helusers.apps.HelusersConfig",
     "helusers.apps.HelusersAdminConfig",
     "helusers.tests",
@@ -24,3 +25,24 @@ OIDC_API_TOKEN_AUTH = {
 HELUSERS_BACK_CHANNEL_LOGOUT_ENABLED = True
 
 ROOT_URLCONF = "helusers.urls"
+
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
+
+MIDDLEWARE = [
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+]
+
+TEMPLATES = [
+    {
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
+            ]
+        },
+    }
+]
