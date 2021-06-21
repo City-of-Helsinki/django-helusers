@@ -1,7 +1,8 @@
 import uuid
 import logging
-from django.db import models, transaction
+from django.db import IntegrityError, models, transaction
 from django.contrib.auth.models import Group, AbstractUser as DjangoAbstractUser
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from .utils import uuid_to_username
@@ -131,3 +132,34 @@ class AbstractUser(DjangoAbstractUser):
     class Meta:
         abstract = True
         ordering = ('id',)
+
+
+class OIDCBackChannelLogoutEventManager(models.Manager):
+    def logout_token_received(self, logout_token):
+        sub = logout_token.claims.get("sub", "")
+        sid = logout_token.claims.get("sid", "")
+
+        try:
+            with transaction.atomic():
+                self.create(iss=logout_token.issuer, sub=sub, sid=sid)
+        except IntegrityError:
+            pass
+
+    def is_session_terminated_for_token(self, token):
+        sid = token.claims.get("sid")
+        if sid:
+            return self.filter(iss=token.issuer, sid=sid).exists()
+
+        return False
+
+
+class OIDCBackChannelLogoutEvent(models.Model):
+    created_at = models.DateTimeField(default=timezone.now, blank=False)
+    iss = models.CharField(max_length=4096, db_index=True)
+    sub = models.CharField(max_length=4096, blank=True, db_index=True)
+    sid = models.CharField(max_length=4096, blank=True, db_index=True)
+
+    objects = OIDCBackChannelLogoutEventManager()
+
+    class Meta:
+        unique_together = ["iss", "sub", "sid"]
