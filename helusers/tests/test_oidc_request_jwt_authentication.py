@@ -7,6 +7,7 @@ from helusers.oidc import AuthenticationError, RequestJWTAuthentication
 
 from .conftest import AUDIENCE, encoded_jwt_factory, ISSUER1, unix_timestamp_now
 from .keys import rsa_key, rsa_key2
+from .test_back_channel_logout import execute_back_channel_logout
 
 USER_UUID = uuid.UUID("b7a35517-eb1f-46c9-88bf-3206fb659c3c")
 
@@ -214,3 +215,15 @@ def test_bearer_authentication_scheme_is_accepted(scheme):
 
 def test_other_than_bearer_authentication_scheme_makes_authentication_skip():
     authentication_is_skipped(auth_scheme="Auth")
+
+
+@pytest.mark.django_db
+def test_token_belonging_to_a_logged_out_session_is_not_accepted():
+    iss = ISSUER1
+    sub = str(USER_UUID)
+    sid = "logged_out_session"
+
+    execute_back_channel_logout(iss=iss, sub=sub, sid=sid)
+
+    authentication_does_not_pass(issuer=iss, sid=sid)
+    authentication_passes(issuer=iss, sid="other_session")

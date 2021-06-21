@@ -12,6 +12,7 @@ from django.urls import reverse
 from jose import JOSEError
 
 from .jwt import JWT, ValidationError
+from .models import OIDCBackChannelLogoutEvent
 from . import oidc
 
 LANGUAGE_FIELD_NAME = "ui_locales"
@@ -108,6 +109,8 @@ class OIDCBackChannelLogout(View):
 
         if jwt is None:
             return HttpResponseBadRequest()
+
+        OIDCBackChannelLogoutEvent.objects.logout_token_received(jwt)
 
         return HttpResponse()
 

@@ -64,6 +64,7 @@ def execute_back_channel_logout(
     return getattr(client, http_method)("/logout/oidc/backchannel/", **params)
 
 
+@pytest.mark.django_db
 def test_valid_logout_token_is_accepted(all_auth_servers):
     response = execute_back_channel_logout(
         iss=all_auth_servers.issuer, signing_key=all_auth_servers.key
@@ -89,6 +90,7 @@ def test_require_application_x_www_form_urlencoded_content_type():
     assert response.status_code == 400
 
 
+@pytest.mark.django_db
 def test_include_cache_prevention_response_headers():
     response = execute_back_channel_logout()
 
@@ -132,6 +134,7 @@ def test_audience_is_required():
     assert response.status_code == 400
 
 
+@pytest.mark.django_db
 def test_audience_in_token_can_be_a_list():
     response = execute_back_channel_logout(
         aud=["some_audience", AUDIENCE, "another_audience"]
@@ -154,6 +157,7 @@ def test_iat_claim_must_be_a_number():
     assert response.status_code == 400
 
 
+@pytest.mark.django_db
 @pytest.mark.parametrize(
     "sub,sid", [("sub_only", None), (None, "sid_only"), ("both_sub", "and_sid")]
 )
