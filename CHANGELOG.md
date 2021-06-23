@@ -2,6 +2,10 @@
 
 ## x.x.x
 
+### Added
+
+- An [OIDC back channel logout](https://openid.net/specs/openid-connect-backchannel-1_0.html) endpoint implementation.
+
 ### Removed
 
 - The `key_provider` argument of `helusers.oidc.RequestJWTAuthentication.__init__` method was removed. It existed only for test support, but tests have been modified in a way that it's not needed any more.

@@ -178,6 +178,67 @@ OIDC_API_TOKEN_AUTH = {
 }
 ```
 
+### OIDC back channel logout endpoint
+
+Django-helusers provides an [OIDC back channel logout](https://openid.net/specs/openid-connect-backchannel-1_0.html) endpoint implementation.
+
+By default the OIDC back channel logout endpoint is disabled. You can enable it in your project's settings:
+
+```python
+# myproject/settings.py
+HELUSERS_BACK_CHANNEL_LOGOUT_ENABLED = True
+
+# These settings specify which authentication server(s) are trusted
+# to send back channel logout requests.
+OIDC_API_TOKEN_AUTH = {
+    # Who we trust to sign the logout tokens. The library will request
+    # the public signature keys from standard locations below this URL.
+    # Multiple issuers are supported, so this setting can also be a list
+    # of strings. Default is https://tunnistamo.hel.fi.
+    'ISSUER': 'https://api.hel.fi/sso/openid'
+
+    # Audience that must be present in the logout token for it to
+    # be accepted. Value must be agreed between your SSO service
+    # and your application instance. Essentially this allows your
+    # application to know that the token is meant to be used with
+    # it. Multiple acceptable audiences are supported, so this
+    # setting can also be a list of strings. This setting is required.
+    'AUDIENCE': 'https://api.hel.fi/auth/projects',
+}
+```
+
+You will also need to add Django-helusers URLs to your URL dispatcher configuration:
+
+```python
+# myproject/urls.py
+urlpatterns = [
+    ...
+    # You can adjust the prefix as you want
+    path('helauth/', include('helusers.urls')),
+    ...
+]
+```
+
+With these settings your project now provides an endpoint at `https://<your-domain>/helauth/logout/oidc/backchannel/` that responds to the OIDC back channel logout requests.
+
+When the endpoint receives a valid request, it stores information about the logout event to the database. This information is used when authentication for other requests is performed. The `helusers.oidc.RequestJWTAuthentication` class that performs authentication based on a JWT bearer token, checks if the token's session has been terminated (by a logout event), and if that's the case, it doesn't authenticate the caller.
+
+#### Logout event callback
+
+The project using the OIDC back channel logout functionality has an option to attach a callback into the logout event handler. This is done by telling Django-helusers where this callback is located. Configure it in your project's settings:
+
+```python
+# myproject/settings.py
+HELUSERS_BACK_CHANNEL_LOGOUT_CALLBACK = "myproject.utils.logout_callback"
+```
+
+When a valid logout event is received, the callback is called. The callback receives two keyword arguments:
+
+* `request`: the [HttpRequest](https://docs.djangoproject.com/en/2.2/ref/request-response/#httprequest-objects) object describing the request to the logout endpoint
+* `jwt`: a `helusers.jwt.JWT` instance of the logout token
+
+The callback can affect the result of the back channel logout event handling by returning an [HttpResponse](https://docs.djangoproject.com/en/2.2/ref/request-response/#httpresponse-objects) instance with a status code between 400 and 599 inclusive. If such a response object is returned by the callback, the logout event handling is terminated and the response is sent to the requester. Any other kind of return value from the callback is ignored.
+
 ### Adding Tunnistamo authentication
 
 django-helusers ships with backend for authenticating against Tunnistamo
