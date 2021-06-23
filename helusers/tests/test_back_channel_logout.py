@@ -1,10 +1,11 @@
 import re
 
 import pytest
-from django.http import HttpRequest
+from django.http import HttpRequest, HttpResponse
 from django.test import Client
 
 from helusers.jwt import JWT
+from helusers.models import OIDCBackChannelLogoutEvent
 
 from .conftest import AUDIENCE, encoded_jwt_factory, ISSUER1, unix_timestamp_now
 from .keys import rsa_key2
@@ -242,3 +243,25 @@ class TestUserProvidedCallback:
         execute_back_channel_logout(iss="unknown_issuer")
 
         assert callback.call_count == 0
+
+    @pytest.mark.parametrize("status", [418, 504])
+    @pytest.mark.django_db
+    def test_4xx_and_5xx_http_responses_returned_by_callback_terminate_the_logout_handling(
+        self, callback, status
+    ):
+        callback.return_value = HttpResponse(status=status)
+
+        response = execute_back_channel_logout()
+
+        assert response.status_code == status
+        assert OIDCBackChannelLogoutEvent.objects.count() == 0
+
+    @pytest.mark.parametrize("response", [None, "something", HttpResponse(status=301)])
+    @pytest.mark.django_db
+    def test_other_responses_returned_by_callback_are_ignored(self, callback, response):
+        callback.return_value = response
+
+        response = execute_back_channel_logout()
+
+        assert response.status_code == 200
+        assert OIDCBackChannelLogoutEvent.objects.count() == 1

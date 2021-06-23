@@ -115,7 +115,13 @@ class OIDCBackChannelLogout(View):
             return HttpResponseBadRequest()
 
         if OIDCBackChannelLogout._user_callback:
-            OIDCBackChannelLogout._user_callback(request=request, jwt=jwt)
+            response = OIDCBackChannelLogout._user_callback(request=request, jwt=jwt)
+            if (
+                isinstance(response, HttpResponse)
+                and response.status_code >= 400
+                and response.status_code < 600
+            ):
+                return response
 
         OIDCBackChannelLogoutEvent.objects.logout_token_received(jwt)
 
