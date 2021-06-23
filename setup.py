@@ -21,7 +21,7 @@ setup(
     author='City of Helsinki',
     author_email='dev@hel.fi',
     install_requires=[
-        'Django',
+        'Django>=2.2',
         'cachetools>=3.0.0',
         'deprecation>=2',
         'requests',
