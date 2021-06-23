@@ -163,3 +163,5 @@ class OIDCBackChannelLogoutEvent(models.Model):
 
     class Meta:
         unique_together = ["iss", "sub", "sid"]
+        verbose_name = "OIDC back channel logout event"
+        verbose_name_plural = "OIDC back channel logout events"
