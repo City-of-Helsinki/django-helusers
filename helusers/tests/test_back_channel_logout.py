@@ -1,7 +1,10 @@
 import re
 
 import pytest
+from django.http import HttpRequest
 from django.test import Client
+
+from helusers.jwt import JWT
 
 from .conftest import AUDIENCE, encoded_jwt_factory, ISSUER1, unix_timestamp_now
 from .keys import rsa_key2
@@ -226,6 +229,14 @@ class TestUserProvidedCallback:
         execute_back_channel_logout()
 
         assert callback.call_count == 1
+
+        call_args, call_kwargs = callback.call_args
+        assert call_args == ()
+        request_arg = call_kwargs["request"]
+        assert isinstance(request_arg, HttpRequest)
+        jwt_arg = call_kwargs["jwt"]
+        assert isinstance(jwt_arg, JWT)
+        assert jwt_arg.issuer == ISSUER1
 
     def test_does_not_call_user_provided_callback_for_invalid_token(self, callback):
         execute_back_channel_logout(iss="unknown_issuer")
