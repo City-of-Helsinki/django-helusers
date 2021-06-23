@@ -1,12 +1,16 @@
 from collections import OrderedDict
 from urllib.parse import urlencode
 
+from django.conf import settings
 from django.contrib.auth.views import LogoutView as DjangoLogoutView
+from django.core.signals import setting_changed
+from django.dispatch import receiver
 from django.views import View
 from django.views.generic.base import RedirectView
 from django.contrib.auth import logout, REDIRECT_FIELD_NAME
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect
 from django.contrib import messages
+from django.utils.module_loading import import_string
 from django.utils.translation import gettext_lazy as _
 from django.urls import reverse
 from jose import JOSEError
@@ -110,6 +114,9 @@ class OIDCBackChannelLogout(View):
         if jwt is None:
             return HttpResponseBadRequest()
 
+        if OIDCBackChannelLogout._user_callback:
+            OIDCBackChannelLogout._user_callback()
+
         OIDCBackChannelLogoutEvent.objects.logout_token_received(jwt)
 
         return HttpResponse()
@@ -121,3 +128,23 @@ class OIDCBackChannelLogout(View):
         response["Pragma"] = "no-cache"
 
         return response
+
+
+def _update_back_channel_logout_user_callback():
+    OIDCBackChannelLogout._user_callback = None
+    try:
+        callback_name = getattr(settings, "HELUSERS_BACK_CHANNEL_LOGOUT_CALLBACK", None)
+        if callback_name:
+            callback = import_string(callback_name)
+            OIDCBackChannelLogout._user_callback = callback
+    except ImportError:
+        pass
+
+
+_update_back_channel_logout_user_callback()
+
+
+@receiver(setting_changed)
+def _reload_config(setting, **kwargs):
+    if setting == "HELUSERS_BACK_CHANNEL_LOGOUT_CALLBACK":
+        _update_back_channel_logout_user_callback()

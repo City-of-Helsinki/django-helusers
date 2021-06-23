@@ -202,3 +202,32 @@ def test_jti_claim_is_required():
 def test_jti_claim_must_be_a_string(value):
     response = execute_back_channel_logout(jti=value)
     assert response.status_code == 400
+
+
+def _callback(**kwargs):
+    pass
+
+
+@pytest.fixture
+def callback(settings, mocker):
+    callback_mock = mocker.patch(
+        "helusers.tests.test_back_channel_logout._callback", autospec=True
+    )
+    callback_mock.return_value = None
+    settings.HELUSERS_BACK_CHANNEL_LOGOUT_CALLBACK = (
+        "helusers.tests.test_back_channel_logout._callback"
+    )
+    return callback_mock
+
+
+class TestUserProvidedCallback:
+    @pytest.mark.django_db
+    def test_calls_user_provided_callback_for_valid_token(self, callback):
+        execute_back_channel_logout()
+
+        assert callback.call_count == 1
+
+    def test_does_not_call_user_provided_callback_for_invalid_token(self, callback):
+        execute_back_channel_logout(iss="unknown_issuer")
+
+        assert callback.call_count == 0
