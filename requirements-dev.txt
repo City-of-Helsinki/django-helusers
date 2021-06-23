@@ -54,10 +54,13 @@ pyparsing==2.4.7
     # via packaging
 pytest-django==4.0.0
     # via -r requirements-dev.in
+pytest-mock==3.6.1
+    # via -r requirements-dev.in
 pytest==6.1.1
     # via
     #   -r requirements-dev.in
     #   pytest-django
+    #   pytest-mock
 python3-openid==3.2.0
     # via django-allauth
 pytz==2020.1

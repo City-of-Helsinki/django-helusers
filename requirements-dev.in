@@ -2,4 +2,5 @@ django-allauth
 drf-oidc-auth
 pytest
 pytest-django
+pytest-mock
 responses
