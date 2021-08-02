@@ -1,22 +1,19 @@
 import json
-import time
 import uuid
 
 import pytest
-from jose import jwt
 
 from helusers.oidc import ApiTokenAuthentication
 
+from .conftest import encoded_jwt_factory, ISSUER1
 from .keys import rsa_key
-
-ISSUER = "test_issuer"
 
 
 class _TestableApiTokenAuthentication(ApiTokenAuthentication):
     @property
     def oidc_config(self):
         return {
-            "issuer": ISSUER,
+            "issuer": ISSUER1,
         }
 
     def jwks_data(self):
@@ -24,22 +21,17 @@ class _TestableApiTokenAuthentication(ApiTokenAuthentication):
 
 
 @pytest.mark.django_db
-def test_valid_jwt_is_accepted(rf):
+def test_valid_jwt_is_accepted(rf, unix_timestamp_now):
     sut = _TestableApiTokenAuthentication()
 
-    unix_timestamp_now = int(time.time())
-
     user_uuid = uuid.UUID("b7a35517-eb1f-46c9-88bf-3206fb659c3c")
-    jwt_data = {
-        "iss": ISSUER,
-        "aud": "test_audience",
-        "iat": unix_timestamp_now - 10,
-        "exp": unix_timestamp_now + 1000,
-        "sub": str(user_uuid),
-    }
 
-    encoded_jwt = jwt.encode(
-        jwt_data, key=rsa_key.private_key_pem, algorithm=rsa_key.jose_algorithm
+    encoded_jwt = encoded_jwt_factory(
+        iss=ISSUER1,
+        aud="test_audience",
+        iat=unix_timestamp_now - 10,
+        exp=unix_timestamp_now + 1000,
+        sub=str(user_uuid),
     )
 
     request = rf.get("/path", HTTP_AUTHORIZATION=f"Bearer {encoded_jwt}")
