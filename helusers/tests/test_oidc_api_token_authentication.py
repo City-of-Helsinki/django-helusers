@@ -1,4 +1,3 @@
-import json
 import uuid
 
 import pytest
@@ -6,23 +5,16 @@ import pytest
 from helusers.oidc import ApiTokenAuthentication
 
 from .conftest import encoded_jwt_factory, ISSUER1
-from .keys import rsa_key
 
 
-class _TestableApiTokenAuthentication(ApiTokenAuthentication):
-    @property
-    def oidc_config(self):
-        return {
-            "issuer": ISSUER1,
-        }
-
-    def jwks_data(self):
-        return json.dumps({"keys": [rsa_key.public_key_jwk]})
+@pytest.fixture(autouse=True)
+def auto_auth_server(auth_server):
+    return auth_server
 
 
 @pytest.mark.django_db
 def test_valid_jwt_is_accepted(rf, unix_timestamp_now):
-    sut = _TestableApiTokenAuthentication()
+    sut = ApiTokenAuthentication()
 
     user_uuid = uuid.UUID("b7a35517-eb1f-46c9-88bf-3206fb659c3c")
 

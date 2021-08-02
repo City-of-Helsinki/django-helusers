@@ -19,6 +19,7 @@ class AuthServer:
         self.config_url = f"{issuer}/.well-known/openid-configuration"
         self.jwks_url = f"{issuer}/jwks"
         self.configuration = {
+            "issuer": issuer,
             "jwks_uri": self.jwks_url,
         }
 
