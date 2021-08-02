@@ -30,7 +30,10 @@ class ApiTokenAuthentication(JSONWebTokenAuthentication):
 
     @cache(ttl=api_token_auth_settings.OIDC_CONFIG_EXPIRATION_TIME)
     def get_oidc_config(self):
-        url = self.settings.ISSUER + '/.well-known/openid-configuration'
+        issuer = self.settings.ISSUER
+        if not isinstance(issuer, str):
+            issuer = issuer[0]
+        url = issuer + '/.well-known/openid-configuration'
         return requests.get(url).json()
 
     def authenticate(self, request):
