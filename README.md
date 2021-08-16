@@ -1,5 +1,5 @@
 [![Run tests](https://github.com/City-of-Helsinki/django-helusers/actions/workflows/test.yml/badge.svg)](https://github.com/City-of-Helsinki/django-helusers/actions/workflows/test.yml)
-[![codecov](https://codecov.io/gh/City-of-Helsinki/django-helusers/branch/master/graph/badge.svg)](https://codecov.org/gh/City-of-Helsinki/django-helusers)
+[![codecov](https://codecov.io/gh/City-of-Helsinki/django-helusers/branch/master/graph/badge.svg?token=bOfnYCJsWW)](https://codecov.io/gh/City-of-Helsinki/django-helusers)
 [![Requirements](https://requires.io/github/City-of-Helsinki/django-helusers/requirements.svg?branch=master)](https://requires.io/github/City-of-Helsinki/django-helusers/requirements/?branch=master)
 
 # Django app for City of Helsinki user infrastructure
