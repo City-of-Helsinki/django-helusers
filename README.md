@@ -1,4 +1,4 @@
-[![Build status](https://travis-ci.org/City-of-Helsinki/django-helusers.svg?branch=master)](https://travis-ci.org/City-of-Helsinki/django-helusers)
+[![Run tests](https://github.com/City-of-Helsinki/django-helusers/actions/workflows/test.yml/badge.svg)](https://github.com/City-of-Helsinki/django-helusers/actions/workflows/test.yml)
 [![codecov](https://codecov.io/gh/City-of-Helsinki/django-helusers/branch/master/graph/badge.svg)](https://codecov.org/gh/City-of-Helsinki/django-helusers)
 [![Requirements](https://requires.io/github/City-of-Helsinki/django-helusers/requirements.svg?branch=master)](https://requires.io/github/City-of-Helsinki/django-helusers/requirements/?branch=master)
 
