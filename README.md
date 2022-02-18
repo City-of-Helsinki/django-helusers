@@ -338,6 +338,40 @@ SOCIAL_AUTH_TUNNISTAMO_OIDC_ENDPOINT = 'https://tunnistamo.example.com/'
 
 Note that `client ID` becomes `KEY` and `client secret` becomes `SECRET`.
 
+#### Active Directory groups
+
+Helusers can sync users AD groups to local Django groups when using an AD 
+login method in Tunnistamo. To enable groups sync you should add "ad_groups" 
+scope to the Tunnistamo OIDC authorize call. It can be done by adding
+the following to the settings:
+
+```python
+SOCIAL_AUTH_TUNNISTAMO_SCOPE = 'ad_groups'
+```
+
+That setting will add "ad_groups" scope to the default social auth scopes
+"openid profile email". If you would like to modify the default social
+auth scopes you can set all of the scopes in the `SOCIAL_AUTH_TUNNISTAMO_SCOPE` 
+setting and set `SOCIAL_AUTH_TUNNISTAMO_IGNORE_DEFAULT_SCOPE` to `True`.
+
+Additionally, the client in Tunnistamo should be configured with AD groups
+enabled.
+
+When the users returns from Tunnistamo with "ad_groups" claim set Helusers will 
+add all of the groups as an instance of `ADGroup` model to the database.
+
+Then, Helusers will add any missing ADGroups to the users' ad_groups-relation
+and remove any ADGroups the user is not a member of anymore.
+
+To use groups in Django permissions, you should use the Django admin view 
+(HELSINKI USERS > AD Group Mappings) to set mappings between ADGroups and 
+Groups. Helusers will then add the user to Django groups that are mapped
+to their AD Groups.
+
+Note that after creating mappings you cannot manually add a user to a mapped
+group if they are not a member of the corresponding AD group because the
+group will be removed the next time the user logs in.
+
 #### Adding tunnistamo URL to template context
 
 If you need to access the Tunnistamo API from your JS code, you can include
