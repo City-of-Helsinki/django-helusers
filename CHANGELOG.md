@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.7.1 - 2022-04-12
+
+### Changed
+
+- Handle a list of configured issuers in `ApiTokenAuthentication`
+- Require Django version < 4
+
 ## 0.7.0 - 2021-08-16
 
 ### Added
