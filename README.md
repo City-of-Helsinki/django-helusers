@@ -8,7 +8,7 @@ Django-helusers is your friendly app for bolting authentication into Django proj
 
 A baseline `User` model is provided that can be used with the various authentication use cases that are supported. The model supports mapping from AD groups to Django groups based on the authentication data.
 
-Additionally there are **optional** functionalities that can be used as needed.
+Additionally, there are **optional** functionalities that can be used as needed.
 
 Functionalities for server needing (API) access token verification:
 
@@ -443,4 +443,11 @@ pip install -r requirements-dev.txt
 
 ```bash
 pytest
+```
+
+You can run the tests against multiple environments by using [tox](https://tox.readthedocs.io/en/latest/).
+Install `tox` globally and run:
+
+```bash
+tox
 ```
