@@ -1,0 +1,8 @@
+# This is for running tox
+django-allauth
+drf-oidc-auth
+pytest
+pytest-cov
+pytest-django
+pytest-mock
+responses

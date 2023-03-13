@@ -6,3 +6,5 @@
 requirements-dev*.txt
 .venv/
 .vscode/
+.tox
+.coverage
