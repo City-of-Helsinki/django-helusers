@@ -1,4 +1,3 @@
-# This is for running tox
 django-allauth
 drf-oidc-auth
 pytest
