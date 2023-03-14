@@ -3,7 +3,6 @@
 /dist
 /build
 /django_helusers.egg-info
-requirements-dev*.txt
 .venv/
 .vscode/
 .tox

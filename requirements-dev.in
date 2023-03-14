@@ -1,8 +1,0 @@
-django<4
-django-allauth
-drf-oidc-auth
-pytest
-pytest-cov
-pytest-django
-pytest-mock
-responses
