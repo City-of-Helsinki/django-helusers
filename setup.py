@@ -21,7 +21,7 @@ setup(
     author='City of Helsinki',
     author_email='dev@hel.fi',
     install_requires=[
-        'Django>=2.2,<4',
+        'Django>=2.2',
         'cachetools>=3.0.0',
         'deprecation>=2',
         'requests',
@@ -39,6 +39,8 @@ setup(
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3.11',
         'Topic :: Internet :: WWW/HTTP',
         'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
     ],
