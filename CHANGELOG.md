@@ -1,13 +1,16 @@
 # Changelog
 
-## Unreleased
+## 0.8.0 - 2023-03-16
 
-### Changed
+### Added
 
-- Drop support for Python 3.6
-- Drop support for Django 2.2
-- Add support for Python 3.10 & 3.11
-- Add support for Django >=4.0
+- Support for Python 3.10 & 3.11
+- Support for Django >=4.0
+
+### Removed
+
+- Support for Python 3.6
+- Support for Django 2.2
 
 ## 0.7.1 - 2022-04-12
 
