@@ -47,6 +47,14 @@ class ApiTokenAuthentication(JSONWebTokenAuthentication):
             logger.debug("Invalid token signature")
             raise
 
+        # Some OPs may provide the "amr" incorrectly as a string, while the
+        # specification dictates it must be an array of strings. Fix that here.
+        if isinstance(payload.get("amr"), str):
+            payload["amr"] = [payload["amr"]]
+            logger.debug(
+                'Modified "amr" claim to be an array of strings instead of a string.'
+            )
+
         logger.debug("Token payload decoded as: {}".format(payload))
 
         self.validate_claims(payload)
