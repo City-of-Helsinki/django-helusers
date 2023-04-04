@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.8.1 - 2023-04-04
+
+### Fixed
+
+- Admin site logout view caching with Django 4
+- Turn invalid string `amr` claim into an array in JWT
+
 ## 0.8.0 - 2023-03-16
 
 ### Added
