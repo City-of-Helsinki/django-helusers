@@ -280,6 +280,19 @@ form did not specify anything else.
 `LOGOUT_REDIRECT_URL` is the same for logout. django-helusers requires this
 to be set.
 
+Configure `social_django` [authentication pipeline](https://python-social-auth.readthedocs.io/en/latest/pipeline.html)
+to handle the users. Django-helusers provides a default pipeline that could well
+suit your needs. Use it by importing it into your `settings.py`:
+
+```python
+from helusers.defaults import SOCIAL_AUTH_PIPELINE
+```
+
+If the default pipeline isn't suitable for your needs as is, build your pipeline
+by hand and set the `SOCIAL_AUTH_PIPELINE` setting to it. You can use the default
+pipeline as an inspiration and use the functions from `helusers.pipeline` in your
+own pipeline.
+
 You will also need to add URLs for `social_django` & `helusers` to your URL
 dispatcher configuration (`urls.py`):
 
