@@ -52,7 +52,12 @@ def do_authentication(
     rf = RequestFactory()
     request = rf.get("/path", HTTP_AUTHORIZATION=f"{auth_scheme} {encoded_jwt}")
 
-    return sut.authenticate(request)
+    result = sut.authenticate(request)
+    if isinstance(sut, ApiTokenAuthentication) and isinstance(result, tuple):
+        # Only return UserAuthorization when authenticating with ApiTokenAuthentication
+        return result[1]
+    else:
+        return result
 
 
 @pytest.fixture(params=[ApiTokenAuthentication, RequestJWTAuthentication])
