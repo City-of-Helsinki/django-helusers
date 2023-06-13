@@ -2,6 +2,7 @@ import uuid
 
 import pytest
 from django.test.client import RequestFactory
+from rest_framework.exceptions import AuthenticationFailed
 
 from helusers.oidc import AuthenticationError, RequestJWTAuthentication
 
@@ -78,7 +79,11 @@ def authentication_passes(**kwargs):
 
 
 def authentication_does_not_pass(**kwargs):
-    with pytest.raises(AuthenticationError):
+    exception_class = AuthenticationError
+    if isinstance(kwargs.get("sut"), ApiTokenAuthentication):
+        exception_class = AuthenticationFailed
+
+    with pytest.raises(exception_class):
         do_authentication(**kwargs)
 
 
@@ -91,8 +96,8 @@ def test_valid_jwt_is_accepted(sut):
     authentication_passes(sut=sut)
 
 
-def test_invalid_signature_is_not_accepted():
-    authentication_does_not_pass(signing_key=rsa_key2)
+def test_invalid_signature_is_not_accepted(sut):
+    authentication_does_not_pass(sut=sut, signing_key=rsa_key2)
 
 
 def test_issuer_is_required():
