@@ -30,9 +30,11 @@ def do_authentication(
     expiration=-1,
     not_before=None,
     auth_scheme="Bearer",
+    sut=None,
     **kwargs,
 ):
-    sut = RequestJWTAuthentication()
+    if sut is None:
+        sut = RequestJWTAuthentication()
 
     if expiration == -1:
         expiration = unix_timestamp_now() + 2
