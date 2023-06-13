@@ -182,9 +182,10 @@ def test_not_before_in_the_past_is_accepted(sut, unix_timestamp_now):
     authentication_passes(sut=sut, not_before=unix_timestamp_now - 1)
 
 
+@pytest.mark.django_db
 class TestApiScopeChecking:
-    @staticmethod
-    def enable_api_scope_checking(settings):
+    @pytest.fixture(autouse=True)
+    def enable_api_scope_checking(self, settings):
         update_oidc_settings(
             settings,
             {
@@ -194,30 +195,20 @@ class TestApiScopeChecking:
             },
         )
 
-    @pytest.mark.django_db
-    def test_if_required_api_scope_is_found_as_is_then_authentication_passes(
-        self, settings
-    ):
-        self.enable_api_scope_checking(settings)
+    def test_if_required_api_scope_is_found_as_is_then_authentication_passes(self):
         authentication_passes(authorization=["api_scope", "another_api_scope"])
 
-    @pytest.mark.django_db
     def test_if_required_api_scope_is_found_as_a_prefix_then_authentication_passes(
-        self, settings
+        self
     ):
-        self.enable_api_scope_checking(settings)
         authentication_passes(authorization=["api_scope.read"])
 
     def test_if_required_api_authorization_field_is_missing_then_authentication_fails(
-        self, settings
+        self
     ):
-        self.enable_api_scope_checking(settings)
         authentication_does_not_pass()
 
-    def test_if_required_api_scope_is_not_found_then_authentication_fails(
-        self, settings
-    ):
-        self.enable_api_scope_checking(settings)
+    def test_if_required_api_scope_is_not_found_then_authentication_fails(self):
         authentication_does_not_pass(authorization=["another_api_scope"])
 
 
