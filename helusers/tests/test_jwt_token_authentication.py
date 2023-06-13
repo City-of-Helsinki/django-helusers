@@ -8,6 +8,7 @@ from helusers.oidc import AuthenticationError, RequestJWTAuthentication
 from .conftest import AUDIENCE, encoded_jwt_factory, ISSUER1, unix_timestamp_now
 from .keys import rsa_key, rsa_key2
 from .test_back_channel_logout import execute_back_channel_logout
+from .._oidc_auth_impl import ApiTokenAuthentication
 
 USER_UUID = uuid.UUID("b7a35517-eb1f-46c9-88bf-3206fb659c3c")
 
@@ -30,19 +31,25 @@ def do_authentication(
     expiration=-1,
     not_before=None,
     auth_scheme="Bearer",
+    issued_at=None,
     sut=None,
     **kwargs,
 ):
     if sut is None:
         sut = RequestJWTAuthentication()
 
+    now = unix_timestamp_now()
+    if issued_at is None:
+        issued_at = now
+
     if expiration == -1:
-        expiration = unix_timestamp_now() + 2
+        expiration = now + 2
 
     encoded_jwt = encoded_jwt_factory(
         iss=issuer,
         sub=str(USER_UUID),
         aud=audience,
+        iat=issued_at,
         exp=expiration,
         nbf=not_before,
         signing_key=signing_key,
@@ -80,8 +87,8 @@ def authentication_is_skipped(**kwargs):
 
 
 @pytest.mark.django_db
-def test_valid_jwt_is_accepted():
-    authentication_passes()
+def test_valid_jwt_is_accepted(sut):
+    authentication_passes(sut=sut)
 
 
 def test_invalid_signature_is_not_accepted():
