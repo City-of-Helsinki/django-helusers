@@ -55,6 +55,11 @@ def do_authentication(
     return sut.authenticate(request)
 
 
+@pytest.fixture(params=[ApiTokenAuthentication, RequestJWTAuthentication])
+def sut(request):
+    return request.param()
+
+
 def authentication_passes(**kwargs):
     auth = do_authentication(**kwargs)
     assert auth.user.uuid == USER_UUID
