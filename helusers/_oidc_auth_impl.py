@@ -1,5 +1,7 @@
 import logging
 import requests
+from authlib.jose import JoseError
+from authlib.jose.errors import ExpiredTokenError
 from django.utils.encoding import smart_str
 from django.utils.functional import cached_property
 from django.utils.translation import gettext as _
@@ -107,6 +109,16 @@ class ApiTokenAuthentication(JSONWebTokenAuthentication):
                   "Credentials string should not contain spaces."))
 
         return auth[1]
+
+    def validate_claims(self, id_token):
+        try:
+            id_token.validate()
+        except ExpiredTokenError:
+            msg = _('Invalid Authorization header. JWT has expired.')
+            raise AuthenticationFailed(msg)
+        except JoseError as e:
+            msg = _(str(type(e)) + str(e))
+            raise AuthenticationFailed(msg)
 
     def authenticate_header(self, request):
         return '{auth_scheme} realm="{realm}"'.format(

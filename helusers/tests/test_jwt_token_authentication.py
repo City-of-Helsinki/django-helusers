@@ -173,8 +173,8 @@ def test_not_before_is_not_required(sut):
     authentication_passes(sut=sut, not_before=None)
 
 
-def test_not_before_in_the_future_is_not_accepted(unix_timestamp_now):
-    authentication_does_not_pass(not_before=unix_timestamp_now + 2)
+def test_not_before_in_the_future_is_not_accepted(sut, unix_timestamp_now):
+    authentication_does_not_pass(sut=sut, not_before=unix_timestamp_now + 2)
 
 
 @pytest.mark.django_db
