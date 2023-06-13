@@ -20,6 +20,21 @@ class ApiTokenAuthentication(JSONWebTokenAuthentication):
         self.settings = settings or api_token_auth_settings
         super(ApiTokenAuthentication, self).__init__(**kwargs)
 
+    @property
+    # This method is used if the drf-oidc-auth dependecy version is 1.0.0 or greater
+    def claims_options(self):
+        _claims_options = super().claims_options
+
+        audiences = self.settings.AUDIENCE
+        if isinstance(audiences, str):
+            audiences = [self.settings.AUDIENCE]
+
+        _claims_options["aud"] = {
+            "essential": True,
+            "values": audiences
+        }
+        return _claims_options
+
     @cached_property
     def auth_scheme(self):
         return self.settings.AUTH_SCHEME or 'Bearer'
@@ -98,6 +113,7 @@ class ApiTokenAuthentication(JSONWebTokenAuthentication):
             auth_scheme=self.auth_scheme,
             realm=self.www_authenticate_realm)
 
+    # This method is only used if the drf-oidc-auth dependecy version is less than 1.0.0
     def get_audiences(self, api_token):
         return {self.settings.AUDIENCE}
 

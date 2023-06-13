@@ -1,6 +1,7 @@
 import uuid
 
 import pytest
+from rest_framework.exceptions import AuthenticationFailed
 
 from helusers.oidc import ApiTokenAuthentication
 
@@ -49,3 +50,16 @@ def test_valid_jwt_is_accepted(rf, jwt_data, user_uuid, jwt_data_extra):
 
     assert user.uuid == user_uuid
     assert auth.user == user
+
+
+@pytest.mark.django_db
+def test_unknown_audience_is_not_accepted(rf, jwt_data):
+    sut = ApiTokenAuthentication()
+
+    jwt_data["aud"] = "unknown_audience"
+    encoded_jwt = encoded_jwt_factory(**jwt_data)
+
+    request = rf.get("/path", HTTP_AUTHORIZATION=f"Bearer {encoded_jwt}")
+
+    with pytest.raises(AuthenticationFailed):
+        sut.authenticate(request)
