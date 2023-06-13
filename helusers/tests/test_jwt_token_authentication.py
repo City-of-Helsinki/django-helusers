@@ -267,3 +267,8 @@ def test_token_belonging_to_a_logged_out_session_is_not_accepted(sut):
 
     authentication_does_not_pass(sut=sut, issuer=iss, sid=sid)
     authentication_passes(sut=sut, issuer=iss, sid="other_session")
+
+@pytest.mark.django_db
+@pytest.mark.parametrize("amr", [None, "something", ["something"], ["one", "two"]])
+def test_amr_as_string_and_list_are_both_accepted(sut, amr):
+    authentication_passes(sut=sut, amr=amr)
