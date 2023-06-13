@@ -224,11 +224,24 @@ def test_if_authorization_header_is_missing_returns_none(rf, sut):
 
 
 @pytest.mark.parametrize(
-    "auth", ["TooShort", "Unknown scheme", "Bearer not_a_jwt", "Too many parts"]
+    "auth", ["TooShort", "Unknown scheme", "Too many parts"]
 )
-def test_if_authorization_header_does_not_contain_a_jwt_returns_none(rf, auth):
+def test_if_authorization_header_does_not_contain_a_correct_prefix_returns_none(
+    rf, sut, auth
+):
     request = rf.get("/path", HTTP_AUTHORIZATION=auth)
+    assert sut.authenticate(request) is None
+
+
+def test_if_authorization_header_does_not_contain_a_valid_jwt_returns_none(rf):
+    request = rf.get("/path", HTTP_AUTHORIZATION="Bearer not_a_jwt")
     assert RequestJWTAuthentication().authenticate(request) is None
+
+
+def test_failure_if_authorization_header_does_not_contain_a_valid_jwt(rf):
+    request = rf.get("/path", HTTP_AUTHORIZATION="Bearer not_a_jwt")
+    with pytest.raises(AuthenticationFailed):
+        ApiTokenAuthentication().authenticate(request)
 
 
 @pytest.mark.django_db
