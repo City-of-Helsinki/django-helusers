@@ -195,21 +195,21 @@ class TestApiScopeChecking:
             },
         )
 
-    def test_if_required_api_scope_is_found_as_is_then_authentication_passes(self):
-        authentication_passes(authorization=["api_scope", "another_api_scope"])
+    def test_if_required_api_scope_is_found_as_is_then_authentication_passes(self, sut):
+        authentication_passes(sut=sut, authorization=["api_scope", "another_api_scope"])
 
     def test_if_required_api_scope_is_found_as_a_prefix_then_authentication_passes(
-        self
+        self, sut
     ):
-        authentication_passes(authorization=["api_scope.read"])
+        authentication_passes(sut=sut, authorization=["api_scope.read"])
 
     def test_if_required_api_authorization_field_is_missing_then_authentication_fails(
-        self
+        self, sut
     ):
-        authentication_does_not_pass()
+        authentication_does_not_pass(sut=sut)
 
-    def test_if_required_api_scope_is_not_found_then_authentication_fails(self):
-        authentication_does_not_pass(authorization=["another_api_scope"])
+    def test_if_required_api_scope_is_not_found_then_authentication_fails(self, sut):
+        authentication_does_not_pass(sut=sut, authorization=["another_api_scope"])
 
 
 def test_if_authorization_header_is_missing_returns_none(rf, sut):
