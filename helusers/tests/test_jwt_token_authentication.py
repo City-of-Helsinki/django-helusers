@@ -100,42 +100,45 @@ def test_invalid_signature_is_not_accepted(sut):
     authentication_does_not_pass(sut=sut, signing_key=rsa_key2)
 
 
-def test_issuer_is_required():
-    authentication_does_not_pass(issuer=None)
+def test_issuer_is_required(sut):
+    authentication_does_not_pass(sut=sut, issuer=None)
 
 
 @pytest.mark.django_db
-def test_any_issuer_from_settings_is_accepted(all_auth_servers):
+def test_any_issuer_from_settings_is_accepted(sut, all_auth_servers):
+    if isinstance(sut, ApiTokenAuthentication):
+        pytest.skip("ApiTokenAuthentication doesn't support multiple issuers yet")
+
     signing_key = all_auth_servers.key
-    authentication_passes(issuer=all_auth_servers.issuer, signing_key=signing_key)
+    authentication_passes(sut=sut, issuer=all_auth_servers.issuer, signing_key=signing_key)
 
 
-def test_issuer_not_found_from_settings_is_not_accepted():
-    authentication_does_not_pass(issuer="unknown_issuer")
+def test_issuer_not_found_from_settings_is_not_accepted(sut):
+    authentication_does_not_pass(sut=sut, issuer="unknown_issuer")
 
 
-def test_audience_is_required():
-    authentication_does_not_pass(audience=None)
-
-
-@pytest.mark.django_db
-def test_audience_from_settings_is_accepted():
-    authentication_passes(audience=AUDIENCE)
+def test_audience_is_required(sut):
+    authentication_does_not_pass(sut=sut, audience=None)
 
 
 @pytest.mark.django_db
-def test_audience_in_token_can_be_a_list():
-    authentication_passes(audience=["some_audience", AUDIENCE, "another_audience"])
-
-    authentication_does_not_pass(audience=["some_audience", "another_audience"])
-
-
-def test_audience_not_found_from_settings_is_not_accepted():
-    authentication_does_not_pass(audience="unknown_audience")
+def test_audience_from_settings_is_accepted(sut):
+    authentication_passes(sut=sut, audience=AUDIENCE)
 
 
 @pytest.mark.django_db
-def test_audiences_setting_can_be_multi_valued(settings):
+def test_audience_in_token_can_be_a_list(sut):
+    authentication_passes(sut=sut, audience=["some_audience", AUDIENCE, "another_audience"])
+
+    authentication_does_not_pass(sut=sut, audience=["some_audience", "another_audience"])
+
+
+def test_audience_not_found_from_settings_is_not_accepted(sut):
+    authentication_does_not_pass(sut=sut, audience="unknown_audience")
+
+
+@pytest.mark.django_db
+def test_audiences_setting_can_be_multi_valued(sut, settings):
     audiences = ["test_audience1", "test_audience2"]
 
     update_oidc_settings(
@@ -146,28 +149,28 @@ def test_audiences_setting_can_be_multi_valued(settings):
     )
 
     for audience in audiences:
-        authentication_passes(audience=audience)
-        authentication_passes(audience=["some_audience", audience, "another_audience"])
+        authentication_passes(sut=sut, audience=audience)
+        authentication_passes(sut=sut, audience=["some_audience", audience, "another_audience"])
 
-    authentication_does_not_pass(audience="unknown_audience")
-
-
-def test_expiration_is_required():
-    authentication_does_not_pass(expiration=None)
+    authentication_does_not_pass(sut=sut, audience="unknown_audience")
 
 
-@pytest.mark.django_db
-def test_expiration_in_the_future_is_accepted(unix_timestamp_now):
-    authentication_passes(expiration=unix_timestamp_now + 2)
-
-
-def test_expiration_in_the_past_is_not_accepted(unix_timestamp_now):
-    authentication_does_not_pass(expiration=unix_timestamp_now - 1)
+def test_expiration_is_required(sut):
+    authentication_does_not_pass(sut=sut, expiration=None)
 
 
 @pytest.mark.django_db
-def test_not_before_is_not_required():
-    authentication_passes(not_before=None)
+def test_expiration_in_the_future_is_accepted(sut, unix_timestamp_now):
+    authentication_passes(sut=sut, expiration=unix_timestamp_now + 2)
+
+
+def test_expiration_in_the_past_is_not_accepted(sut, unix_timestamp_now):
+    authentication_does_not_pass(sut=sut, expiration=unix_timestamp_now - 1)
+
+
+@pytest.mark.django_db
+def test_not_before_is_not_required(sut):
+    authentication_passes(sut=sut, not_before=None)
 
 
 def test_not_before_in_the_future_is_not_accepted(unix_timestamp_now):
@@ -175,8 +178,8 @@ def test_not_before_in_the_future_is_not_accepted(unix_timestamp_now):
 
 
 @pytest.mark.django_db
-def test_not_before_in_the_past_is_accepted(unix_timestamp_now):
-    authentication_passes(not_before=unix_timestamp_now - 1)
+def test_not_before_in_the_past_is_accepted(sut, unix_timestamp_now):
+    authentication_passes(sut=sut, not_before=unix_timestamp_now - 1)
 
 
 class TestApiScopeChecking:
@@ -218,9 +221,9 @@ class TestApiScopeChecking:
         authentication_does_not_pass(authorization=["another_api_scope"])
 
 
-def test_if_authorization_header_is_missing_returns_none(rf):
+def test_if_authorization_header_is_missing_returns_none(rf, sut):
     request = rf.get("/path")
-    assert RequestJWTAuthentication().authenticate(request) is None
+    assert sut.authenticate(request) is None
 
 
 @pytest.mark.parametrize(
@@ -233,21 +236,24 @@ def test_if_authorization_header_does_not_contain_a_jwt_returns_none(rf, auth):
 
 @pytest.mark.django_db
 @pytest.mark.parametrize("scheme", ["Bearer", "bearer", "BEARER", "BeArEr"])
-def test_bearer_authentication_scheme_is_accepted(scheme):
-    authentication_passes(auth_scheme=scheme)
+def test_bearer_authentication_scheme_is_accepted(sut, scheme):
+    authentication_passes(sut=sut, auth_scheme=scheme)
 
 
-def test_other_than_bearer_authentication_scheme_makes_authentication_skip():
-    authentication_is_skipped(auth_scheme="Auth")
+def test_other_than_bearer_authentication_scheme_makes_authentication_skip(sut):
+    authentication_is_skipped(sut=sut, auth_scheme="Auth")
 
 
 @pytest.mark.django_db
-def test_token_belonging_to_a_logged_out_session_is_not_accepted():
+def test_token_belonging_to_a_logged_out_session_is_not_accepted(sut):
+    if isinstance(sut, ApiTokenAuthentication):
+        pytest.skip("ApiTokenAuthentication doesn't check for terminated sessions")
+
     iss = ISSUER1
     sub = str(USER_UUID)
     sid = "logged_out_session"
 
     execute_back_channel_logout(iss=iss, sub=sub, sid=sid)
 
-    authentication_does_not_pass(issuer=iss, sid=sid)
-    authentication_passes(issuer=iss, sid="other_session")
+    authentication_does_not_pass(sut=sut, issuer=iss, sid=sid)
+    authentication_passes(sut=sut, issuer=iss, sid="other_session")
