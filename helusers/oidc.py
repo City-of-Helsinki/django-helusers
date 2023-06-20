@@ -12,8 +12,7 @@ from django.dispatch import receiver
 from django.utils.functional import cached_property
 
 from .authz import UserAuthorization
-from .jwt import JWT
-from .models import OIDCBackChannelLogoutEvent
+from .jwt import JWT, ValidationError
 from .settings import api_token_auth_settings
 from .user_utils import get_or_create_user
 
@@ -126,28 +125,19 @@ class RequestJWTAuthentication:
             return None
 
         try:
-            issuer = jwt.issuer
-        except KeyError:
-            raise AuthenticationError('Required "iss" claim is missing.')
+            jwt.validate_issuer()
+        except ValidationError as e:
+            raise AuthenticationError(str(e)) from e
 
-        if issuer not in _defaults.issuers:
-            raise AuthenticationError("Unknown JWT issuer {}.".format(issuer))
-
-        keys = _defaults.key_provider(issuer)
+        keys = _defaults.key_provider(jwt.issuer)
         try:
             jwt.validate(keys, _defaults.audience)
+            jwt.validate_api_scope()
+            jwt.validate_session()
+        except ValidationError as e:
+            raise AuthenticationError(str(e)) from e
         except Exception:
             raise AuthenticationError("JWT verification failed.")
-
-        if api_token_auth_settings.REQUIRE_API_SCOPE_FOR_AUTHENTICATION:
-            api_scope = api_token_auth_settings.API_SCOPE_PREFIX
-            if not jwt.has_api_scope_with_prefix(api_scope):
-                raise AuthenticationError(
-                    'Not authorized for API scope "{}"'.format(api_scope)
-                )
-
-        if OIDCBackChannelLogoutEvent.objects.is_session_terminated_for_token(jwt):
-            raise AuthenticationError("Session has been terminated.")
 
         claims = jwt.claims
         user = get_or_create_user(claims, oidc=True)
