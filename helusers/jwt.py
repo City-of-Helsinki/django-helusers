@@ -20,12 +20,13 @@ class ValidationError(Exception):
 
 
 class JWT:
-    def __init__(self, encoded_jwt):
+    def __init__(self, encoded_jwt, settings=None):
         """The constructor checks that a JWT can be extracted from the
         provided input but it doesn't validate it in any way. If the
         input is invalid, an exception is raised."""
         self._encoded_jwt = encoded_jwt
         self._claims = jwt.get_unverified_claims(encoded_jwt)
+        self.settings = settings or api_token_auth_settings
 
     def validate(self, keys, audience, required_claims=_NOT_PROVIDED):
         """Verifies the JWT's signature using the provided keys,
@@ -67,7 +68,7 @@ class JWT:
         except KeyError:
             raise ValidationError('Required "iss" claim is missing.')
 
-        issuers = api_token_auth_settings.ISSUER
+        issuers = self.settings.ISSUER
         if isinstance(issuers, str):
             issuers = [issuers]
 
@@ -75,10 +76,10 @@ class JWT:
             raise ValidationError("Unknown JWT issuer {}.".format(issuer))
 
     def validate_api_scope(self):
-        if not api_token_auth_settings.REQUIRE_API_SCOPE_FOR_AUTHENTICATION:
+        if not self.settings.REQUIRE_API_SCOPE_FOR_AUTHENTICATION:
             return
 
-        api_scope = api_token_auth_settings.API_SCOPE_PREFIX
+        api_scope = self.settings.API_SCOPE_PREFIX
         if not self.has_api_scope_with_prefix(api_scope):
             raise ValidationError(
                 'Not authorized for API scope "{}"'.format(api_scope)
@@ -115,5 +116,5 @@ class JWT:
                 isinstance(x, str) and x for x in value
             )
 
-        api_scopes = self.claims.get(api_token_auth_settings.API_AUTHORIZATION_FIELD)
+        api_scopes = self.claims.get(self.settings.API_AUTHORIZATION_FIELD)
         return set(api_scopes) if is_list_of_non_empty_strings(api_scopes) else set()
