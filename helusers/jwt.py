@@ -8,6 +8,7 @@ except ImportError:
 from django.utils.functional import cached_property
 from jose import jwt
 
+from .models import OIDCBackChannelLogoutEvent
 from .settings import api_token_auth_settings
 
 
@@ -59,6 +60,33 @@ class JWT:
                 audience = {audience}
             if len(set(audience).intersection(claim_audiences)) == 0:
                 raise ValidationError("Invalid audience.")
+
+    def validate_issuer(self):
+        try:
+            issuer = self.issuer
+        except KeyError:
+            raise ValidationError('Required "iss" claim is missing.')
+
+        issuers = api_token_auth_settings.ISSUER
+        if isinstance(issuers, str):
+            issuers = [issuers]
+
+        if issuer not in issuers:
+            raise ValidationError("Unknown JWT issuer {}.".format(issuer))
+
+    def validate_api_scope(self):
+        if not api_token_auth_settings.REQUIRE_API_SCOPE_FOR_AUTHENTICATION:
+            return
+
+        api_scope = api_token_auth_settings.API_SCOPE_PREFIX
+        if not self.has_api_scope_with_prefix(api_scope):
+            raise ValidationError(
+                'Not authorized for API scope "{}"'.format(api_scope)
+            )
+
+    def validate_session(self):
+        if OIDCBackChannelLogoutEvent.objects.is_session_terminated_for_token(self):
+            raise ValidationError("Session has been terminated.")
 
     @property
     def issuer(self):

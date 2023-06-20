@@ -105,6 +105,20 @@ def test_issuer_is_required(sut):
 
 
 @pytest.mark.django_db
+def test_issuer_setting_can_be_a_string(sut, settings):
+    update_oidc_settings(settings, {"ISSUER": ISSUER1})
+
+    authentication_passes(sut=sut)
+
+
+@pytest.mark.django_db
+def test_substring_doesnt_match_when_issuer_setting_is_a_string(sut, settings):
+    update_oidc_settings(settings, {"ISSUER": ISSUER1 + "/something"})
+
+    authentication_does_not_pass(sut=sut, issuer=ISSUER1)
+
+
+@pytest.mark.django_db
 def test_any_issuer_from_settings_is_accepted(sut, all_auth_servers):
     if isinstance(sut, ApiTokenAuthentication):
         pytest.skip("ApiTokenAuthentication doesn't support multiple issuers yet")
