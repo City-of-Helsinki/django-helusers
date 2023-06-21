@@ -1,5 +1,5 @@
 django-allauth
-drf-oidc-auth
+djangorestframework
 pytest
 pytest-cov
 pytest-django

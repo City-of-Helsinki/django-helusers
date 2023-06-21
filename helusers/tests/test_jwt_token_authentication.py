@@ -120,9 +120,6 @@ def test_substring_doesnt_match_when_issuer_setting_is_a_string(sut, settings):
 
 @pytest.mark.django_db
 def test_any_issuer_from_settings_is_accepted(sut, all_auth_servers):
-    if isinstance(sut, ApiTokenAuthentication):
-        pytest.skip("ApiTokenAuthentication doesn't support multiple issuers yet")
-
     signing_key = all_auth_servers.key
     authentication_passes(sut=sut, issuer=all_auth_servers.issuer, signing_key=signing_key)
 
@@ -247,15 +244,9 @@ def test_if_authorization_header_does_not_contain_a_correct_prefix_returns_none(
     assert sut.authenticate(request) is None
 
 
-def test_if_authorization_header_does_not_contain_a_valid_jwt_returns_none(rf):
+def test_if_authorization_header_does_not_contain_a_valid_jwt_returns_none(rf, sut):
     request = rf.get("/path", HTTP_AUTHORIZATION="Bearer not_a_jwt")
-    assert RequestJWTAuthentication().authenticate(request) is None
-
-
-def test_failure_if_authorization_header_does_not_contain_a_valid_jwt(rf):
-    request = rf.get("/path", HTTP_AUTHORIZATION="Bearer not_a_jwt")
-    with pytest.raises(AuthenticationFailed):
-        ApiTokenAuthentication().authenticate(request)
+    assert sut.authenticate(request) is None
 
 
 @pytest.mark.django_db
@@ -270,9 +261,6 @@ def test_other_than_bearer_authentication_scheme_makes_authentication_skip(sut):
 
 @pytest.mark.django_db
 def test_token_belonging_to_a_logged_out_session_is_not_accepted(sut):
-    if isinstance(sut, ApiTokenAuthentication):
-        pytest.skip("ApiTokenAuthentication doesn't check for terminated sessions")
-
     iss = ISSUER1
     sub = str(USER_UUID)
     sid = "logged_out_session"

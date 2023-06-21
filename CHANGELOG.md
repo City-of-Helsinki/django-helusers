@@ -1,5 +1,43 @@
 # Changelog
 
+
+## Upcoming - 2023-xx-xx
+
+### Fixed
+
+- `ApiTokenAuthentication` again validates the `aud` claim. The `aud` claim wasn't validated if the `drf-oidc-auth` version was 1.0.0 or greater.
+
+### Added
+- Documentation about social auth pipeline configuration
+
+### Removed 
+
+- Removed `drf-oidc-auth` requirement when using `ApiTokenAuthentication`. Django REST framework is still required.
+
+### Changed
+
+- `ApiTokenAuthentication` is no longer a subclass of `oidc_auth.authentication.JSONWebTokenAuthentication` but a direct subclass of `rest_framework.authentication.BaseAuthentication`
+- `ApiTokenAuthentication` uses the same `JWT` class as `RequestJWTAuthentication` for the token validation
+  - **Changed** methods:
+    - `decode_jwt` can raise `jose.JWTError` exception
+    - `get_oidc_config` no longer returns oidc configuration dictionary but an `OIDCConfig` instance
+    - `validate_claims` still exists and is called, but doesn't do anything
+  - **Removed** methods:
+    - `get_audiences`
+    - `jwks`
+    - `jwks_data`
+    - `oidc_config`
+  - **Removed** properties:
+    - `claims_options`
+    - `issuer`
+
+- `ApiTokenAuthentication` now supports multiple issuers. Previously it accepted multiple issuers in the settings but could only use the first issuer.
+- `ApiTokenAuthentication.authenticate` no longer raises AuthenticationError if authorization header contains the correct scheme but not a valid JWT-token. Now it just returns None which means the authentication didn't succeed but can be tried with the next authenticator.
+- `ApiTokenAuthentication` now rejects tokens if they are invalidated with back-channel log out
+- `amr` claim is no longer validated in `ApiTokenAuthentication`
+- Issued at (`iat`) claim is no longer limited by the OIDC_LEEWAY oidc_auth setting (default 10 minutes) when using `ApiTokenAuthentication`. i.e. tokens can be generated as long ago as needed.
+- User is no longer created if token is correct but is missing the required API scopes in `ApiTokenAuthentication`
+
 ## 0.8.1 - 2023-04-04
 
 ### Fixed
