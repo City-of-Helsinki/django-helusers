@@ -92,7 +92,6 @@ authenticated by checking the signature of the included JWT token. It still
 creates a persistent Django user, which is updated with the information
 from the token with every request.
 
-- Include `drf-oidc-auth` in your project's dependencies.
 - Configure REST framework to use the `ApiTokenAuthentication` class in `settings.py`:
 
 ```python
@@ -103,27 +102,7 @@ REST_FRAMEWORK = {
 }
 ```
 
-- Set your deployment-specific variables in `local_settings.py`, e.g.:
-
-```python
-OIDC_API_TOKEN_AUTH = {
-    # Audience that must be present in the token for the request to be
-    # accepted. Value must be agreed between your SSO service and your
-    # application instance. Essentially this allows your application to
-    # know that the token in meant to be used with it.
-    'AUDIENCE': 'https://api.hel.fi/auth/projects',
-    # Who we trust to sign the tokens. The library will request the
-    # public signature keys from standard locations below this URL
-    'ISSUER': 'https://api.hel.fi/sso/openid'
-    # The following can be used if you need certain OAuth2 scopes
-    # for any functionality of the API. The request will be denied
-    # if scopes starting with API_SCOPE_PREFIX are not present
-    # in the token claims. Usually this is not needed, as checking
-    # the audience is enough.
-    'REQUIRE_API_SCOPE_FOR_AUTHENTICATION': True,
-    'API_SCOPE_PREFIX': 'projects',
-}
-```
+- Set your deployment-specific variables in your project settings. See [Token authentication settings](#token-authentication-settings)
 
 ### API authentication using JWT in any setup
 
@@ -137,7 +116,10 @@ It has a method called `authenticate` that takes a [Django HttpRequest](https://
 User of this class can use it in any way they need to perform authentication and/or authorization.
 Check the class documentation for more details.
 
-Some settings are needed (and some are optional) that affect how the `RequestJWTAuthentication` class works.
+
+### Token authentication settings
+
+Some settings are needed (and some are optional) that affect how the `ApiTokenAuthentication` and `RequestJWTAuthentication` classes work.
 
 ```python
 OIDC_API_TOKEN_AUTH = {
@@ -145,30 +127,33 @@ OIDC_API_TOKEN_AUTH = {
     # accepted. Value must be agreed between your SSO service and your
     # application instance. Essentially this allows your application to
     # know that the token is meant to be used with it.
-    # RequestJWTAuthentication supports multiple acceptable audiences,
+    # Multiple acceptable audiences are supported,
     # so this setting can also be a list of strings.
     # This setting is required.
     'AUDIENCE': 'https://api.hel.fi/auth/projects',
 
     # Who we trust to sign the tokens. The library will request the
     # public signature keys from standard locations below this URL.
-    # RequestJWTAuthentication supports multiple issuers, so this
+    # Multiple issuers are supported, so this
     # setting can also be a list of strings.
     # Default is https://tunnistamo.hel.fi.
-    'ISSUER': 'https://api.hel.fi/sso/openid'
+    'ISSUER': 'https://api.hel.fi/sso/openid',
 
     # The following can be used if you need certain scopes for any
     # functionality of the API. Usually this is not needed, as checking
     # the audience is enough. Default is False.
     'REQUIRE_API_SCOPE_FOR_AUTHENTICATION': True,
     # The name of the claim that is used to read in the scopes from the JWT.
+    # Supports multiple fields as a list. If the field is deeper in the claims
+    # use dot notation. e.g. "authorization.permissions.scopes"
     # Default is https://api.hel.fi/auth.
     'API_AUTHORIZATION_FIELD': 'scope_field',
     # The request will be denied if scopes don't contain anything starting
-    # with the value provided here.
+    # with the value provided here. Supports multiple scope prefixes as a list.
+    # Only one scope needs to match if multiple prefixes are provided.
     'API_SCOPE_PREFIX': 'projects',
 
-    # In order to do the authentication RequestJWTAuthentication needs
+    # In order to do the authentication the token authentication classes need
     # some facts from the authorization server, mainly its public keys for
     # verifying the JWT's signature. This setting controls the time how long
     # authorization server configuration and public keys are "remembered".
@@ -194,7 +179,7 @@ OIDC_API_TOKEN_AUTH = {
     # the public signature keys from standard locations below this URL.
     # Multiple issuers are supported, so this setting can also be a list
     # of strings. Default is https://tunnistamo.hel.fi.
-    'ISSUER': 'https://api.hel.fi/sso/openid'
+    'ISSUER': 'https://api.hel.fi/sso/openid',
 
     # Audience that must be present in the logout token for it to
     # be accepted. Value must be agreed between your SSO service
