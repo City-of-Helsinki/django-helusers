@@ -1,3 +1,5 @@
+from .utils import get_scopes_from_claims
+
 try:
     from ._rest_framework_jwt_impl import (JWTAuthentication,
                                            get_user_id_from_payload_handler,
@@ -79,10 +81,15 @@ class JWT:
         if not self.settings.REQUIRE_API_SCOPE_FOR_AUTHENTICATION:
             return
 
-        api_scope = self.settings.API_SCOPE_PREFIX
-        if not self.has_api_scope_with_prefix(api_scope):
+        api_scopes = self.settings.API_SCOPE_PREFIX
+        if isinstance(api_scopes, str):
+            api_scopes = [api_scopes]
+
+        if not any(
+            [self.has_api_scope_with_prefix(api_scope) for api_scope in api_scopes]
+        ):
             raise ValidationError(
-                'Not authorized for API scope "{}"'.format(api_scope)
+                'Not authorized for any of the API scopes "{}"'.format(api_scopes)
             )
 
     def validate_session(self):
@@ -111,10 +118,7 @@ class JWT:
 
     @cached_property
     def _authorized_api_scopes(self):
-        def is_list_of_non_empty_strings(value):
-            return isinstance(value, list) and all(
-                isinstance(x, str) and x for x in value
-            )
-
-        api_scopes = self.claims.get(self.settings.API_AUTHORIZATION_FIELD)
-        return set(api_scopes) if is_list_of_non_empty_strings(api_scopes) else set()
+        return get_scopes_from_claims(
+            self.settings.API_AUTHORIZATION_FIELD,
+            self.claims
+        )
