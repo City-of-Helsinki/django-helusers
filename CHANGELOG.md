@@ -8,6 +8,8 @@
 - `ApiTokenAuthentication` again validates the `aud` claim. The `aud` claim wasn't validated if the `drf-oidc-auth` version was 1.0.0 or greater.
 
 ### Added
+
+- Ability to use "dot notation" in `API_AUTHORIZATION_FIELD` setting for searching api scopes from deeper in the claims 
 - Documentation about social auth pipeline configuration
 
 ### Removed 
@@ -16,6 +18,7 @@
 
 ### Changed
 
+- `API_AUTHORIZATION_FIELD` and `API_SCOPE_PREFIX` settings now support a list of strings
 - `ApiTokenAuthentication` is no longer a subclass of `oidc_auth.authentication.JSONWebTokenAuthentication` but a direct subclass of `rest_framework.authentication.BaseAuthentication`
 - `ApiTokenAuthentication` uses the same `JWT` class as `RequestJWTAuthentication` for the token validation
   - **Changed** methods:
