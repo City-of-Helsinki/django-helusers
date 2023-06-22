@@ -1,6 +1,7 @@
 from django.utils.functional import cached_property
 
 from .settings import api_token_auth_settings
+from .utils import get_scopes_from_claims
 
 
 class UserAuthorization(object):
@@ -42,12 +43,4 @@ class UserAuthorization(object):
 
     @cached_property
     def _authorized_api_scopes(self):
-        api_scopes = self.data.get(self.settings.API_AUTHORIZATION_FIELD)
-        return (set(api_scopes)
-                if is_list_of_non_empty_strings(api_scopes) else None)
-
-
-def is_list_of_non_empty_strings(value):
-    if not isinstance(value, list):
-        return False
-    return all(isinstance(x, str) and x for x in value)
+        return get_scopes_from_claims(self.settings.API_AUTHORIZATION_FIELD, self.data)
