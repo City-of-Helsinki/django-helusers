@@ -194,15 +194,31 @@ def test_not_before_in_the_past_is_accepted(sut, unix_timestamp_now):
 
 
 @pytest.mark.django_db
-class TestApiScopeChecking:
-    @pytest.fixture(autouse=True)
-    def enable_api_scope_checking(self, settings):
+class TestApiScopeCheckingTunnistamoToken:
+    @pytest.fixture(params=[
+        {
+            "authorization_field": "https://example.com",
+            "prefix": "api_scope",
+        },
+        {
+            "authorization_field": ["https://example.com"],
+            "prefix": ["api_scope"],
+        },
+        {
+            "authorization_field": [
+                "https://example.com",
+                "authorization.permissions.scopes",
+            ],
+            "prefix": ["api_scope", "access"],
+        },
+    ], autouse=True)
+    def enable_api_scope_checking(self, request, settings):
         update_oidc_settings(
             settings,
             {
                 "REQUIRE_API_SCOPE_FOR_AUTHENTICATION": True,
-                "API_AUTHORIZATION_FIELD": "https://example.com",
-                "API_SCOPE_PREFIX": "api_scope",
+                "API_AUTHORIZATION_FIELD": request.param["authorization_field"],
+                "API_SCOPE_PREFIX": request.param["prefix"],
             },
         )
 
@@ -226,6 +242,68 @@ class TestApiScopeChecking:
         authentication_does_not_pass(
             sut=sut,
             **{"https://example.com": ["another_api_scope"]}
+        )
+
+
+@pytest.mark.django_db
+class TestApiScopeCheckingKeycloakToken:
+    @pytest.fixture(params=[
+        {
+            "authorization_field": "authorization.permissions.scopes",
+            "prefix": "access",
+        },
+        {
+            "authorization_field": ["authorization.permissions.scopes"],
+            "prefix": ["access"],
+        },
+        {
+            "authorization_field": [
+                "https://example.com",
+                "authorization.permissions.scopes",
+            ],
+            "prefix": ["api_scope", "access"],
+        },
+    ], autouse=True)
+    def enable_api_scope_checking(self, request, settings):
+        update_oidc_settings(
+            settings,
+            {
+                "REQUIRE_API_SCOPE_FOR_AUTHENTICATION": True,
+                "API_AUTHORIZATION_FIELD": request.param["authorization_field"],
+                "API_SCOPE_PREFIX": request.param["prefix"],
+            },
+        )
+
+    def test_if_required_api_scope_is_found_as_is_then_authentication_passes(self, sut):
+        authentication_passes(
+            sut=sut,
+            authorization={
+                "permissions": [
+                    {
+                        "scopes": ["access"]
+                    },
+                    {
+                        "scopes": ["second"]
+                    }
+                ]
+            }
+        )
+
+    def test_if_required_api_authorization_field_is_missing_then_authentication_fails(
+        self, sut
+    ):
+        authentication_does_not_pass(sut=sut)
+
+    def test_if_required_api_scope_is_not_found_then_authentication_fails(self, sut):
+        authentication_does_not_pass(
+            sut=sut,
+            authorization={
+                "permissions": [
+                    {
+                        "scopes": ["another"]
+                    }
+                ]
+            }
         )
 
 
