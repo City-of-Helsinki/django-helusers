@@ -1,7 +1,7 @@
 # Changelog
 
 
-## Upcoming - 2023-xx-xx
+## 0.9.0 - 2023-08-09
 
 ### Fixed
 
