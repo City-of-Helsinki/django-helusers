@@ -292,13 +292,13 @@ urlpatterns = [
 
 You can change the paths if they conflict with your application.
 
-Finally, you will need to configure your SESSION_SERIALIZER. helusers stores
-the access token expiration time as a datetime which is not serializable
-to JSON, so Django needs to be configured to use the built-in
-PickleSerializer:
+Finally, because of the pipeline set earlier you will also need to configure your
+SESSION_SERIALIZER. helusers stores the access token expiration time as a datetime
+which is not serializable to JSON, so Django needs to be configured to use the
+provided TunnistamoOIDCSerializer.
 
 ```python
-SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
+SESSION_SERIALIZER = "helusers.sessions.TunnistamoOIDCSerializer"
 ```
 
 #### Django session login
