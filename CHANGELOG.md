@@ -1,6 +1,15 @@
 # Changelog
 
 
+## 0.10.0 - 2024-03-07
+
+### Changed
+
+- Drop support for Python 3.7 and older
+- Add support for Python 3.12
+- Require at least Django 3.2
+- Add support for Django 5.0 by adding a new session serializer `TunnistamoOIDCSerializer` which can handle session data produced by the custom `helusers.defaults.SOCIAL_AUTH_PIPELINE` pipeline. Django 5.0 removed `PickleSerializer`.
+
 ## 0.9.0 - 2023-08-09
 
 ### Fixed
