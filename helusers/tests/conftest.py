@@ -23,11 +23,11 @@ class AuthServer:
             "jwks_uri": self.jwks_url,
         }
 
-        ISSUER_KEYS = {
+        issuer_keys = {
             ISSUER1: rsa_key,
             ISSUER2: rsa_key2,
         }
-        self.key = ISSUER_KEYS[issuer]
+        self.key = issuer_keys[issuer]
         self.keys_response = {"keys": [self.key.public_key_jwk]}
 
 
