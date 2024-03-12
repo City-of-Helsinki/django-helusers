@@ -10,7 +10,6 @@ from helusers.models import OIDCBackChannelLogoutEvent
 from .conftest import AUDIENCE, encoded_jwt_factory, ISSUER1, unix_timestamp_now
 from .keys import rsa_key2
 
-
 _NOT_PROVIDED = object()
 
 

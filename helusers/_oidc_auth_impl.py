@@ -29,6 +29,7 @@ class ApiTokenAuthentication(BaseAuthentication):
     @ttl_cache(ttl=api_token_auth_settings.OIDC_CONFIG_EXPIRATION_TIME)
     def get_oidc_config(self, issuer):
         from helusers.oidc import OIDCConfig
+
         return OIDCConfig(issuer)
 
     def authenticate(self, request):
@@ -83,11 +84,15 @@ class ApiTokenAuthentication(BaseAuthentication):
 
         if len(auth) == 1:
             raise AuthenticationFailed(
-                _("Invalid Authorization header. No credentials provided"))
+                _("Invalid Authorization header. No credentials provided")
+            )
         elif len(auth) > 2:
             raise AuthenticationFailed(
-                _("Invalid Authorization header. "
-                  "Credentials string should not contain spaces."))
+                _(
+                    "Invalid Authorization header. "
+                    "Credentials string should not contain spaces."
+                )
+            )
 
         return auth[1]
 
@@ -96,8 +101,8 @@ class ApiTokenAuthentication(BaseAuthentication):
 
     def authenticate_header(self, request):
         return '{auth_scheme} realm="{realm}"'.format(
-            auth_scheme=self.auth_scheme,
-            realm=self.www_authenticate_realm)
+            auth_scheme=self.auth_scheme, realm=self.www_authenticate_realm
+        )
 
 
 def resolve_user(request, payload):

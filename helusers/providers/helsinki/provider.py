@@ -7,32 +7,32 @@ from helusers.utils import uuid_to_username
 
 class HelsinkiAccount(ProviderAccount):
     def get_profile_url(self):
-        return self.account.extra_data.get('html_url')
+        return self.account.extra_data.get("html_url")
 
     def get_avatar_url(self):
-        return self.account.extra_data.get('avatar_url')
+        return self.account.extra_data.get("avatar_url")
 
     def to_str(self):
         dflt = super(HelsinkiAccount, self).to_str()
-        return self.account.extra_data.get('name', dflt)
+        return self.account.extra_data.get("name", dflt)
 
 
 class HelsinkiProvider(OAuth2Provider):
-    id = 'helsinki'
-    name = 'City of Helsinki employees'
-    package = 'helusers.providers.helsinki'
+    id = "helsinki"
+    name = "City of Helsinki employees"
+    package = "helusers.providers.helsinki"
     account_class = HelsinkiAccount
 
     def extract_uid(self, data):
-        return str(data['uuid'])
+        return str(data["uuid"])
 
     def extract_common_fields(self, data):
         ret = data.copy()
-        ret['username'] = uuid_to_username(data['uuid'])
+        ret["username"] = uuid_to_username(data["uuid"])
         return ret
 
     def get_default_scope(self):
-        return ['read']
+        return ["read"]
 
 
 providers.registry.register(HelsinkiProvider)

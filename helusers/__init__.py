@@ -1,1 +1,1 @@
-default_app_config = 'helusers.apps.HelusersConfig'
+default_app_config = "helusers.apps.HelusersConfig"

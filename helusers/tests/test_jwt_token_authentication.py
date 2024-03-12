@@ -6,10 +6,10 @@ from rest_framework.exceptions import AuthenticationFailed
 
 from helusers.oidc import AuthenticationError, RequestJWTAuthentication
 
+from .._oidc_auth_impl import ApiTokenAuthentication
 from .conftest import AUDIENCE, encoded_jwt_factory, ISSUER1, unix_timestamp_now
 from .keys import rsa_key, rsa_key2
 from .test_back_channel_logout import execute_back_channel_logout
-from .._oidc_auth_impl import ApiTokenAuthentication
 
 USER_UUID = uuid.UUID("b7a35517-eb1f-46c9-88bf-3206fb659c3c")
 
@@ -121,7 +121,9 @@ def test_substring_doesnt_match_when_issuer_setting_is_a_string(sut, settings):
 @pytest.mark.django_db
 def test_any_issuer_from_settings_is_accepted(sut, all_auth_servers):
     signing_key = all_auth_servers.key
-    authentication_passes(sut=sut, issuer=all_auth_servers.issuer, signing_key=signing_key)
+    authentication_passes(
+        sut=sut, issuer=all_auth_servers.issuer, signing_key=signing_key
+    )
 
 
 def test_issuer_not_found_from_settings_is_not_accepted(sut):
@@ -139,9 +141,13 @@ def test_audience_from_settings_is_accepted(sut):
 
 @pytest.mark.django_db
 def test_audience_in_token_can_be_a_list(sut):
-    authentication_passes(sut=sut, audience=["some_audience", AUDIENCE, "another_audience"])
+    authentication_passes(
+        sut=sut, audience=["some_audience", AUDIENCE, "another_audience"]
+    )
 
-    authentication_does_not_pass(sut=sut, audience=["some_audience", "another_audience"])
+    authentication_does_not_pass(
+        sut=sut, audience=["some_audience", "another_audience"]
+    )
 
 
 def test_audience_not_found_from_settings_is_not_accepted(sut):
@@ -161,7 +167,9 @@ def test_audiences_setting_can_be_multi_valued(sut, settings):
 
     for audience in audiences:
         authentication_passes(sut=sut, audience=audience)
-        authentication_passes(sut=sut, audience=["some_audience", audience, "another_audience"])
+        authentication_passes(
+            sut=sut, audience=["some_audience", audience, "another_audience"]
+        )
 
     authentication_does_not_pass(sut=sut, audience="unknown_audience")
 
@@ -195,23 +203,26 @@ def test_not_before_in_the_past_is_accepted(sut, unix_timestamp_now):
 
 @pytest.mark.django_db
 class TestApiScopeCheckingTunnistamoToken:
-    @pytest.fixture(params=[
-        {
-            "authorization_field": "https://example.com",
-            "prefix": "api_scope",
-        },
-        {
-            "authorization_field": ["https://example.com"],
-            "prefix": ["api_scope"],
-        },
-        {
-            "authorization_field": [
-                "https://example.com",
-                "authorization.permissions.scopes",
-            ],
-            "prefix": ["api_scope", "access"],
-        },
-    ], autouse=True)
+    @pytest.fixture(
+        params=[
+            {
+                "authorization_field": "https://example.com",
+                "prefix": "api_scope",
+            },
+            {
+                "authorization_field": ["https://example.com"],
+                "prefix": ["api_scope"],
+            },
+            {
+                "authorization_field": [
+                    "https://example.com",
+                    "authorization.permissions.scopes",
+                ],
+                "prefix": ["api_scope", "access"],
+            },
+        ],
+        autouse=True,
+    )
     def enable_api_scope_checking(self, request, settings):
         update_oidc_settings(
             settings,
@@ -224,8 +235,7 @@ class TestApiScopeCheckingTunnistamoToken:
 
     def test_if_required_api_scope_is_found_as_is_then_authentication_passes(self, sut):
         authentication_passes(
-            sut=sut,
-            **{"https://example.com": ["api_scope", "another_api_scope"]}
+            sut=sut, **{"https://example.com": ["api_scope", "another_api_scope"]}
         )
 
     def test_if_required_api_scope_is_found_as_a_prefix_then_authentication_passes(
@@ -240,30 +250,32 @@ class TestApiScopeCheckingTunnistamoToken:
 
     def test_if_required_api_scope_is_not_found_then_authentication_fails(self, sut):
         authentication_does_not_pass(
-            sut=sut,
-            **{"https://example.com": ["another_api_scope"]}
+            sut=sut, **{"https://example.com": ["another_api_scope"]}
         )
 
 
 @pytest.mark.django_db
 class TestApiScopeCheckingKeycloakToken:
-    @pytest.fixture(params=[
-        {
-            "authorization_field": "authorization.permissions.scopes",
-            "prefix": "access",
-        },
-        {
-            "authorization_field": ["authorization.permissions.scopes"],
-            "prefix": ["access"],
-        },
-        {
-            "authorization_field": [
-                "https://example.com",
-                "authorization.permissions.scopes",
-            ],
-            "prefix": ["api_scope", "access"],
-        },
-    ], autouse=True)
+    @pytest.fixture(
+        params=[
+            {
+                "authorization_field": "authorization.permissions.scopes",
+                "prefix": "access",
+            },
+            {
+                "authorization_field": ["authorization.permissions.scopes"],
+                "prefix": ["access"],
+            },
+            {
+                "authorization_field": [
+                    "https://example.com",
+                    "authorization.permissions.scopes",
+                ],
+                "prefix": ["api_scope", "access"],
+            },
+        ],
+        autouse=True,
+    )
     def enable_api_scope_checking(self, request, settings):
         update_oidc_settings(
             settings,
@@ -278,15 +290,8 @@ class TestApiScopeCheckingKeycloakToken:
         authentication_passes(
             sut=sut,
             authorization={
-                "permissions": [
-                    {
-                        "scopes": ["access"]
-                    },
-                    {
-                        "scopes": ["second"]
-                    }
-                ]
-            }
+                "permissions": [{"scopes": ["access"]}, {"scopes": ["second"]}]
+            },
         )
 
     def test_if_required_api_authorization_field_is_missing_then_authentication_fails(
@@ -296,14 +301,7 @@ class TestApiScopeCheckingKeycloakToken:
 
     def test_if_required_api_scope_is_not_found_then_authentication_fails(self, sut):
         authentication_does_not_pass(
-            sut=sut,
-            authorization={
-                "permissions": [
-                    {
-                        "scopes": ["another"]
-                    }
-                ]
-            }
+            sut=sut, authorization={"permissions": [{"scopes": ["another"]}]}
         )
 
 
@@ -312,9 +310,7 @@ def test_if_authorization_header_is_missing_returns_none(rf, sut):
     assert sut.authenticate(request) is None
 
 
-@pytest.mark.parametrize(
-    "auth", ["TooShort", "Unknown scheme", "Too many parts"]
-)
+@pytest.mark.parametrize("auth", ["TooShort", "Unknown scheme", "Too many parts"])
 def test_if_authorization_header_does_not_contain_a_correct_prefix_returns_none(
     rf, sut, auth
 ):
@@ -347,6 +343,7 @@ def test_token_belonging_to_a_logged_out_session_is_not_accepted(sut):
 
     authentication_does_not_pass(sut=sut, issuer=iss, sid=sid)
     authentication_passes(sut=sut, issuer=iss, sid="other_session")
+
 
 @pytest.mark.django_db
 @pytest.mark.parametrize("amr", [None, "something", ["something"], ["one", "two"]])

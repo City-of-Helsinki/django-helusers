@@ -19,12 +19,12 @@ class SocialAccountAdapter(DefaultSocialAccountAdapter):
             return
 
         data = sociallogin.account.extra_data
-        oidc = sociallogin.account.provider == 'helsinki_oidc'
+        oidc = sociallogin.account.provider == "helsinki_oidc"
         update_user(user, data, oidc)
 
     def populate_user(self, request, sociallogin, data):
         user = sociallogin.user
-        exclude_fields = ['is_staff', 'password', 'is_superuser', 'id']
+        exclude_fields = ["is_staff", "password", "is_superuser", "id"]
         user_fields = [f.name for f in user._meta.fields if f not in exclude_fields]
         for field in user_fields:
             if field in data:
@@ -38,7 +38,7 @@ class SocialAccountAdapter(DefaultSocialAccountAdapter):
         sociallogin.save(request)
 
         data = sociallogin.account.extra_data
-        oidc = sociallogin.account.provider == 'helsinki_oidc'
+        oidc = sociallogin.account.provider == "helsinki_oidc"
         update_user(u, data, oidc)
 
         return u

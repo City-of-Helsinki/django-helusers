@@ -1,10 +1,11 @@
 """URLs module"""
-from django.urls import path
+
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
+from django.urls import path
 from django.views.decorators.csrf import csrf_exempt
-from . import views
 
+from . import views
 
 app_name = "helusers"
 

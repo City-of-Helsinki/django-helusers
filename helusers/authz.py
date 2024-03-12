@@ -38,8 +38,9 @@ class UserAuthorization(object):
         if self._authorized_api_scopes is None:
             return None
         return any(
-            x == prefix or x.startswith(prefix + '.')
-            for x in self._authorized_api_scopes)
+            x == prefix or x.startswith(prefix + ".")
+            for x in self._authorized_api_scopes
+        )
 
     @cached_property
     def _authorized_api_scopes(self):

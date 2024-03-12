@@ -10,6 +10,7 @@ class TunnistamoOIDCSerializer(JSONSerializer):
     Datetime handling is required for TunnistamoOIDCAuth backend when using
     the `helusers.defaults.SOCIAL_AUTH_PIPELINE`.
     """
+
     datetime_field = "access_token_expires_at"
 
     def dumps(self, obj):

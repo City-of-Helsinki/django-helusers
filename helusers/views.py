@@ -2,22 +2,22 @@ from collections import OrderedDict
 from urllib.parse import urlencode
 
 from django.conf import settings
+from django.contrib import messages
+from django.contrib.auth import logout, REDIRECT_FIELD_NAME
 from django.contrib.auth.views import LogoutView as DjangoLogoutView
 from django.core.signals import setting_changed
 from django.dispatch import receiver
-from django.views import View
-from django.views.generic.base import RedirectView
-from django.contrib.auth import logout, REDIRECT_FIELD_NAME
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect
-from django.contrib import messages
+from django.urls import reverse
 from django.utils.module_loading import import_string
 from django.utils.translation import gettext_lazy as _
-from django.urls import reverse
+from django.views import View
+from django.views.generic.base import RedirectView
 from jose import JOSEError
 
+from . import oidc
 from .jwt import JWT, ValidationError
 from .models import OIDCBackChannelLogoutEvent
-from . import oidc
 
 LANGUAGE_FIELD_NAME = "ui_locales"
 
