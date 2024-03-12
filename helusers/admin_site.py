@@ -76,14 +76,3 @@ class AdminSite(admin.AdminSite):
             view, args, kwargs = resolve(logout_url)
             return view(request, *args, **kwargs)
         return super().logout(request, extra_context)
-
-
-# Django versions starting from 2.1 support overriding the default admin
-# site, so monkeypatching is not needed.
-if django.VERSION[0:2] < (2, 1):
-    site = AdminSite()
-    site._registry.update(admin.site._registry)
-    default_admin_site = admin.site
-    # Monkeypatch the default admin site with the custom one
-    admin.site = site
-    admin.sites.site = site
