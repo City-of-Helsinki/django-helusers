@@ -3,7 +3,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 
 from helusers._oidc_auth_impl import ApiTokenAuthentication
-from helusers.tests.test_jwt_token_authentication import (
+from helusers.tests.test_jwt_token_authentication import (  # noqa: F401
     authentication_passes,
     auto_auth_server,
     do_authentication,

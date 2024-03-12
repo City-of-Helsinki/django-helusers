@@ -6,7 +6,7 @@ from helusers.user_utils import get_or_create_user
 
 
 @pytest.mark.django_db
-def test_get_or_create_user_always_returns_a_User_with_UUID_type_id():
+def test_get_or_create_user_always_returns_a_user_with_uuid_type_id():
     user_uuid = uuid.uuid4()
     payload = {
         "sub": str(user_uuid),

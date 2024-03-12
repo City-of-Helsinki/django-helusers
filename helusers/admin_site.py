@@ -1,4 +1,3 @@
-import django
 from django.apps import apps
 from django.conf import settings
 from django.contrib import admin
@@ -28,8 +27,8 @@ class AdminSite(admin.AdminSite):
     @property
     def site_header(self):
         if "django.contrib.sites" in settings.INSTALLED_APPS:
-            Site = apps.get_model(app_label="sites", model_name="Site")
-            site = Site.objects.get_current()
+            site_model = apps.get_model(app_label="sites", model_name="Site")
+            site = site_model.objects.get_current()
             site_name = site.name
         elif hasattr(settings, "WAGTAIL_SITE_NAME"):
             site_name = settings.WAGTAIL_SITE_NAME

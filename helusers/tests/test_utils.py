@@ -1,8 +1,6 @@
 import random
 from uuid import UUID
 
-import pytest
-
 from helusers.utils import username_to_uuid, uuid_to_username
 
 

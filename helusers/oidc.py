@@ -1,5 +1,5 @@
 try:
-    from ._oidc_auth_impl import ApiTokenAuthentication, resolve_user
+    from ._oidc_auth_impl import ApiTokenAuthentication, resolve_user  # noqa: F401
 except ImportError:
     pass
 
@@ -104,6 +104,7 @@ class RequestJWTAuthentication:
                 "The 'key_provider' argument to RequestJWTAuthentication is obsolete. "
                 "Providing one has no effect any more.",
                 DeprecationWarning,
+                stacklevel=2,
             )
 
     def authenticate(self, request):

@@ -23,7 +23,7 @@ class Command(BaseCommand):
 
         client_id = secret_key = None
 
-        jwt_settings = getattr(settings, "JWT_AUTH")
+        jwt_settings = getattr(settings, "JWT_AUTH", None)
         if jwt_settings:
             client_id = jwt_settings.get("JWT_AUDIENCE")
             secret_key = jwt_settings.get("JWT_SECRET_KEY")
