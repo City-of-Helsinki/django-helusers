@@ -1,0 +1,17 @@
+[tool.black]
+line-length = 88 # Black's default value
+target-version = ["py38"]
+
+[tool.isort]
+profile = "black"
+py_version = 38
+atomic = true
+order_by_type = false
+extend_skip_glob = ["*migrations*"]
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "helusers.tests.settings"
+
+[tool.coverage.run]
+source = ["helusers"]
+omit = ["helusers/migrations/*", "*/tests/*"]

@@ -1,4 +1,0 @@
-[run]
-source = helusers
-omit = helusers/migrations/*
-       */tests/*
