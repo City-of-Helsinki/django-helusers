@@ -1,9 +1,11 @@
 from .utils import get_scopes_from_claims
 
 try:
-    from ._rest_framework_jwt_impl import (JWTAuthentication,
-                                           get_user_id_from_payload_handler,
-                                           patch_jwt_settings)
+    from ._rest_framework_jwt_impl import (
+        get_user_id_from_payload_handler,
+        JWTAuthentication,
+        patch_jwt_settings,
+    )
 except ImportError:
     pass
 
@@ -12,7 +14,6 @@ from jose import jwt
 
 from .models import OIDCBackChannelLogoutEvent
 from .settings import api_token_auth_settings
-
 
 _NOT_PROVIDED = object()
 
@@ -119,6 +120,5 @@ class JWT:
     @cached_property
     def _authorized_api_scopes(self):
         return get_scopes_from_claims(
-            self.settings.API_AUTHORIZATION_FIELD,
-            self.claims
+            self.settings.API_AUTHORIZATION_FIELD, self.claims
         )

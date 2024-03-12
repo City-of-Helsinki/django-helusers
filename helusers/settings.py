@@ -6,15 +6,15 @@ _defaults = dict(
     AUDIENCE=None,
     API_SCOPE_PREFIX=None,
     REQUIRE_API_SCOPE_FOR_AUTHENTICATION=False,
-    API_AUTHORIZATION_FIELD='https://api.hel.fi/auth',
-    ISSUER='https://tunnistamo.hel.fi',
-    AUTH_SCHEME='Bearer',
-    USER_RESOLVER='helusers.oidc.resolve_user',
-    OIDC_CONFIG_EXPIRATION_TIME=24 * 60 * 60
+    API_AUTHORIZATION_FIELD="https://api.hel.fi/auth",
+    ISSUER="https://tunnistamo.hel.fi",
+    AUTH_SCHEME="Bearer",
+    USER_RESOLVER="helusers.oidc.resolve_user",
+    OIDC_CONFIG_EXPIRATION_TIME=24 * 60 * 60,
 )
 
 _import_strings = [
-    'USER_RESOLVER',
+    "USER_RESOLVER",
 ]
 
 

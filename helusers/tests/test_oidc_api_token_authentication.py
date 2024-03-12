@@ -4,10 +4,10 @@ from django.contrib.auth import get_user_model
 
 from helusers._oidc_auth_impl import ApiTokenAuthentication
 from helusers.tests.test_jwt_token_authentication import (
-    USER_UUID,
     authentication_passes,
-    do_authentication,
     auto_auth_server,
+    do_authentication,
+    USER_UUID,
 )
 
 
@@ -66,7 +66,7 @@ class KerroKantasiApiTokenAuthentication(ApiTokenAuthentication):
 
         # amr (Authentication Methods References) should contain the used auth
         # provider name e.g. suomifi
-        if payload.get('amr') in settings.STRONG_AUTH_PROVIDERS:
+        if payload.get("amr") in settings.STRONG_AUTH_PROVIDERS:
             user.has_strong_auth = True
         else:
             user.has_strong_auth = False

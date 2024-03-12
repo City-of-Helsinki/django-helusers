@@ -1,12 +1,13 @@
-import uuid
 import logging
+import uuid
+
+from django.contrib.auth.models import AbstractUser as DjangoAbstractUser
+from django.contrib.auth.models import Group
 from django.db import IntegrityError, models, transaction
-from django.contrib.auth.models import Group, AbstractUser as DjangoAbstractUser
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from .utils import uuid_to_username
-
 
 logger = logging.getLogger(__name__)
 
@@ -25,16 +26,18 @@ class ADGroup(models.Model):
 
 
 class ADGroupMapping(models.Model):
-    group = models.ForeignKey(Group, db_index=True, on_delete=models.CASCADE,
-                              related_name='ad_groups')
-    ad_group = models.ForeignKey(ADGroup, db_index=True, on_delete=models.CASCADE,
-                                 related_name='groups')
+    group = models.ForeignKey(
+        Group, db_index=True, on_delete=models.CASCADE, related_name="ad_groups"
+    )
+    ad_group = models.ForeignKey(
+        ADGroup, db_index=True, on_delete=models.CASCADE, related_name="groups"
+    )
 
     def __str__(self):
-        return '%s -> %s' % (self.ad_group, self.group)
+        return "%s -> %s" % (self.ad_group, self.group)
 
     class Meta:
-        unique_together = (('group', 'ad_group'),)
+        unique_together = (("group", "ad_group"),)
         verbose_name = _("AD group mapping")
         verbose_name_plural = _("AD group mappings")
 
@@ -63,7 +66,7 @@ class AbstractUser(DjangoAbstractUser):
 
     def get_display_name(self):
         if self.first_name and self.last_name:
-            return '{0} {1}'.format(self.first_name, self.last_name).strip()
+            return "{0} {1}".format(self.first_name, self.last_name).strip()
         else:
             return self.email
 
@@ -73,7 +76,7 @@ class AbstractUser(DjangoAbstractUser):
         return self.email
 
     def get_username(self):
-        if not self.username or self.username.startswith('u-'):
+        if not self.username or self.username.startswith("u-"):
             return self.email
         return self.username
 
@@ -83,12 +86,16 @@ class AbstractUser(DjangoAbstractUser):
     def sync_groups_from_ad(self):
         """Determine which Django groups to add or remove based on AD groups."""
 
-        ad_list = ADGroupMapping.objects.values_list('ad_group', 'group')
+        ad_list = ADGroupMapping.objects.values_list("ad_group", "group")
         mappings = {ad_group: group for ad_group, group in ad_list}
 
-        user_ad_groups = set(self.ad_groups.filter(groups__isnull=False).values_list(flat=True))
+        user_ad_groups = set(
+            self.ad_groups.filter(groups__isnull=False).values_list(flat=True)
+        )
         all_mapped_groups = set(mappings.values())
-        old_groups = set(self.groups.filter(id__in=all_mapped_groups).values_list(flat=True))
+        old_groups = set(
+            self.groups.filter(id__in=all_mapped_groups).values_list(flat=True)
+        )
         new_groups = set([mappings[x] for x in user_ad_groups])
 
         groups_to_delete = old_groups - new_groups
@@ -105,7 +112,9 @@ class AbstractUser(DjangoAbstractUser):
 
         # Make sure there's an ADGroup object for each group
         lower_names = [x.lower() for x in ad_group_names]
-        ad_groups = {x.name.lower(): x for x in ADGroup.objects.filter(name__in=lower_names)}
+        ad_groups = {
+            x.name.lower(): x for x in ADGroup.objects.filter(name__in=lower_names)
+        }
         for name in ad_group_names:
             n = name.lower()
             if n not in ad_groups:
@@ -125,13 +134,13 @@ class AbstractUser(DjangoAbstractUser):
 
     def __str__(self):
         if self.first_name and self.last_name:
-            return '%s %s (%s)' % (self.last_name, self.first_name, self.email)
+            return "%s %s (%s)" % (self.last_name, self.first_name, self.email)
         else:
             return self.email
 
     class Meta:
         abstract = True
-        ordering = ('id',)
+        ordering = ("id",)
 
 
 class OIDCBackChannelLogoutEventManager(models.Manager):

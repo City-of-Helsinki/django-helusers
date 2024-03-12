@@ -1,11 +1,13 @@
 import logging
-from django.conf import settings
-from django.contrib.auth import get_user_model
-from django.utils.translation import gettext as _
-from django.db import transaction, IntegrityError
 from uuid import UUID, uuid5
 
+from django.conf import settings
+from django.contrib.auth import get_user_model
+from django.db import IntegrityError, transaction
+from django.utils.translation import gettext as _
+
 logger = logging.getLogger(__name__)
+
 
 def oidc_to_user_data(payload):
     """
@@ -14,9 +16,9 @@ def oidc_to_user_data(payload):
     payload = payload.copy()
 
     field_map = {
-        'given_name': 'first_name',
-        'family_name': 'last_name',
-        'email': 'email',
+        "given_name": "first_name",
+        "family_name": "last_name",
+        "email": "email",
     }
     ret = {}
     for token_attr, user_attr in field_map.items():
@@ -29,9 +31,8 @@ def oidc_to_user_data(payload):
 
 
 def populate_user(user, data):
-    exclude_fields = ['is_staff', 'password', 'is_superuser', 'id']
-    user_fields = [f.name for f in user._meta.fields
-                   if f.name not in exclude_fields]
+    exclude_fields = ["is_staff", "password", "is_superuser", "id"]
+    user_fields = [f.name for f in user._meta.fields if f.name not in exclude_fields]
     changed = False
     for field in user_fields:
         if field in data:
@@ -48,7 +49,7 @@ def update_user(user, payload, oidc=False):
         payload = oidc_to_user_data(payload)
 
     # Default is for Tunnistamo, Azure uses 'groups'
-    group_claim_name = getattr(settings, 'HELUSERS_ADGROUPS_CLAIM', 'ad_groups')
+    group_claim_name = getattr(settings, "HELUSERS_ADGROUPS_CLAIM", "ad_groups")
 
     changed = populate_user(user, payload)
     if changed or not user.pk:
@@ -60,8 +61,10 @@ def update_user(user, payload, oidc=False):
     logger.debug("AD groups found in claim: %s", ad_groups)
     # Only update AD groups if it's a list of non-empty strings
     if isinstance(ad_groups, list) and (
-            all([isinstance(x, str) and x for x in ad_groups])):
+        all([isinstance(x, str) and x for x in ad_groups])
+    ):
         user.update_ad_groups(ad_groups)
+
 
 # Critical section for user creation. It is quite possible that,
 # for a new user, the first requests fired toward the API will race
@@ -78,6 +81,7 @@ def _try_create_or_update(user_id, payload, oidc):
         update_user(user, payload, oidc)
     return user
 
+
 def is_valid_uuid(uuid_to_test, version=None):
     try:
         uuid_obj = UUID(uuid_to_test, version=version)
@@ -86,10 +90,11 @@ def is_valid_uuid(uuid_to_test, version=None):
 
     return str(uuid_obj) == uuid_to_test
 
+
 def convert_to_uuid(convertable, namespace=None):
     # Our default, arbitrary, namespace
     if namespace is None:
-        namespace = UUID('126c8382-ab0c-11ea-be22-8c8590573044')
+        namespace = UUID("126c8382-ab0c-11ea-be22-8c8590573044")
     else:
         namespace = UUID(namespace)
 
@@ -99,14 +104,17 @@ def convert_to_uuid(convertable, namespace=None):
     # from a 'sub' field of a token
     generated_uuid = str(uuid5(namespace, convertable))
 
-    logger.debug("generated UUID: %s to stand for non-UUID: %s", generated_uuid, convertable)
+    logger.debug(
+        "generated UUID: %s to stand for non-UUID: %s", generated_uuid, convertable
+    )
 
     return generated_uuid
 
+
 def get_or_create_user(payload, oidc=False):
-    user_id = payload.get('sub')
+    user_id = payload.get("sub")
     if not user_id:
-        msg = _('Invalid payload. sub missing')
+        msg = _("Invalid payload. sub missing")
         raise ValueError(msg)
 
     # django-helusers uses UUID as the primary key for the user
@@ -115,7 +123,7 @@ def get_or_create_user(payload, oidc=False):
     if not is_valid_uuid(user_id):
         # Maybe we have an Azure pairwise ID? Check for Azure tenant ID
         # in token and use that as UUID namespace if available
-        namespace = payload.get('tid')
+        namespace = payload.get("tid")
         user_id = convert_to_uuid(user_id, namespace)
 
     try_again = False
@@ -133,14 +141,14 @@ def get_or_create_user(payload, oidc=False):
     # If allauth.socialaccount is installed, create the SocialAcount
     # that corresponds to this user. Otherwise logins through
     # allauth will not work for the user later on.
-    if 'allauth.socialaccount' in settings.INSTALLED_APPS:
-        from allauth.socialaccount.models import SocialAccount, EmailAddress
+    if "allauth.socialaccount" in settings.INSTALLED_APPS:
+        from allauth.socialaccount.models import EmailAddress, SocialAccount
 
         if oidc:
-            provider_name = 'helsinki_oidc'
+            provider_name = "helsinki_oidc"
         else:
-            provider_name = 'helsinki'
-        args = {'provider': provider_name, 'uid': user_id}
+            provider_name = "helsinki"
+        args = {"provider": provider_name, "uid": user_id}
         try:
             account = SocialAccount.objects.get(**args)
             assert account.user_id == user.id
@@ -154,8 +162,9 @@ def get_or_create_user(payload, oidc=False):
                 email = EmailAddress.objects.get(email__iexact=user.email)
                 assert email.user == user
             except EmailAddress.DoesNotExist:
-                email = EmailAddress(email=user.email.lower(), primary=True,
-                                     user=user, verified=True)
+                email = EmailAddress(
+                    email=user.email.lower(), primary=True, user=user, verified=True
+                )
                 email.save()
 
     return user

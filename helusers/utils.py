@@ -12,9 +12,9 @@ def uuid_to_username(uuid):
     >>> uuid_to_username(UUID('00fbac99-0bab-5e66-8e84-2e567ea4d1f6'))
     'u-ad52zgilvnpgnduefzlh5jgr6y'
     """
-    uuid_data = getattr(uuid, 'bytes', None) or UUID(uuid).bytes
+    uuid_data = getattr(uuid, "bytes", None) or UUID(uuid).bytes
     b32coded = base64.b32encode(uuid_data)
-    return 'u-' + b32coded.decode('ascii').replace('=', '').lower()
+    return "u-" + b32coded.decode("ascii").replace("=", "").lower()
 
 
 def username_to_uuid(username):
@@ -24,9 +24,9 @@ def username_to_uuid(username):
     >>> username_to_uuid('u-ad52zgilvnpgnduefzlh5jgr6y')
     UUID('00fbac99-0bab-5e66-8e84-2e567ea4d1f6')
     """
-    if not username.startswith('u-') or len(username) != 28:
-        raise ValueError('Not an UUID based username: %r' % (username,))
-    decoded = base64.b32decode(username[2:].upper() + '======')
+    if not username.startswith("u-") or len(username) != 28:
+        raise ValueError("Not an UUID based username: %r" % (username,))
+    decoded = base64.b32decode(username[2:].upper() + "======")
     return UUID(bytes=decoded)
 
 
@@ -67,9 +67,7 @@ def flatten_list(x):
 
 
 def is_list_of_non_empty_strings(value):
-    return isinstance(value, list) and all(
-        isinstance(x, str) and x for x in value
-    )
+    return isinstance(value, list) and all(isinstance(x, str) and x for x in value)
 
 
 def get_scopes_from_claims(authorization_fields, claims):
