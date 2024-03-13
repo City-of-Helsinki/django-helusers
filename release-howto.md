@@ -1,5 +1,7 @@
 # Steps for doing a release
 
+**Note!** Releases are handled by GitHub Actions. This document is for reference only.
+
 ## Preparation
 
 Update changelog.
