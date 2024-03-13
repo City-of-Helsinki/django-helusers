@@ -1,12 +1,10 @@
 import django
 from django.apps import apps
-from django.contrib import admin
 from django.conf import settings
+from django.contrib import admin
 from django.core.exceptions import ImproperlyConfigured
-from django.http import HttpResponseRedirect
-from django.urls import reverse
+from django.urls import resolve, reverse
 from django.utils.translation import gettext_lazy as _
-
 
 if hasattr(settings, 'SITE_TYPE'):
     if settings.SITE_TYPE not in ('dev', 'test', 'production'):
@@ -73,8 +71,10 @@ class AdminSite(admin.AdminSite):
 
     def logout(self, request, extra_context=None):
         if request.session and request.session.get('social_auth_end_session_url'):
+            # This will allow e.g. to use a subclassed logout view
             logout_url = reverse('helusers:auth_logout')
-            return HttpResponseRedirect(logout_url)
+            view, args, kwargs = resolve(logout_url)
+            return view(request, *args, **kwargs)
         return super().logout(request, extra_context)
 
 
