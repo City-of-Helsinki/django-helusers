@@ -41,8 +41,8 @@ Then proceed by adding these apps to your `INSTALLED_APPS` in settings.py:
 
 ```python
 INSTALLED_APPS = (
-    'helusers.apps.HelusersConfig',
-    'helusers.apps.HelusersAdminConfig',
+    "helusers.apps.HelusersConfig",
+    "helusers.apps.HelusersAdminConfig",
     ...
 )
 ```
@@ -78,7 +78,7 @@ and reference it in settings.py:
 ```python
 # myproject/settings.py
 
-AUTH_USER_MODEL = 'users.User'
+AUTH_USER_MODEL = "users.User"
 ```
 
 ## Optional features
@@ -96,8 +96,8 @@ from the token with every request.
 
 ```python
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'helusers.oidc.ApiTokenAuthentication',
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "helusers.oidc.ApiTokenAuthentication",
     ),
 }
 ```
@@ -130,35 +130,35 @@ OIDC_API_TOKEN_AUTH = {
     # Multiple acceptable audiences are supported,
     # so this setting can also be a list of strings.
     # This setting is required.
-    'AUDIENCE': 'https://api.hel.fi/auth/projects',
+    "AUDIENCE": "https://api.hel.fi/auth/projects",
 
     # Who we trust to sign the tokens. The library will request the
     # public signature keys from standard locations below this URL.
     # Multiple issuers are supported, so this
     # setting can also be a list of strings.
     # Default is https://tunnistamo.hel.fi.
-    'ISSUER': 'https://api.hel.fi/sso/openid',
+    "ISSUER": "https://api.hel.fi/sso/openid",
 
     # The following can be used if you need certain scopes for any
     # functionality of the API. Usually this is not needed, as checking
     # the audience is enough. Default is False.
-    'REQUIRE_API_SCOPE_FOR_AUTHENTICATION': True,
+    "REQUIRE_API_SCOPE_FOR_AUTHENTICATION": True,
     # The name of the claim that is used to read in the scopes from the JWT.
     # Supports multiple fields as a list. If the field is deeper in the claims
     # use dot notation. e.g. "authorization.permissions.scopes"
     # Default is https://api.hel.fi/auth.
-    'API_AUTHORIZATION_FIELD': 'scope_field',
+    "API_AUTHORIZATION_FIELD": "scope_field",
     # The request will be denied if scopes don't contain anything starting
     # with the value provided here. Supports multiple scope prefixes as a list.
     # Only one scope needs to match if multiple prefixes are provided.
-    'API_SCOPE_PREFIX': 'projects',
+    "API_SCOPE_PREFIX": "projects",
 
     # In order to do the authentication the token authentication classes need
     # some facts from the authorization server, mainly its public keys for
     # verifying the JWT's signature. This setting controls the time how long
     # authorization server configuration and public keys are "remembered".
     # The value is in seconds. Default is 24 hours.
-    'OIDC_CONFIG_EXPIRATION_TIME': 600,
+    "OIDC_CONFIG_EXPIRATION_TIME": 600,
 }
 ```
 
@@ -179,7 +179,7 @@ OIDC_API_TOKEN_AUTH = {
     # the public signature keys from standard locations below this URL.
     # Multiple issuers are supported, so this setting can also be a list
     # of strings. Default is https://tunnistamo.hel.fi.
-    'ISSUER': 'https://api.hel.fi/sso/openid',
+    "ISSUER": "https://api.hel.fi/sso/openid",
 
     # Audience that must be present in the logout token for it to
     # be accepted. Value must be agreed between your SSO service
@@ -187,7 +187,7 @@ OIDC_API_TOKEN_AUTH = {
     # application to know that the token is meant to be used with
     # it. Multiple acceptable audiences are supported, so this
     # setting can also be a list of strings. This setting is required.
-    'AUDIENCE': 'https://api.hel.fi/auth/projects',
+    "AUDIENCE": "https://api.hel.fi/auth/projects",
 }
 ```
 
@@ -198,7 +198,7 @@ You will also need to add Django-helusers URLs to your URL dispatcher configurat
 urlpatterns = [
     ...
     # You can adjust the prefix as you want
-    path('helauth/', include('helusers.urls')),
+    path("helauth/", include("helusers.urls")),
     ...
 ]
 ```
@@ -239,7 +239,7 @@ Add `social_django` into your `INSTALLED_APPS` setting:
 # myproject/settings.py
 INSTALLED_APPS = (
     ...
-    'social_django',
+    "social_django",
     ...
 )
 ```
@@ -252,11 +252,11 @@ Add backend configuration to your `settings.py`:
 
 ```python
 AUTHENTICATION_BACKENDS = [
-    'helusers.tunnistamo_oidc.TunnistamoOIDCAuth',
-    'django.contrib.auth.backends.ModelBackend',
+    "helusers.tunnistamo_oidc.TunnistamoOIDCAuth",
+    "django.contrib.auth.backends.ModelBackend",
 ]
-LOGIN_REDIRECT_URL = '/'
-LOGOUT_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = "/"
+LOGOUT_REDIRECT_URL = "/"
 ```
 
 `LOGIN_REDIRECT_URL` is the default landing URL after succesful login, if your
@@ -284,8 +284,8 @@ dispatcher configuration (`urls.py`):
 ```python
 urlpatterns = [
     ...
-    path('pysocial/', include('social_django.urls', namespace='social')),
-    path('helauth/', include('helusers.urls')),
+    path("pysocial/", include("social_django.urls", namespace="social")),
+    path("helauth/", include("helusers.urls")),
     ...
 ]
 ```
@@ -328,40 +328,40 @@ development on your own laptop your `app.domain` would be `localhost`.
 After you've received your client ID, client secret and Tunnistamo OIDC
 endpoint you would configure them as follows:
 ```python
-SOCIAL_AUTH_TUNNISTAMO_KEY = 'https://i/am/clientid/in/url/style'
-SOCIAL_AUTH_TUNNISTAMO_SECRET = 'iamyoursecret'
-SOCIAL_AUTH_TUNNISTAMO_OIDC_ENDPOINT = 'https://tunnistamo.example.com/'
+SOCIAL_AUTH_TUNNISTAMO_KEY = "https://i/am/clientid/in/url/style"
+SOCIAL_AUTH_TUNNISTAMO_SECRET = "iamyoursecret"
+SOCIAL_AUTH_TUNNISTAMO_OIDC_ENDPOINT = "https://tunnistamo.example.com/"
 ```
 
 Note that `client ID` becomes `KEY` and `client secret` becomes `SECRET`.
 
 #### Active Directory groups
 
-Helusers can sync users AD groups to local Django groups when using an AD 
-login method in Tunnistamo. To enable groups sync you should add "ad_groups" 
+Helusers can sync users AD groups to local Django groups when using an AD
+login method in Tunnistamo. To enable groups sync you should add "ad_groups"
 scope to the Tunnistamo OIDC authorize call. It can be done by adding
 the following to the settings:
 
 ```python
-SOCIAL_AUTH_TUNNISTAMO_SCOPE = 'ad_groups'
+SOCIAL_AUTH_TUNNISTAMO_SCOPE = "ad_groups"
 ```
 
 That setting will add "ad_groups" scope to the default social auth scopes
 "openid profile email". If you would like to modify the default social
-auth scopes you can set all of the scopes in the `SOCIAL_AUTH_TUNNISTAMO_SCOPE` 
+auth scopes you can set all of the scopes in the `SOCIAL_AUTH_TUNNISTAMO_SCOPE`
 setting and set `SOCIAL_AUTH_TUNNISTAMO_IGNORE_DEFAULT_SCOPE` to `True`.
 
 Additionally, the client in Tunnistamo should be configured with AD groups
 enabled.
 
-When the users returns from Tunnistamo with "ad_groups" claim set Helusers will 
+When the users returns from Tunnistamo with "ad_groups" claim set Helusers will
 add all of the groups as an instance of `ADGroup` model to the database.
 
 Then, Helusers will add any missing ADGroups to the users' ad_groups-relation
 and remove any ADGroups the user is not a member of anymore.
 
-To use groups in Django permissions, you should use the Django admin view 
-(HELSINKI USERS > AD Group Mappings) to set mappings between ADGroups and 
+To use groups in Django permissions, you should use the Django admin view
+(HELSINKI USERS > AD Group Mappings) to set mappings between ADGroups and
 Groups. Helusers will then add the user to Django groups that are mapped
 to their AD Groups.
 
@@ -377,9 +377,9 @@ the Tunnistamo base URL in your template context using helusers's context proces
 ```python
 TEMPLATES = [
     {
-        'OPTIONS': {
-            'context_processors': [
-                'helusers.context_processors.settings'
+        "OPTIONS": {
+            "context_processors": [
+                "helusers.context_processors.settings"
             ]
         }
     }
@@ -395,7 +395,7 @@ to the login screens presented by Tunnistamo.
 Configure `python-social-auth` to pass the necessary argument through its
 login view:
 ```python
-SOCIAL_AUTH_TUNNISTAMO_AUTH_EXTRA_ARGUMENTS = {'ui_locales': 'fi'}
+SOCIAL_AUTH_TUNNISTAMO_AUTH_EXTRA_ARGUMENTS = {"ui_locales": "fi"}
 ```
 `fi` there is the language code that will be used when no language is requested, so change it if you you prefer some
 other default language. If you don't want to set a default language at all, use an empty string `""` as the language
