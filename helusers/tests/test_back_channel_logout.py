@@ -3,6 +3,7 @@ import re
 import pytest
 from django.http import HttpRequest, HttpResponse
 from django.test import Client
+from django.urls import reverse
 
 from helusers.jwt import JWT
 from helusers.models import OIDCBackChannelLogoutEvent
@@ -64,7 +65,7 @@ def execute_back_channel_logout(
         params["content_type"] = content_type
 
     client = Client()
-    return getattr(client, http_method)("/logout/oidc/backchannel/", **params)
+    return getattr(client, http_method)(reverse("helusers:oidc_backchannel"), **params)
 
 
 @pytest.mark.django_db

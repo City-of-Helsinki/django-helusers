@@ -40,6 +40,7 @@ if getattr(settings, "HELUSERS_BACK_CHANNEL_LOGOUT_ENABLED", False):
             path(
                 "logout/oidc/backchannel/",
                 csrf_exempt(views.OIDCBackChannelLogout.as_view()),
+                name="oidc_backchannel",
             ),
         ]
     )
