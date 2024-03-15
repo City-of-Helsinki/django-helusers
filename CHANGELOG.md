@@ -1,6 +1,14 @@
 # Changelog
 
 
+## 0.11.0 - 2024-03-15
+
+### Changed
+
+- Add Django admin logout support for Django 5.0
+- Add code quality tooling: black, isort, flake8, commitlint, pre-commit
+- Run code quality tools and do the necessary fixes
+
 ## 0.10.0 - 2024-03-07
 
 ### Changed
@@ -18,10 +26,10 @@
 
 ### Added
 
-- Ability to use "dot notation" in `API_AUTHORIZATION_FIELD` setting for searching api scopes from deeper in the claims 
+- Ability to use "dot notation" in `API_AUTHORIZATION_FIELD` setting for searching api scopes from deeper in the claims
 - Documentation about social auth pipeline configuration
 
-### Removed 
+### Removed
 
 - Removed `drf-oidc-auth` requirement when using `ApiTokenAuthentication`. Django REST framework is still required.
 
