@@ -11,6 +11,7 @@ _defaults = dict(
     AUTH_SCHEME="Bearer",
     USER_RESOLVER="helusers.oidc.resolve_user",
     OIDC_CONFIG_EXPIRATION_TIME=24 * 60 * 60,
+    ALLOWED_ALGORITHMS=["RS256"],
 )
 
 _import_strings = [
