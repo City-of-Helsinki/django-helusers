@@ -159,6 +159,10 @@ OIDC_API_TOKEN_AUTH = {
     # authorization server configuration and public keys are "remembered".
     # The value is in seconds. Default is 24 hours.
     "OIDC_CONFIG_EXPIRATION_TIME": 600,
+    
+    # Allow only algorithms that we actually use. In case of tunnistamo and
+    # tunnistus only RS256 is used with API access tokens. 
+    "ALLOWED_ALGORITHMS": ["RS256"],
 }
 ```
 

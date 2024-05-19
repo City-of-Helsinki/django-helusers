@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.12.0 - 2024-05-20
+
+### Changed
+
+- Add new setting `ALLOWED_ALGORITHMS` with a default value of `["RS256"]`
 
 ## 0.11.0 - 2024-03-15
 

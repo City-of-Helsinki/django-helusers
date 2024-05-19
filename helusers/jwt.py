@@ -50,7 +50,12 @@ class JWT:
         for required_claim in required_claims:
             options[f"require_{required_claim}"] = True
 
-        jwt.decode(self._encoded_jwt, keys, options=options)
+        jwt.decode(
+            self._encoded_jwt,
+            keys,
+            algorithms=self.settings.ALLOWED_ALGORITHMS,
+            options=options,
+        )
 
         claims = self.claims
         if require_aud and "aud" not in claims:
