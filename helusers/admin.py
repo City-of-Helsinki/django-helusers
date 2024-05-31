@@ -22,7 +22,7 @@ class ADGroupMappingAdmin(admin.ModelAdmin):
 
     ordering = ("ad_group__display_name", "group")
 
-    @admin.display(description="Mapping")
+    @admin.display(description=_("Mapping"))
     def get_str(self, obj):
         return str(obj)
 
