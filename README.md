@@ -159,9 +159,9 @@ OIDC_API_TOKEN_AUTH = {
     # authorization server configuration and public keys are "remembered".
     # The value is in seconds. Default is 24 hours.
     "OIDC_CONFIG_EXPIRATION_TIME": 600,
-    
+
     # Allow only algorithms that we actually use. In case of tunnistamo and
-    # tunnistus only RS256 is used with API access tokens. 
+    # tunnistus only RS256 is used with API access tokens.
     "ALLOWED_ALGORITHMS": ["RS256"],
 }
 ```
@@ -456,7 +456,7 @@ tox
 This project uses
 [`black`](https://github.com/ambv/black),
 [`flake8`](https://github.com/pycqa/flake8) and
-[`isort`](https://github.com/timothycrosley/isort)
+[`isort`](https://github.com/pycqa/isort)
 for code formatting and quality checking. Project follows the basic
 black config, without any modifications.
 
