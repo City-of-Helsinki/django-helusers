@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.13.0 - 2024-06-25
+
+### Added
+
+- Add feature to migrate old users from Tunnistamo to Keycloak upon login. With default settings, only users using AD authentication will be migrated. Feature can be enabled with the setting `HELUSERS_USER_MIGRATE_ENABLED` which defaults to `False`.
+
+### Changed
+
+- Improve ModelAdmins for ADGroupMapping and ADGroup
+
 ## 0.12.0 - 2024-05-20
 
 ### Changed
