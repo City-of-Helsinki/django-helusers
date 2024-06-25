@@ -418,7 +418,7 @@ username/password form from Django admin login page by setting `HELUSERS_PASSWOR
 to `True`.
 
 
-#### Migrating old user from Tunnistamo to Keycloak
+### Migrating old user from Tunnistamo to Keycloak
 
 By default, the migration logic is configured to support migrating users from Tunnistamo
 AD authentication to Keycloak AD authentication. The migration should be tested by the
