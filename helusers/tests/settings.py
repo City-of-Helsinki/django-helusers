@@ -12,7 +12,7 @@ INSTALLED_APPS = (
     "django.contrib.sessions",
     "django.contrib.messages",
     "helusers.apps.HelusersConfig",
-    "helusers.apps.HelusersAdminConfig",
+    "helusers.apps.admin.HelusersAdminConfig",
     "social_django",
     "helusers.tests",
 )

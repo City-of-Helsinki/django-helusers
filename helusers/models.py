@@ -17,6 +17,9 @@ class ADGroup(models.Model):
     name = models.CharField(max_length=200, db_index=True)
     display_name = models.CharField(max_length=200)
 
+    class Meta:
+        app_label = "helusers"
+
     def save(self, *args, **kwargs):
         self.name = self.name.lower()
         return super().save(*args, **kwargs)
@@ -37,6 +40,7 @@ class ADGroupMapping(models.Model):
         return "%s -> %s" % (self.ad_group, self.group)
 
     class Meta:
+        app_label = "helusers"
         unique_together = (("group", "ad_group"),)
         verbose_name = _("AD group mapping")
         verbose_name_plural = _("AD group mappings")
@@ -46,6 +50,9 @@ class AbstractUser(DjangoAbstractUser):
     uuid = models.UUIDField(unique=True)
     department_name = models.CharField(max_length=50, null=True, blank=True)
     ad_groups = models.ManyToManyField(ADGroup, blank=True)
+
+    class Meta:
+        app_label = "helusers"
 
     def save(self, *args, **kwargs):
         self.clean()
@@ -171,6 +178,7 @@ class OIDCBackChannelLogoutEvent(models.Model):
     objects = OIDCBackChannelLogoutEventManager()
 
     class Meta:
+        app_label = "helusers"
         unique_together = ["iss", "sub", "sid"]
         verbose_name = "OIDC back channel logout event"
         verbose_name_plural = "OIDC back channel logout events"
