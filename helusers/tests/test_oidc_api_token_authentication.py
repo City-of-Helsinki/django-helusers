@@ -51,7 +51,7 @@ def test_overridden_validate_claims_method_works():
     authentication_passes(sut=AmrFixApiTokenAuthentication(), amr="test_value")
 
 
-# From https://github.com/City-of-Helsinki/kerrokantasi/blob/master/kerrokantasi/oidc.py
+# From https://github.com/City-of-Helsinki/kerrokantasi/blob/main/kerrokantasi/oidc.py
 class KerroKantasiApiTokenAuthentication(ApiTokenAuthentication):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
