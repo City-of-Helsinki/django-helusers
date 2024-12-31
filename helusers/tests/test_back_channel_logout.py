@@ -8,7 +8,7 @@ from django.urls import reverse
 from helusers.jwt import JWT
 from helusers.models import OIDCBackChannelLogoutEvent
 
-from .conftest import AUDIENCE, encoded_jwt_factory, ISSUER1, unix_timestamp_now
+from .conftest import AUDIENCE, ISSUER1, encoded_jwt_factory, unix_timestamp_now
 from .keys import rsa_key2
 
 _NOT_PROVIDED = object()
