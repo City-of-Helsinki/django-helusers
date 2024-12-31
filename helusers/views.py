@@ -3,7 +3,7 @@ from urllib.parse import urlencode
 
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth import logout, REDIRECT_FIELD_NAME
+from django.contrib.auth import REDIRECT_FIELD_NAME, logout
 from django.contrib.auth.views import LogoutView as DjangoLogoutView
 from django.core.signals import setting_changed
 from django.dispatch import receiver
