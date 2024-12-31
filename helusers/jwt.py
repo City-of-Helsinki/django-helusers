@@ -2,8 +2,8 @@ from .utils import get_scopes_from_claims
 
 try:
     from ._rest_framework_jwt_impl import (  # noqa: F401
-        get_user_id_from_payload_handler,
         JWTAuthentication,
+        get_user_id_from_payload_handler,
         patch_jwt_settings,
     )
 except ImportError:
