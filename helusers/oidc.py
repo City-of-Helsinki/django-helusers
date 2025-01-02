@@ -36,7 +36,8 @@ def _build_defaults():
         def audience(self):
             if not api_token_auth_settings.AUDIENCE:
                 raise ImproperlyConfigured(
-                    "You must set OIDC_API_TOKEN_AUTH['AUDIENCE'] setting to the accepted JWT audience."
+                    "You must set OIDC_API_TOKEN_AUTH['AUDIENCE'] setting to the"
+                    " accepted JWT audience."
                 )
             return api_token_auth_settings.AUDIENCE
 
@@ -45,7 +46,8 @@ def _build_defaults():
             issuers = api_token_auth_settings.ISSUER
             if not issuers:
                 raise ImproperlyConfigured(
-                    "You must set OIDC_API_TOKEN_AUTH['ISSUER'] setting to one or to a list of accepted JWT issuers."
+                    "You must set OIDC_API_TOKEN_AUTH['ISSUER'] setting to one or to a"
+                    " list of accepted JWT issuers."
                 )
             if isinstance(issuers, str):
                 issuers = [issuers]
