@@ -161,7 +161,8 @@ def migrate_user(user_id: str, payload: dict):
         [email.endswith(f"@{domain}") for domain in domains_to_migrate]
     ):
         logger.debug(
-            f"User {user_id} email: {email} doesn't have a whitelisted domain, not trying to migrate."
+            f"User {user_id} email: {email} doesn't have a whitelisted domain, not"
+            " trying to migrate."
         )
         return
 

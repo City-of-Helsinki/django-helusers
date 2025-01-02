@@ -40,7 +40,7 @@ def get_nested_from_dict(data, full_key):
     'value'
     >>> get_nested_from_dict({"level1": [{"level2": "value1"}, {"level2": "value2"}]}, "level1.level2")
     ['value1', 'value2']
-    """
+    """  # noqa: E501
     if not isinstance(data, dict) or not isinstance(full_key, str):
         return None
 

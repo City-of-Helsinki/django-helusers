@@ -56,7 +56,8 @@ class TunnistamoOIDCAuth(OpenIdConnectAuth):
             )
 
         try:
-            # Add the params to the end_session URL, which might have query params already
+            # Add the params to the end_session URL, which might have query params
+            # already
             url_parts = list(urlparse.urlparse(url))
             query = dict(urlparse.parse_qsl(url_parts[4]))
             query.update(params)
