@@ -18,7 +18,8 @@ if (
 ):
     if not settings.LOGOUT_REDIRECT_URL:
         raise ImproperlyConfigured(
-            "LOGOUT_REDIRECT_URL setting must be set to use social_auth login/logout with helusers."
+            "LOGOUT_REDIRECT_URL setting must be set to use social_auth login/logout"
+            " with helusers."
         )
 
     urlpatterns.extend(
