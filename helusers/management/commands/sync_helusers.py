@@ -34,7 +34,8 @@ class Command(BaseCommand):
             )
         if not secret_key:
             raise ImproperlyConfigured(
-                "You must set JWT_AUTH['JWT_SECRET_KEY'] to correspond to your secret key"
+                "You must set JWT_AUTH['JWT_SECRET_KEY'] to correspond to your secret"
+                " key"
             )
 
         if app.client_id != client_id:

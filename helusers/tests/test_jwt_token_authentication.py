@@ -7,7 +7,7 @@ from rest_framework.exceptions import AuthenticationFailed
 from helusers.oidc import AuthenticationError, RequestJWTAuthentication
 
 from .._oidc_auth_impl import ApiTokenAuthentication
-from .conftest import AUDIENCE, encoded_jwt_factory, ISSUER1, unix_timestamp_now
+from .conftest import AUDIENCE, ISSUER1, encoded_jwt_factory, unix_timestamp_now
 from .keys import rsa_key, rsa_key2
 from .test_back_channel_logout import execute_back_channel_logout
 

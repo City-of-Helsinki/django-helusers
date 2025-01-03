@@ -21,5 +21,5 @@ def test_reflective_username_uuid_relationship():
     rd = random.Random()
     rd.seed(0)
 
-    for uuid in [UUID(int=rd.getrandbits(128)) for i in range(0, 100)]:
+    for uuid in [UUID(int=rd.getrandbits(128)) for i in range(100)]:
         assert username_to_uuid(uuid_to_username(uuid)) == uuid

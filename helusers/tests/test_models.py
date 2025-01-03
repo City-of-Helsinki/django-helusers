@@ -5,7 +5,7 @@ from django.contrib.auth.models import Group
 from helusers.jwt import JWT
 from helusers.models import ADGroup, ADGroupMapping, OIDCBackChannelLogoutEvent
 
-from .conftest import encoded_jwt_factory, ISSUER1
+from .conftest import ISSUER1, encoded_jwt_factory
 
 user_model = get_user_model()
 

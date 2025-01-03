@@ -4,10 +4,10 @@ from django.contrib.auth import get_user_model
 
 from helusers._oidc_auth_impl import ApiTokenAuthentication
 from helusers.tests.test_jwt_token_authentication import (  # noqa: F401
+    USER_UUID,
     authentication_passes,
     auto_auth_server,
     do_authentication,
-    USER_UUID,
 )
 
 

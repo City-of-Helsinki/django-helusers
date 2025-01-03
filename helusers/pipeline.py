@@ -14,7 +14,6 @@ logger = logging.getLogger(__name__)
 
 
 def ensure_uid_is_uuid(details, backend, response, user=None, *args, **kwargs):
-
     uid = kwargs.get("uid")
 
     # django-helusers uses UUID as the primary key for the user.

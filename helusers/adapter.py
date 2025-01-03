@@ -6,7 +6,10 @@ from .user_utils import update_user
 
 @deprecated(
     deprecated_in="0.6.0",
-    details="Allauth based authentication is deprecated. Use the social-auth-app-django based authentication system.",
+    details=(
+        "Allauth based authentication is deprecated. Use the social-auth-app-django"
+        " based authentication system."
+    ),
 )
 class SocialAccountAdapter(DefaultSocialAccountAdapter):
     def pre_social_login(self, request, sociallogin):
