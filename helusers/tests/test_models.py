@@ -160,6 +160,32 @@ class TestUserAdGroups:
                 [],
                 id="all_removed",
             ),
+            # many ad-group for 1 user group
+            pytest.param(
+                (
+                    ("ad_group_1", "group_1"),
+                    ("ad_group_2", "group_1"),
+                    ("ad_group_3", "group_1"),
+                ),
+                [],
+                [],
+                ["ad_group_1", "ad_group_2", "ad_group_3"],
+                ["group_1"],
+                id="one-ad-for-many-group",
+            ),
+            # 1 ad-group for many user groups
+            pytest.param(
+                (
+                    ("ad_group_1", "group_1"),
+                    ("ad_group_1", "group_2"),
+                    ("ad_group_1", "group_3"),
+                ),
+                [],
+                [],
+                ["ad_group_1"],
+                ["group_1", "group_2", "group_3"],
+                id="many-ad-for-one-group",
+            ),
         ],
     )
     def test_update_ad_groups(
