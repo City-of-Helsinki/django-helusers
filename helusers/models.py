@@ -1,5 +1,7 @@
 import logging
 import uuid
+from collections import defaultdict
+from itertools import chain
 
 from django.contrib.auth.models import AbstractUser as DjangoAbstractUser
 from django.contrib.auth.models import Group
@@ -87,16 +89,18 @@ class AbstractUser(DjangoAbstractUser):
         """Determine which Django groups to add or remove based on AD groups."""
 
         ad_list = ADGroupMapping.objects.values_list("ad_group", "group")
-        mappings = {ad_group: group for ad_group, group in ad_list}
+        mappings = defaultdict(list)
+        for ad_group, group in ad_list:
+            mappings[ad_group].append(group)
 
         user_ad_groups = set(
             self.ad_groups.filter(groups__isnull=False).values_list(flat=True)
         )
-        all_mapped_groups = set(mappings.values())
+        all_mapped_groups = set(chain(*mappings.values()))
         old_groups = set(
             self.groups.filter(id__in=all_mapped_groups).values_list(flat=True)
         )
-        new_groups = set([mappings[x] for x in user_ad_groups])
+        new_groups = set(chain(*[mappings[x] for x in user_ad_groups]))
 
         groups_to_delete = old_groups - new_groups
         if groups_to_delete:
