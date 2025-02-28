@@ -3,7 +3,7 @@ name: Publish to PyPI
 on:
   push:
     tags:
-      - 'v*.*.*'
+      - 'django-helusers-v*'
 
 jobs:
   build-and-publish:
