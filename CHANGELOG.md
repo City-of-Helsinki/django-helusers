@@ -10,6 +10,13 @@
 
 - Drop support for Python 3.8 and Django 3.2
 
+## [0.13.2](https://github.com/City-of-Helsinki/django-helusers/compare/django-helusers-v0.13.1...django-helusers-v0.13.2) (2025-03-03)
+
+
+### Continuous Integration
+
+* Release-please automatically pushes the package to PyPi ([623d889](https://github.com/City-of-Helsinki/django-helusers/commit/623d889fd0aa7a44dd82143e084f55bae7e1396e))
+
 ## [0.13.1](https://github.com/City-of-Helsinki/django-helusers/compare/django-helusers-v0.13.0...django-helusers-v0.13.1) (2025-03-03)
 
 
