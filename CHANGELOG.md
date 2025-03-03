@@ -1,15 +1,5 @@
 # Changelog
 
-## Unreleased
-
-### Added
-
-- Add support for Python 3.13 and Django 5.1
-
-### Removed
-
-- Drop support for Python 3.8 and Django 3.2
-
 ## [0.13.2](https://github.com/City-of-Helsinki/django-helusers/compare/django-helusers-v0.13.1...django-helusers-v0.13.2) (2025-03-03)
 
 
