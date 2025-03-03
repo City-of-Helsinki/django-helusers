@@ -10,6 +10,19 @@
 
 - Drop support for Python 3.8 and Django 3.2
 
+## [0.13.1](https://github.com/City-of-Helsinki/django-helusers/compare/django-helusers-v0.13.0...django-helusers-v0.13.1) (2025-03-03)
+
+
+### Bug Fixes
+
+* Map multiple user groups to one ad group ([1600579](https://github.com/City-of-Helsinki/django-helusers/commit/1600579d88f3559201e6d7dd2f642f558f70f79e))
+
+
+### Documentation
+
+* **readme:** Fix title level for user migration ([7381cda](https://github.com/City-of-Helsinki/django-helusers/commit/7381cda7f2acb1e7804e461994193c3cfbb5b735))
+* Update changelog ([f0ccc44](https://github.com/City-of-Helsinki/django-helusers/commit/f0ccc44d21211f51459555d9d4af63e7e7c66dcc))
+
 ## 0.13.0 - 2024-06-25
 
 ### Added
