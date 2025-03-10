@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.13.3](https://github.com/City-of-Helsinki/django-helusers/compare/django-helusers-v0.13.2...django-helusers-v0.13.3) (2025-03-10)
+
+
+### Bug Fixes
+
+* Use "get_success_url"-method ([0305c06](https://github.com/City-of-Helsinki/django-helusers/commit/0305c0663b18de0bb8d5076ad993b995109e0f60))
+
+
+### Documentation
+
+* **changelog:** Remove unreleased and removed sections ([7fb9c71](https://github.com/City-of-Helsinki/django-helusers/commit/7fb9c710bc67b82418b4f409c3192b3ce37fb83f))
+
 ## [0.13.2](https://github.com/City-of-Helsinki/django-helusers/compare/django-helusers-v0.13.1...django-helusers-v0.13.2) (2025-03-03)
 
 
