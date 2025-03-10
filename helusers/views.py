@@ -37,7 +37,7 @@ class LogoutView(DjangoLogoutView):
 
 class LogoutCompleteView(DjangoLogoutView):
     def dispatch(self, request, *args, **kwargs):
-        return HttpResponseRedirect(self.get_next_page())
+        return HttpResponseRedirect(self.get_success_url())
 
 
 class LoginView(RedirectView):
