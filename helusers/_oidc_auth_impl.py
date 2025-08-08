@@ -1,6 +1,7 @@
 import logging
 
 from cachetools.func import ttl_cache
+from django.utils import timezone
 from django.utils.encoding import smart_str
 from django.utils.translation import gettext as _
 from jose import JWTError
@@ -50,6 +51,12 @@ class ApiTokenAuthentication(BaseAuthentication):
         except ValueError as e:
             raise AuthenticationFailed(str(e)) from e
         auth = UserAuthorization(user, payload, self.settings)
+
+        if user and hasattr(user, "last_api_use"):
+            today = timezone.now().date()
+            if not user.last_api_use or user.last_api_use < today:
+                user.last_api_use = today
+                user.save(update_fields=["last_api_use"])
 
         return user, auth
 

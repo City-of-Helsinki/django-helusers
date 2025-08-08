@@ -1,6 +1,7 @@
 import pytest
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.utils import timezone
 
 from helusers._oidc_auth_impl import ApiTokenAuthentication
 from helusers.tests.test_jwt_token_authentication import (  # noqa: F401
@@ -82,3 +83,11 @@ def test_kerrokantasi_apitokenauthentication_works(settings, amr):
     auth = do_authentication(sut=KerroKantasiApiTokenAuthentication(), amr=amr)
 
     assert auth.user.has_strong_auth == bool(amr)
+
+
+@pytest.mark.django_db
+def test_last_api_use_updated_on_authentication():
+    """Tests that the last_api_use field is updated on authentication."""
+    auth = do_authentication(sut=ApiTokenAuthentication())
+    user = auth.user
+    assert user.last_api_use == timezone.now().date()
