@@ -45,7 +45,9 @@ def test_django_admin_logout(client, admin_user):
     for using the helusers.views.LogoutView
     """
     expected_url = "http://example.com/redirected_after_logout"
-    UserSocialAuth.objects.create(user=admin_user, provider=TunnistamoOIDCAuth.name)
+    UserSocialAuth.objects.create(
+        user=admin_user, provider=TunnistamoOIDCAuth.name, uid="12345"
+    )
     client.login(username="admin", password="super-duper-test")
     session = client.session
     session["social_auth_end_session_url"] = expected_url
