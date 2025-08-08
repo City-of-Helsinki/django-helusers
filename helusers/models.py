@@ -48,6 +48,9 @@ class AbstractUser(DjangoAbstractUser):
     uuid = models.UUIDField(unique=True)
     department_name = models.CharField(max_length=50, null=True, blank=True)
     ad_groups = models.ManyToManyField(ADGroup, blank=True)
+    last_api_use = models.DateField(
+        null=True, blank=True, verbose_name=_("Latest API token usage date")
+    )
 
     def save(self, *args, **kwargs):
         self.clean()
