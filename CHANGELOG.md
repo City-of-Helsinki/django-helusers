@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.14.0](https://github.com/City-of-Helsinki/django-helusers/compare/django-helusers-v0.13.3...django-helusers-v0.14.0) (2025-09-01)
+
+
+### Features
+
+* Add api_token_used field to AbstractUser ([f66dce5](https://github.com/City-of-Helsinki/django-helusers/commit/f66dce518dd33876732c15034909fb9929709ad7))
+
 ## [0.13.3](https://github.com/City-of-Helsinki/django-helusers/compare/django-helusers-v0.13.2...django-helusers-v0.13.3) (2025-03-10)
 
 
