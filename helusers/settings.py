@@ -36,7 +36,7 @@ def _compile_settings():
 
                 return attr
             except KeyError:
-                raise AttributeError("Setting '{}' not found".format(name))
+                raise AttributeError(f"Setting '{name}' not found")
 
         def _load(self):
             self._settings = _defaults.copy()

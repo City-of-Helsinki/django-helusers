@@ -22,7 +22,7 @@ class AdminSite(admin.AdminSite):
     login_template = "admin/hel_login.html"
 
     def __init__(self, *args, **kwargs):
-        super(AdminSite, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     @property
     def site_header(self):
@@ -37,7 +37,7 @@ class AdminSite(admin.AdminSite):
         return _("%(site_name)s admin") % {"site_name": site_name}
 
     def each_context(self, request):
-        ret = super(AdminSite, self).each_context(request)
+        ret = super().each_context(request)
         ret["site_type"] = getattr(settings, "SITE_TYPE", "dev")
         ret["redirect_path"] = request.GET.get("next", None)
         provider_installed = False

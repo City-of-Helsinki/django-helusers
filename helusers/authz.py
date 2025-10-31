@@ -4,7 +4,7 @@ from .settings import api_token_auth_settings
 from .utils import get_scopes_from_claims
 
 
-class UserAuthorization(object):
+class UserAuthorization:
     def __init__(self, user, api_token_payload, settings=None):
         """
         Initialize authorization info from user and API Token payload.

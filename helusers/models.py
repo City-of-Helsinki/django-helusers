@@ -36,7 +36,7 @@ class ADGroupMapping(models.Model):
     )
 
     def __str__(self):
-        return "%s -> %s" % (self.ad_group, self.group)
+        return f"{self.ad_group} -> {self.group}"
 
     class Meta:
         unique_together = (("group", "ad_group"),)
@@ -54,7 +54,7 @@ class AbstractUser(DjangoAbstractUser):
 
     def save(self, *args, **kwargs):
         self.clean()
-        return super(AbstractUser, self).save(*args, **kwargs)
+        return super().save(*args, **kwargs)
 
     def clean(self):
         self._make_sure_uuid_is_set()
@@ -71,7 +71,7 @@ class AbstractUser(DjangoAbstractUser):
 
     def get_display_name(self):
         if self.first_name and self.last_name:
-            return "{0} {1}".format(self.first_name, self.last_name).strip()
+            return f"{self.first_name} {self.last_name}".strip()
         else:
             return self.email
 
@@ -128,8 +128,8 @@ class AbstractUser(DjangoAbstractUser):
                 ad_groups[n] = ADGroup.objects.create(name=n, display_name=name)
 
         # Update user's groups
-        new_ad_groups = set([x.id for x in ad_groups.values()])
-        old_ad_groups = set([x.id for x in user.ad_groups.all()])
+        new_ad_groups = {x.id for x in ad_groups.values()}
+        old_ad_groups = {x.id for x in user.ad_groups.all()}
         groups_to_add = new_ad_groups - old_ad_groups
         if groups_to_add:
             user.ad_groups.add(*groups_to_add)
@@ -141,7 +141,7 @@ class AbstractUser(DjangoAbstractUser):
 
     def __str__(self):
         if self.first_name and self.last_name:
-            return "%s %s (%s)" % (self.last_name, self.first_name, self.email)
+            return f"{self.last_name} {self.first_name} ({self.email})"
         else:
             return self.email
 

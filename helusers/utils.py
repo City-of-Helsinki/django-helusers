@@ -25,7 +25,7 @@ def username_to_uuid(username):
     UUID('00fbac99-0bab-5e66-8e84-2e567ea4d1f6')
     """
     if not username.startswith("u-") or len(username) != 28:
-        raise ValueError("Not an UUID based username: %r" % (username,))
+        raise ValueError(f"Not an UUID based username: {username!r}")
     decoded = base64.b32decode(username[2:].upper() + "======")
     return UUID(bytes=decoded)
 
