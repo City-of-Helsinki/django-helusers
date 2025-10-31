@@ -15,7 +15,7 @@ class HelsinkiOAuth2Adapter(OAuth2Adapter):
     profile_url = "https://api.hel.fi/sso/user/"
 
     def complete_login(self, request, app, token, **kwargs):
-        headers = {"Authorization": "Bearer {0}".format(token.token)}
+        headers = {"Authorization": f"Bearer {token.token}"}
         resp = requests.get(self.profile_url, headers=headers)
         extra_data = resp.json()
         return self.get_provider().sociallogin_from_response(request, extra_data)

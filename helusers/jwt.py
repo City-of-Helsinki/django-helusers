@@ -81,7 +81,7 @@ class JWT:
             issuers = [issuers]
 
         if issuer not in issuers:
-            raise ValidationError("Unknown JWT issuer {}.".format(issuer))
+            raise ValidationError(f"Unknown JWT issuer {issuer}.")
 
     def validate_api_scope(self):
         if not self.settings.REQUIRE_API_SCOPE_FOR_AUTHENTICATION:
@@ -95,7 +95,7 @@ class JWT:
             [self.has_api_scope_with_prefix(api_scope) for api_scope in api_scopes]
         ):
             raise ValidationError(
-                'Not authorized for any of the API scopes "{}"'.format(api_scopes)
+                f'Not authorized for any of the API scopes "{api_scopes}"'
             )
 
     def validate_session(self):

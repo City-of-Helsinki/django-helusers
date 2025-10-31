@@ -21,7 +21,7 @@ class ApiTokenAuthentication(BaseAuthentication):
 
     def __init__(self, settings=None, **kwargs):
         self.settings = settings or api_token_auth_settings
-        super(ApiTokenAuthentication, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
     @property
     def auth_scheme(self):
@@ -43,7 +43,7 @@ class ApiTokenAuthentication(BaseAuthentication):
         except JWTError:
             return None
 
-        logger.debug("Token payload decoded as: {}".format(payload))
+        logger.debug(f"Token payload decoded as: {payload}")
 
         user_resolver = self.settings.USER_RESOLVER  # Default: resolve_user
         try:
@@ -84,7 +84,7 @@ class ApiTokenAuthentication(BaseAuthentication):
     def get_jwt_value(self, request):
         auth = get_authorization_header(request).split()
 
-        logger.debug("Authorization header: {}".format(auth))
+        logger.debug(f"Authorization header: {auth}")
 
         if not auth or smart_str(auth[0]).lower() != self.auth_scheme.lower():
             return None
