@@ -127,12 +127,12 @@ def fetch_api_tokens(
     if not api_scopes:
         return
 
-    logger.info("Retrieving API tokens for scopes %s" % " ".join(api_scopes))
+    logger.info(f"Retrieving API tokens for scopes {' '.join(api_scopes)}")
 
-    headers = {"Authorization": "Bearer %s" % social.extra_data["access_token"]}
+    headers = {"Authorization": f"Bearer {social.extra_data['access_token']}"}
     url = settings.TUNNISTAMO_BASE_URL + "/api-tokens/"
     resp = requests.post(url, headers=headers)
     if resp.status_code != 200:
-        logger.error("Unable to get API tokens: HTTP %d" % (resp.status_code))
+        logger.error(f"Unable to get API tokens: HTTP {resp.status_code}")
         return
     request.session["api_tokens"] = resp.json()
