@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.14.1](https://github.com/City-of-Helsinki/django-helusers/compare/django-helusers-v0.14.0...django-helusers-v0.14.1) (2025-11-04)
+
+
+### Dependencies
+
+* Add python 3.14, drop python 3.9 ([7e9b502](https://github.com/City-of-Helsinki/django-helusers/commit/7e9b5022496ffc94cec85aa45bf2f49d27e165c1))
+
 ## [0.14.0](https://github.com/City-of-Helsinki/django-helusers/compare/django-helusers-v0.13.3...django-helusers-v0.14.0) (2025-09-01)
 
 
