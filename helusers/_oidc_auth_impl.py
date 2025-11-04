@@ -107,9 +107,7 @@ class ApiTokenAuthentication(BaseAuthentication):
         """Not in use. Only for backwards compatibility"""
 
     def authenticate_header(self, request):
-        return '{auth_scheme} realm="{realm}"'.format(
-            auth_scheme=self.auth_scheme, realm=self.www_authenticate_realm
-        )
+        return f'{self.auth_scheme} realm="{self.www_authenticate_realm}"'
 
 
 def resolve_user(request, payload):
