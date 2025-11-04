@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.14.2](https://github.com/City-of-Helsinki/django-helusers/compare/django-helusers-v0.14.1...django-helusers-v0.14.2) (2025-11-04)
+
+
+### Bug Fixes
+
+* Make python version a string ([d19a978](https://github.com/City-of-Helsinki/django-helusers/commit/d19a9782e7e59b6d1d3614e5e71652a698236dcb))
+
 ## [0.14.1](https://github.com/City-of-Helsinki/django-helusers/compare/django-helusers-v0.14.0...django-helusers-v0.14.1) (2025-11-04)
 
 
