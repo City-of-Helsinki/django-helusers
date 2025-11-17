@@ -1,0 +1,12 @@
+header#grp-header #grp-navigation ul#grp-user-tools {
+    border-left: 0px !important;
+}
+header#grp-header #grp-navigation ul#grp-user-tools>li {
+    border: 0px !important;
+}
+header#grp-header #grp-navigation a {
+    color: #fff !important;
+}
+header#grp-header div#grp-navigation {
+    background: #417690;
+}
