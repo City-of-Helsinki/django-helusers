@@ -1,0 +1,13 @@
+.helusers-hide {
+  display: none;
+}
+
+#top-bottom-margins {
+  margin-bottom: 2em;
+  margin-top: 1em;
+}
+
+#helsinki-login-btn {
+  margin-left: 9em;
+  width: auto;
+}

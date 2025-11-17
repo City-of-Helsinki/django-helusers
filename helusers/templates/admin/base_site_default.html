@@ -1,31 +1,15 @@
 {% extends "admin/base.html" %}
+{% load static %}
 
 {% block title %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
 
 {% block blockbots %}
 <meta name="robots" content="NONE,NOARCHIVE" />
-<style>
-.login #header h1 a {
-    color: #fff !important;
-}
-
 {% if site_type == 'production' %}
-#header {
-    /* background: #4e579d; */
-    background: #e47c60;
-}
-#branding h1, #branding h1 a:link, #branding h1 a:visited {
-    color: #ffecbb;
-}
+<link rel="stylesheet" href="{% static 'helusers/css/default_production.css' %}"/>
 {% else %}
-#header {
-    background: #417690;
-}
-#branding h1, #branding h1 a:link, #branding h1 a:visited {
-    color: #ffe192;
-}
+<link rel="stylesheet" href="{% static 'helusers/css/default.css' %}"/>
 {% endif %}
-</style>
 {% endblock %}
 
 {% block branding %}

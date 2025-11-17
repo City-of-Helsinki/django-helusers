@@ -1,0 +1,10 @@
+.login #header h1 a {
+    color: #fff !important;
+}
+
+#header {
+    background: #417690;
+}
+#branding h1, #branding h1 a:link, #branding h1 a:visited {
+    color: #ffe192;
+}

@@ -3,22 +3,19 @@
 
 {% block extrastyle %}
 {{ block.super }}
+<link rel="stylesheet" href="{% static 'helusers/css/helusers.css' %}"/>
 {% if password_login_disabled %}
-<style>
-    #content-main form {
-        display: none;
-    }
-</style>
+<link rel="stylesheet" href="{% static 'helusers/css/password_login_disabled.css' %}"/>
 {% endif %}
 {% endblock %}
 
 {% block content %}
 {% if helsinki_provider_installed %}
-<div id="helsinki-login"{% if grappelli_installed %} style="display: none;"{% endif %}>
+<div id="helsinki-login"{% if grappelli_installed %} class="helusers-hide"{% endif %}>
     <p>Kirjaudu sisään Helsingin kaupungin työntekijän tunnuksella:</p>
-    <div style="margin-bottom: 2em; margin-top: 1em;">
+    <div id="top-bottom-margins">
         <a href="{{ helsinki_login_url }}{% if redirect_path %}?next={{ redirect_path }}{% endif %}">
-            <button style="margin-left: 9em; width: auto;" class="button grp-button grp-default" type="button">Helsinki Login</button>
+            <button id="helsinki-login-btn" class="button grp-button grp-default" type="button">Helsinki Login</button>
         </a>
     </div>
 {% if not password_login_disabled %}
