@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.14.3](https://github.com/City-of-Helsinki/django-helusers/compare/django-helusers-v0.14.2...django-helusers-v0.14.3) (2025-11-18)
+
+
+### Bug Fixes
+
+* Move inline styles into css files ([ce9bdfe](https://github.com/City-of-Helsinki/django-helusers/commit/ce9bdfe08dd0a69e17ed8a5b54708261b2c998ae))
+
 ## [0.14.2](https://github.com/City-of-Helsinki/django-helusers/compare/django-helusers-v0.14.1...django-helusers-v0.14.2) (2025-11-04)
 
 
