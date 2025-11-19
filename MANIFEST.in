@@ -1,4 +1,4 @@
 include LICENSE
 include README.md
-recursive-include helusers *.html *.py *.po *.mo
+recursive-include helusers *.html *.py *.po *.mo *.css
 prune helusers/tests
