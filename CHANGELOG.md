@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.14.4](https://github.com/City-of-Helsinki/django-helusers/compare/django-helusers-v0.14.3...django-helusers-v0.14.4) (2025-11-19)
+
+
+### Bug Fixes
+
+* Include static files in package ([506957c](https://github.com/City-of-Helsinki/django-helusers/commit/506957ca47901685577656155aceaeca00ab8889))
+
 ## [0.14.3](https://github.com/City-of-Helsinki/django-helusers/compare/django-helusers-v0.14.2...django-helusers-v0.14.3) (2025-11-18)
 
 
