@@ -10,7 +10,7 @@ os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 setup(
     name="django-helusers",
-    version="0.14.3",
+    version="0.14.4",
     packages=["helusers"],
     include_package_data=True,
     license="BSD License",
