@@ -1,16 +1,8 @@
 from django.apps import apps
 from django.conf import settings
 from django.contrib import admin
-from django.core.exceptions import ImproperlyConfigured
 from django.urls import resolve, reverse
 from django.utils.translation import gettext_lazy as _
-
-if hasattr(settings, "SITE_TYPE"):
-    if settings.SITE_TYPE not in ("dev", "test", "production"):
-        raise ImproperlyConfigured(
-            "SITE_TYPE must be either 'dev', 'test' or 'production'"
-        )
-
 
 PROVIDERS = (
     ("helusers.providers.helsinki", "helsinki_login"),
@@ -38,7 +30,6 @@ class AdminSite(admin.AdminSite):
 
     def each_context(self, request):
         ret = super().each_context(request)
-        ret["site_type"] = getattr(settings, "SITE_TYPE", "dev")
         ret["redirect_path"] = request.GET.get("next", None)
         provider_installed = False
         if (
