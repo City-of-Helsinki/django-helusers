@@ -53,12 +53,7 @@ class AdminSite(admin.AdminSite):
             ret["helsinki_login_url"] = login_url
             ret["helsinki_logout_url"] = logout_url
 
-        ret["grappelli_installed"] = "grappelli" in settings.INSTALLED_APPS
-        if ret["grappelli_installed"]:
-            ret["grappelli_admin_title"] = self.site_header
-            ret["base_site_template"] = "admin/base_site_grappelli.html"
-        else:
-            ret["base_site_template"] = "admin/base_site_default.html"
+        ret["base_site_template"] = "admin/base_site_default.html"
 
         ret["password_login_disabled"] = getattr(
             settings, "HELUSERS_PASSWORD_LOGIN_DISABLED", False
