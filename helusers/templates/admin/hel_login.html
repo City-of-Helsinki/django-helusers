@@ -11,7 +11,7 @@
 
 {% block content %}
 {% if helsinki_provider_installed %}
-<div id="helsinki-login"{% if grappelli_installed %} class="helusers-hide"{% endif %}>
+<div id="helsinki-login">
     <p>Kirjaudu sisään Helsingin kaupungin työntekijän tunnuksella:</p>
     <div id="top-bottom-margins">
         <a href="{{ helsinki_login_url }}{% if redirect_path %}?next={{ redirect_path }}{% endif %}">
@@ -36,18 +36,6 @@
         <input type="submit" value="{% translate "Log out" %}">
     </div>
 </form>
-{% endif %}
-
-{% if grappelli_installed %}
-<script type="text/javascript">
-(function() {
-    var $ = grp.jQuery;
-
-    $el = $("#helsinki-login");
-    $el.addClass('form-row grp-row');
-    $el.prependTo($('div.module')).show();
-})();
-</script>
 {% endif %}
 
 {% endblock %}
