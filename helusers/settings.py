@@ -2,6 +2,9 @@ from django.conf import settings
 from django.core.signals import setting_changed
 from django.dispatch import receiver
 
+ENVIRONMENT = getattr(settings, "HELUSERS_ENVIRONMENT", None)
+
+
 _defaults = dict(
     AUDIENCE=None,
     API_SCOPE_PREFIX=None,

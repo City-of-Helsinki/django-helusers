@@ -1,15 +1,35 @@
 {% extends "admin/base.html" %}
+{% block extrastyle %}
+{{ block.super }}
+{% if environment_name %}
+<style type="text/css">
+    body::before {
+        display: block;
+        line-height: 2rem;
+        background-color: {{ environment_background_color }};
+        content: "{{ environment_name }}";
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        text-align: center;
+        font-weight: bold;
+        text-transform: uppercase;
+    }
+    body {
+        height: auto;
+    }
+    .sticky {
+        top: 2rem;
+    }
+</style>
+{% endif %}
+{% endblock %}
 {% load static %}
 
 {% block title %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
 
 {% block blockbots %}
 <meta name="robots" content="NONE,NOARCHIVE" />
-{% if site_type == 'production' %}
-<link rel="stylesheet" href="{% static 'helusers/css/default_production.css' %}"/>
-{% else %}
-<link rel="stylesheet" href="{% static 'helusers/css/default.css' %}"/>
-{% endif %}
 {% endblock %}
 
 {% block branding %}
