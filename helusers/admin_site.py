@@ -86,8 +86,6 @@ class AdminSite(admin.AdminSite):
             ret["helsinki_login_url"] = login_url
             ret["helsinki_logout_url"] = logout_url
 
-        ret["base_site_template"] = "admin/base_site_default.html"
-
         ret["password_login_disabled"] = getattr(
             settings, "HELUSERS_PASSWORD_LOGIN_DISABLED", False
         )
