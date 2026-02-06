@@ -227,6 +227,39 @@ When a valid logout event is received, the callback is called. The callback rece
 
 The callback can affect the result of the back channel logout event handling by returning an [HttpResponse](https://docs.djangoproject.com/en/2.2/ref/request-response/#httpresponse-objects) instance with a status code between 400 and 599 inclusive. If such a response object is returned by the callback, the logout event handling is terminated and the response is sent to the requester. Any other kind of return value from the callback is ignored.
 
+
+### Show environment banner in Django admin
+
+django-helusers can display a visual environment banner in the Django admin interface to help users identify which environment they are working in. This is particularly useful for preventing accidental changes in production environments.
+
+To enable the environment banner, add the `HELUSERS_ENVIRONMENT` setting to your Django settings:
+
+```python
+# myproject/settings.py
+HELUSERS_ENVIRONMENT = "local"  # or "review", "development", "testing", "staging", "production"
+
+# or based on environment variables, e.g.
+import os
+
+HELUSERS_ENVIRONMENT = os.environ.get("HELUSERS_ENVIRONMENT", None)
+```
+
+The environment banner will automatically appear at the top of all Django admin pages when this setting is configured.
+
+#### Available environments
+
+The following environment values are supported out of the box:
+
+- `"local"` - Shows a blue banner labeled "Local environment"
+- `"review"` - Shows a green banner labeled "Review environment"
+- `"development"` - Shows a green banner labeled "Development environment"
+- `"testing"` - Shows a green banner labeled "Testing environment"
+- `"staging"` - Shows a yellow banner labeled "Staging environment"
+- `"production"` - Shows a red banner labeled "⚠️ Production environment ⚠️"
+
+If `HELUSERS_ENVIRONMENT` is not set or is set to a value not in the predefined list, no banner will be displayed.
+
+
 ### Adding Tunnistamo authentication
 
 django-helusers ships with backend for authenticating against Tunnistamo

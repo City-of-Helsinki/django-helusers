@@ -4,10 +4,39 @@ from django.contrib import admin
 from django.urls import resolve, reverse
 from django.utils.translation import gettext_lazy as _
 
+import helusers.settings as helusers_settings
+
 PROVIDERS = (
     ("helusers.providers.helsinki", "helsinki_login"),
     ("helusers.providers.helsinki_oidc", "helsinki_oidc_login"),
 )
+
+ENVIRONMENT_BANNERS = {
+    "local": {
+        "name": "Local environment",
+        "background_color": "darkblue",
+    },
+    "review": {
+        "name": "Review environment",
+        "background_color": "green",
+    },
+    "development": {
+        "name": "Development environment",
+        "background_color": "green",
+    },
+    "testing": {
+        "name": "Testing environment",
+        "background_color": "green",
+    },
+    "staging": {
+        "name": "Staging environment",
+        "background_color": "olive",
+    },
+    "production": {
+        "name": "⚠️ Production environment ⚠️",
+        "background_color": "maroon",
+    },
+}
 
 
 class AdminSite(admin.AdminSite):
@@ -30,6 +59,10 @@ class AdminSite(admin.AdminSite):
 
     def each_context(self, request):
         ret = super().each_context(request)
+        if env_banner_data := ENVIRONMENT_BANNERS.get(helusers_settings.ENVIRONMENT):
+            ret["environment_name"] = env_banner_data["name"]
+            ret["environment_background_color"] = env_banner_data["background_color"]
+        ret["environment"] = helusers_settings.ENVIRONMENT
         ret["redirect_path"] = request.GET.get("next", None)
         provider_installed = False
         if (
