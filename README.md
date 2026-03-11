@@ -450,6 +450,20 @@ If you're not allowing users to log in with passwords, you may disable the
 username/password form from Django admin login page by setting `HELUSERS_PASSWORD_LOGIN_DISABLED`
 to `True`.
 
+To also prevent password authentication at the backend level, replace Django's default
+`ModelBackend` with `HelusersModelBackend` in your `AUTHENTICATION_BACKENDS` setting:
+
+```python
+AUTHENTICATION_BACKENDS = [
+    "helusers.auth.HelusersModelBackend",
+    ...
+]
+```
+
+When `HELUSERS_PASSWORD_LOGIN_DISABLED` is `True`, `HelusersModelBackend` will refuse all
+password-based authentication attempts in addition to hiding the login form.
+
+
 
 ### Migrating old user from Tunnistamo to Keycloak
 
