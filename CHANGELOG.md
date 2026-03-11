@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.0.0](https://github.com/City-of-Helsinki/django-helusers/compare/django-helusers-v0.14.4...django-helusers-v1.0.0) (2026-03-11)
+
+
+### ⚠ BREAKING CHANGES
+
+* drop support for grappelli
+* remove SITE_TYPE setting
+
+### Features
+
+* Add HELUSERS_ENVIRONMENT setting ([b78a32e](https://github.com/City-of-Helsinki/django-helusers/commit/b78a32e0abaf97e908a30ef6df032cb07b2991f4))
+* Add HelusersModelBackend for disabling password login ([86f8950](https://github.com/City-of-Helsinki/django-helusers/commit/86f8950ebdd30efe8486d81a3e58917455704cbd))
+* Drop support for grappelli ([19bd985](https://github.com/City-of-Helsinki/django-helusers/commit/19bd985457215499d30ac919d6007bcf953c6010))
+* Remove SITE_TYPE setting ([866645f](https://github.com/City-of-Helsinki/django-helusers/commit/866645f63ba198d9723e7af3492ad5188205bfc6))
+
 ## [0.14.4](https://github.com/City-of-Helsinki/django-helusers/compare/django-helusers-v0.14.3...django-helusers-v0.14.4) (2025-11-19)
 
 
