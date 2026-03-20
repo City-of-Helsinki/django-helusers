@@ -44,7 +44,7 @@ def _compile_settings():
         def _load(self):
             self._settings = _defaults.copy()
 
-            user_settings = getattr(settings, "OIDC_API_TOKEN_AUTH", None)
+            user_settings = getattr(settings, "OIDC_API_TOKEN_AUTH", {})
             self._settings.update(user_settings)
 
     return Settings()
