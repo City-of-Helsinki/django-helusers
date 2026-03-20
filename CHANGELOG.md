@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/City-of-Helsinki/django-helusers/compare/django-helusers-v1.0.0...django-helusers-v1.0.1) (2026-03-20)
+
+
+### Bug Fixes
+
+* Don't fail on missing OIDC_API_TOKEN_AUTH setting ([8a0d6e8](https://github.com/City-of-Helsinki/django-helusers/commit/8a0d6e802c2f02b8be9edc2836e8e9e3dcab8813))
+
 ## [1.0.0](https://github.com/City-of-Helsinki/django-helusers/compare/django-helusers-v0.14.4...django-helusers-v1.0.0) (2026-03-11)
 
 
