@@ -460,8 +460,11 @@ AUTHENTICATION_BACKENDS = [
 ]
 ```
 
-When `HELUSERS_PASSWORD_LOGIN_DISABLED` is `True`, `HelusersModelBackend` will refuse all
-password-based authentication attempts in addition to hiding the login form.
+When `HELUSERS_PASSWORD_LOGIN_DISABLED` is `True`, `HelusersModelBackend` will prevent
+password-based authentication attempts for non-allowlisted users, in addition to hiding
+the login form.
+The `HELUSERS_PASSWORD_LOGIN_ALLOWLIST` setting can be used to allow password logins for
+specific users, even when `HELUSERS_PASSWORD_LOGIN_DISABLED` is `True` (e.g. for basic auth).
 
 
 
