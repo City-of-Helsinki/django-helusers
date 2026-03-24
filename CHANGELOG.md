@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/City-of-Helsinki/django-helusers/compare/django-helusers-v1.0.1...django-helusers-v1.1.0) (2026-03-24)
+
+
+### Features
+
+* Allow password login users in the allowlist ([79c441d](https://github.com/City-of-Helsinki/django-helusers/commit/79c441d2b247c5ae89cb6587be9b6273c094981c))
+
 ## [1.0.1](https://github.com/City-of-Helsinki/django-helusers/compare/django-helusers-v1.0.0...django-helusers-v1.0.1) (2026-03-20)
 
 
