@@ -513,20 +513,29 @@ pip install -e .
 Install development requirements:
 
 ```bash
-pip install -r requirements-test.txt
+pip install hatch
 ```
 
 ## Running tests
 
+This project uses [hatch](https://hatch.pypa.io/) for running tests.
+
+Run tests:
+
 ```bash
-pytest
+hatch test
 ```
 
-You can run the tests against multiple environments by using [tox](https://tox.readthedocs.io/en/latest/).
-Install `tox` globally and run:
+Run tests across all Python and Django versions:
 
 ```bash
-tox
+hatch test -a
+```
+
+Run tests for a specific Python version:
+
+```bash
+hatch test -i python=3.14
 ```
 
 ## Code format
