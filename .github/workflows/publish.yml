@@ -1,0 +1,56 @@
+name: Create release & publish to PyPI
+# If ran manually, e.g. with ref set to "refs/tags/v1.2.3", set the run name to "Publish refs/tags/v1.2.3".
+run-name: ${{ inputs.ref && format('Publish {0}', inputs.ref) || null }}
+
+on:
+  push:
+    branches:
+      - main
+  # Run daily to keep the release PR date current
+  schedule:
+    - cron: '1 0 * * *'
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "The branch, tag or SHA to publish."
+        required: true
+        type: string
+
+jobs:
+  release-please:
+    uses: City-of-Helsinki/.github/.github/workflows/release-please.yml@main
+    permissions:
+      contents: write
+      pull-requests: write
+    with:
+        include-component-in-tag: false
+
+  build:
+    needs:
+      - release-please
+    uses: City-of-Helsinki/.github/.github/workflows/build-python-dists.yml@main
+    with:
+        ref: ${{ inputs.ref }}
+    # Run build job if a release was created or a ref was specified (i.e. workflow was invoked manually)
+    if: ${{ needs.release-please.outputs.release_created || inputs.ref }}
+
+  publish-to-pypi:
+    name: Publish to PyPI
+    runs-on: ubuntu-latest
+    needs:
+      - build
+    # Run publish job if an artifact was uploaded
+    if: ${{ needs.build.outputs.artifact_name }}
+    environment:
+      name: pypi
+      url: https://pypi.org/p/django-helusers
+    permissions:
+      id-token: write  # mandatory for trusted publishing
+    steps:
+    - name: Download all the dists
+      uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
+      with:
+        name: ${{ needs.build.outputs.artifact_name }}
+        path: dist/
+    - name: Publish distribution to PyPI
+      uses: pypa/gh-action-pypi-publish@ed0c53931b1dc9bd32cbe73a98c7f6766f8a527e # v1.13.0
