@@ -1,8 +1,8 @@
 from datetime import datetime, timezone
 
+import jwt as pyjwt
 import pytest
 import responses
-from jose import jwt
 
 from helusers.settings import api_token_auth_settings
 
@@ -54,8 +54,8 @@ def encoded_jwt_factory(signing_key=rsa_key, **claims):
         if value is not None:
             jwt_data[name] = value
 
-    return jwt.encode(
-        jwt_data, key=signing_key.private_key_pem, algorithm=signing_key.jose_algorithm
+    return pyjwt.encode(
+        jwt_data, key=signing_key.private_key_pem, algorithm=signing_key.algorithm
     )
 
 
