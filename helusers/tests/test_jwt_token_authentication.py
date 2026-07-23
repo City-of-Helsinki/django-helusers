@@ -1,9 +1,13 @@
+import base64
+import json
 import uuid
 
+import jwt as pyjwt
 import pytest
 from django.test.client import RequestFactory
 from rest_framework.exceptions import AuthenticationFailed
 
+from helusers.jwt import _decode_jwt_with_keys, _get_unverified_payload
 from helusers.oidc import AuthenticationError, RequestJWTAuthentication
 
 from .._oidc_auth_impl import ApiTokenAuthentication
@@ -349,3 +353,86 @@ def test_token_belonging_to_a_logged_out_session_is_not_accepted(sut):
 @pytest.mark.parametrize("amr", [None, "something", ["something"], ["one", "two"]])
 def test_amr_as_string_and_list_are_both_accepted(sut, amr):
     authentication_passes(sut=sut, amr=amr)
+
+
+def test_decode_jwt_skips_unusable_jwks_entries_before_valid_key():
+    """_decode_jwt_with_keys skips malformed/unsupported entries and uses the
+    valid key that follows them."""
+    now = unix_timestamp_now()
+    token = encoded_jwt_factory(
+        iss=ISSUER1,
+        sub=str(USER_UUID),
+        aud=AUDIENCE,
+        iat=now,
+        exp=now + 60,
+        signing_key=rsa_key,
+    )
+
+    mixed_jwks = {
+        "keys": [
+            {"kty": "UNKNOWN", "kid": "bad-unsupported"},  # unsupported type
+            {"kty": "RSA", "kid": "bad-malformed"},  # missing required fields
+            rsa_key.public_key_jwk,  # valid key — must be reached
+        ]
+    }
+
+    result = _decode_jwt_with_keys(
+        token,
+        mixed_jwks,
+        algorithms=["RS256"],
+        options={"verify_aud": False},
+    )
+    assert result["sub"] == str(USER_UUID)
+
+
+def test_decode_jwt_with_keys_raises_on_empty_jwks():
+    with pytest.raises(pyjwt.exceptions.DecodeError):
+        _decode_jwt_with_keys("a.b.c", {"keys": []}, algorithms=["RS256"], options={})
+
+
+def test_get_unverified_payload_raises_on_invalid_json():
+    not_json = base64.urlsafe_b64encode(b"not-json").rstrip(b"=").decode()
+    with pytest.raises(pyjwt.exceptions.DecodeError):
+        _get_unverified_payload(f"header.{not_json}.sig")
+
+
+def test_get_unverified_payload_raises_on_non_dict_payload():
+    array_payload = (
+        base64.urlsafe_b64encode(json.dumps([1, 2, 3]).encode()).rstrip(b"=").decode()
+    )
+    with pytest.raises(pyjwt.exceptions.DecodeError):
+        _get_unverified_payload(f"header.{array_payload}.sig")
+
+
+def test_get_unverified_payload_raises_on_invalid_utf8():
+    with pytest.raises(pyjwt.exceptions.DecodeError):
+        _get_unverified_payload(b"\xff\xfe invalid utf-8")
+
+
+def test_decode_jwt_skips_ec_key_before_rsa_signing_key():
+    """An EC key (constructs fine but wrong type for RS256) must be skipped so
+    the subsequent RSA key is still tried."""
+    from cryptography.hazmat.primitives.asymmetric import ec
+
+    ec_jwk = json.loads(
+        pyjwt.algorithms.ECAlgorithm.to_jwk(
+            ec.generate_private_key(ec.SECP256R1()).public_key()
+        )
+    )
+
+    now = unix_timestamp_now()
+    token = encoded_jwt_factory(
+        iss=ISSUER1,
+        sub=str(USER_UUID),
+        aud=AUDIENCE,
+        iat=now,
+        exp=now + 60,
+        signing_key=rsa_key,
+    )
+
+    mixed_jwks = {"keys": [ec_jwk, rsa_key.public_key_jwk]}
+
+    result = _decode_jwt_with_keys(
+        token, mixed_jwks, algorithms=["RS256"], options={"verify_aud": False}
+    )
+    assert result["sub"] == str(USER_UUID)

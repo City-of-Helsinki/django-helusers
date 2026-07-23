@@ -1,5 +1,7 @@
-from jose import jwk
-from jose.constants import ALGORITHMS
+import json
+
+import jwt as pyjwt
+from cryptography.hazmat.primitives.serialization import load_pem_public_key
 
 
 def _build_key(private_pem, public_pem):
@@ -7,10 +9,13 @@ def _build_key(private_pem, public_pem):
         pass
 
     key = _Key()
-    key.jose_algorithm = ALGORITHMS.RS256
+    key.algorithm = "RS256"
     key.private_key_pem = private_pem
     key.public_key_pem = public_pem
-    key.public_key_jwk = jwk.construct(public_pem, key.jose_algorithm).to_dict()
+    pub = load_pem_public_key(
+        public_pem.encode() if isinstance(public_pem, str) else public_pem
+    )
+    key.public_key_jwk = json.loads(pyjwt.algorithms.RSAAlgorithm.to_jwk(pub))
 
     return key
 

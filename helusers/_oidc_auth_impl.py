@@ -4,7 +4,7 @@ from cachetools.func import ttl_cache
 from django.utils import timezone
 from django.utils.encoding import smart_str
 from django.utils.translation import gettext as _
-from jose import JWTError
+from jwt.exceptions import PyJWTError
 from rest_framework.authentication import BaseAuthentication, get_authorization_header
 from rest_framework.exceptions import AuthenticationFailed
 
@@ -40,7 +40,7 @@ class ApiTokenAuthentication(BaseAuthentication):
 
         try:
             payload = self.decode_jwt(jwt_value)
-        except JWTError:
+        except PyJWTError:
             return None
 
         logger.debug(f"Token payload decoded as: {payload}")

@@ -36,7 +36,8 @@ dependencies = [
     "cachetools>=3.0.0",
     "deprecation>=2",
     "requests",
-    "python-jose",
+    "PyJWT>=2",
+    "cryptography",
 ]
 
 [project.urls]

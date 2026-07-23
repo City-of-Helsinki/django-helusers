@@ -9,13 +9,84 @@ try:
 except ImportError:
     pass
 
+import base64
+import json as _json
+import logging
+
+import jwt as pyjwt
 from django.utils.functional import cached_property
-from jose import jwt
+from jwt import PyJWK
 
 from .models import OIDCBackChannelLogoutEvent
 from .settings import api_token_auth_settings
 
+logger = logging.getLogger(__name__)
+
 _NOT_PROVIDED = object()
+
+
+def _get_unverified_payload(encoded_jwt):
+    """Base64-decode the JWT payload without touching the signature.
+
+    Intentionally skips signature verification — callers must call
+    JWT.validate() before trusting any claim values.
+    """
+    try:
+        if isinstance(encoded_jwt, bytes):
+            encoded_jwt = encoded_jwt.decode("utf-8")
+        parts = encoded_jwt.split(".")
+        if len(parts) != 3:
+            raise pyjwt.exceptions.DecodeError("Not enough segments")
+        # JWT compact serialisation strips base64 padding; restore it.
+        padded = parts[1] + "=" * (-len(parts[1]) % 4)
+        payload = _json.loads(base64.urlsafe_b64decode(padded))
+    except pyjwt.exceptions.DecodeError:
+        raise
+    except Exception as exc:
+        raise pyjwt.exceptions.DecodeError("Invalid JWT payload") from exc
+    if not isinstance(payload, dict):
+        raise pyjwt.exceptions.DecodeError("Invalid JWT payload: not a JSON object")
+    return payload
+
+
+def _decode_jwt_with_keys(token, jwks, algorithms, options):
+    """Decode a JWT by trying each key in the JWKS until one succeeds.
+
+    Entries that cannot be constructed into usable key objects (unsupported
+    kty, malformed key material, encryption-only keys, etc.) are skipped.
+    Terminal failures — expired token, missing claims, algorithm mismatch —
+    are raised immediately once a key has been successfully constructed.
+    """
+    key_list = jwks.get("keys", []) if isinstance(jwks, dict) else []
+    if not key_list:
+        raise pyjwt.exceptions.DecodeError("No keys available for validation")
+
+    last_exc = None
+    for jwk_data in key_list:
+        try:
+            key_obj = PyJWK(jwk_data)
+        except Exception as exc:
+            kid = (
+                jwk_data.get("kid", "<no kid>")
+                if isinstance(jwk_data, dict)
+                else "<unknown>"
+            )
+            logger.debug("Skipping unusable JWK entry (kid=%s): %s", kid, exc)
+            continue
+
+        try:
+            return pyjwt.decode(
+                token, key_obj.key, algorithms=algorithms, options=options
+            )
+        except (
+            pyjwt.exceptions.InvalidSignatureError,
+            pyjwt.exceptions.InvalidKeyError,
+            TypeError,
+        ) as exc:
+            # Wrong key or incompatible key type — try the next one
+            last_exc = exc
+
+    raise last_exc or pyjwt.exceptions.InvalidSignatureError("JWT validation failed")
 
 
 class ValidationError(Exception):
@@ -28,7 +99,7 @@ class JWT:
         provided input but it doesn't validate it in any way. If the
         input is invalid, an exception is raised."""
         self._encoded_jwt = encoded_jwt
-        self._claims = jwt.get_unverified_claims(encoded_jwt)
+        self._claims = _get_unverified_payload(encoded_jwt)
         self.settings = settings or api_token_auth_settings
 
     def validate(self, keys, audience, required_claims=_NOT_PROVIDED):
@@ -40,17 +111,15 @@ class JWT:
         if required_claims is _NOT_PROVIDED:
             required_claims = ["aud", "exp"]
 
+        require_aud = "aud" in required_claims
+        remaining_claims = [c for c in required_claims if c != "aud"]
+
         options = {
             "verify_aud": False,
+            "require": remaining_claims,
         }
 
-        require_aud = "aud" in required_claims
-        required_claims.remove("aud")
-
-        for required_claim in required_claims:
-            options[f"require_{required_claim}"] = True
-
-        jwt.decode(
+        _decode_jwt_with_keys(
             self._encoded_jwt,
             keys,
             algorithms=self.settings.ALLOWED_ALGORITHMS,
@@ -65,6 +134,12 @@ class JWT:
             claim_audiences = claims["aud"]
             if isinstance(claim_audiences, str):
                 claim_audiences = {claim_audiences}
+            elif isinstance(claim_audiences, list) and all(
+                isinstance(a, str) for a in claim_audiences
+            ):
+                claim_audiences = set(claim_audiences)
+            else:
+                raise ValidationError("Invalid audience.")
             if isinstance(audience, str):
                 audience = {audience}
             if len(set(audience).intersection(claim_audiences)) == 0:

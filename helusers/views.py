@@ -13,7 +13,7 @@ from django.utils.module_loading import import_string
 from django.utils.translation import gettext_lazy as _
 from django.views import View
 from django.views.generic.base import RedirectView
-from jose import JOSEError
+from jwt.exceptions import PyJWTError
 
 from . import oidc
 from .jwt import JWT, ValidationError
@@ -103,7 +103,7 @@ class OIDCBackChannelLogout(View):
 
             if "nonce" in jwt.claims:
                 raise ValidationError()
-        except (JOSEError, KeyError, ValidationError):
+        except (PyJWTError, KeyError, ValidationError):
             return None
 
         return jwt
