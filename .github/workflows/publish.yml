@@ -15,6 +15,10 @@ on:
         description: "The branch, tag or SHA to publish."
         required: true
         type: string
+      skip-build:
+        description: "Skip artifact build and publish, i.e. run release-please only."
+        default: false
+        type: boolean
 
 jobs:
   release-please:
@@ -32,7 +36,8 @@ jobs:
     with:
         ref: ${{ inputs.ref }}
     # Run build job if a release was created or a ref was specified (i.e. workflow was invoked manually)
-    if: ${{ needs.release-please.outputs.release_created || inputs.ref }}
+    # Skip if skip-build is set on.
+    if: ${{ needs.release-please.outputs.release_created || inputs.ref && !inputs.skip-build }}
 
   publish-to-pypi:
     name: Publish to PyPI
