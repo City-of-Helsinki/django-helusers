@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.2.0](https://github.com/City-of-Helsinki/django-helusers/compare/django-helusers-v1.1.0...django-helusers-v1.2.0) (2026-07-27)
+
+
+### Features
+
+* Replace python-jose with PyJWT and cryptography ([5749d65](https://github.com/City-of-Helsinki/django-helusers/commit/5749d65dc8eeabcd4b269e7118f16d7d595809ee))
+
+
+### Dependencies
+
+* Update pre-commit tool versions ([9a481ac](https://github.com/City-of-Helsinki/django-helusers/commit/9a481ac7bf30ec54509a6bc003c6695210bf7e09))
+
 ## [1.1.0](https://github.com/City-of-Helsinki/django-helusers/compare/django-helusers-v1.0.1...django-helusers-v1.1.0) (2026-03-24)
 
 
