@@ -8,6 +8,8 @@ from django.contrib.auth.views import LogoutView as DjangoLogoutView
 from django.core.signals import setting_changed
 from django.dispatch import receiver
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect
+from django.middleware.csrf import get_token
+from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.module_loading import import_string
 from django.utils.translation import gettext_lazy as _
@@ -42,6 +44,7 @@ class LogoutCompleteView(DjangoLogoutView):
 
 class LoginView(RedirectView):
     permanent = False
+    http_method_names = ["post"]
 
     def get_redirect_url(self, *args, **kwargs):
         # We make sure the user is logged out first, because otherwise
@@ -49,9 +52,16 @@ class LoginView(RedirectView):
         # method is connected to an existing user account.
         logout(self.request)
 
+        # In session based CSRF (CSRF_USE_SESSIONS) the CSRF token is stored
+        # server side. Calling logout() wipes this stored data which in
+        # turn would cause a 403 when the 307 redirects the POST to the next endpoint.
+        # Calling get_token ensures that CsrfViewMiddleware adds the token to the
+        # newly created session.
+        get_token(self.request)
+
         url = reverse("social:begin", kwargs=dict(backend="tunnistamo"))
-        redirect_to = self.request.GET.get(REDIRECT_FIELD_NAME)
-        lang = self.request.GET.get(LANGUAGE_FIELD_NAME)
+        redirect_to = self.request.POST.get(REDIRECT_FIELD_NAME)
+        lang = self.request.POST.get(LANGUAGE_FIELD_NAME)
 
         query_params = OrderedDict()
         if redirect_to:
@@ -62,6 +72,12 @@ class LoginView(RedirectView):
             url += "?" + urlencode(query_params)
 
         return url
+
+    def post(self, request, *args, **kwargs):
+        return redirect(
+            self.get_redirect_url(*args, **kwargs),
+            preserve_request=True,
+        )
 
 
 class OIDCBackChannelLogout(View):

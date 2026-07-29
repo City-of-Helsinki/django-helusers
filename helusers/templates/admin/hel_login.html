@@ -14,9 +14,16 @@
 <div id="helsinki-login">
     <p>Kirjaudu sisään Helsingin kaupungin työntekijän tunnuksella:</p>
     <div id="top-bottom-margins">
-        <a href="{{ helsinki_login_url }}{% if redirect_path %}?next={{ redirect_path }}{% endif %}">
-            <button id="helsinki-login-btn" class="button grp-button grp-default" type="button">Helsinki Login</button>
-        </a>
+        <form method="post" action="{{ helsinki_login_url }}">
+            {% csrf_token %}
+            {% if redirect_path %}
+            <input type="hidden" name="next" value="{{ redirect_path }}">
+            {% endif %}
+            {% if request.GET.ui_locales %}
+            <input type="hidden" name="ui_locales" value="{{ request.GET.ui_locales }}">
+            {% endif %}
+            <input id="helsinki-login-btn" class="button" type="submit" value="Helsinki Login">
+        </form>
     </div>
 {% if not password_login_disabled %}
     <p>
