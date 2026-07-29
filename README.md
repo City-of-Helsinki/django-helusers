@@ -438,10 +438,14 @@ SOCIAL_AUTH_TUNNISTAMO_AUTH_EXTRA_ARGUMENTS = {"ui_locales": "fi"}
 other default language. If you don't want to set a default language at all, use an empty string `""` as the language
 code.
 
-When this setting is in place, languages can be requested using query param `ui_locales=<language code>` when starting
-the login process, for example in your template
-```
-<a href="{% url 'helusers:auth_login' %}?next=/foobar/&ui_locales=en">Login in English</a>
+When this setting is in place, languages can be requested using the parameter `ui_locales=<language code>` when
+starting the login process. Login initiation uses a POST request, for example in your template:
+<form method="post" action="{% url 'helusers:auth_login' %}">
+    {% csrf_token %}
+    <input type="hidden" name="next" value="/foobar/">
+    <input type="hidden" name="ui_locales" value="en">
+    <button type="submit">Login in English</button>
+</form>
 ```
 
 #### Disabling password logins
