@@ -1,6 +1,17 @@
+# This file is synced from City-of-Helsinki/.github and should not be edited directly
 name: Create release & publish to PyPI
-# If ran manually, e.g. with ref set to "refs/tags/v1.2.3", set the run name to "Publish refs/tags/v1.2.3".
-run-name: ${{ inputs.ref && format('Publish {0}', inputs.ref) || null }}
+# For manual runs:
+# - If ref is set (for example, "refs/tags/v1.2.3"), use "Publish refs/tags/v1.2.3".
+# - If skipping build (for example, ref is "main"), use "Release-please only (main)"
+# Otherwise, use the default name (latest commit).
+run-name: >-
+  ${{
+    inputs.ref &&
+      (inputs.skip-build
+        && format('Release-please only ({0})', inputs.ref)
+        || format('Publish {0}', inputs.ref))
+    || null
+  }}
 
 on:
   push:
@@ -12,7 +23,7 @@ on:
   workflow_dispatch:
     inputs:
       ref:
-        description: "The branch, tag or SHA to publish."
+        description: "The branch, tag or SHA to publish. E.g. main, refs/tags/v1.0.0, aeb2839."
         required: true
         type: string
       skip-build:
@@ -27,17 +38,16 @@ jobs:
       contents: write
       pull-requests: write
     with:
-        include-component-in-tag: false
+      include-component-in-tag: false
 
   build:
     needs:
       - release-please
     uses: City-of-Helsinki/.github/.github/workflows/build-python-dists.yml@main
     with:
-        ref: ${{ inputs.ref }}
-    # Run build job if a release was created or a ref was specified (i.e. workflow was invoked manually)
-    # Skip if skip-build is set on.
-    if: ${{ needs.release-please.outputs.release_created || inputs.ref && !inputs.skip-build }}
+      ref: ${{ inputs.ref }}
+    # If the build is not skipped, run the build job when a release was created or a ref was specified.
+    if: ${{ !inputs.skip-build && (needs.release-please.outputs.release_created || inputs.ref) }}
 
   publish-to-pypi:
     name: Publish to PyPI
@@ -48,14 +58,14 @@ jobs:
     if: ${{ needs.build.outputs.artifact_name }}
     environment:
       name: pypi
-      url: https://pypi.org/p/django-helusers
+      url: https://pypi.org/p/${{ github.event.repository.name }}
     permissions:
       id-token: write  # mandatory for trusted publishing
     steps:
-    - name: Download all the dists
-      uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
-      with:
-        name: ${{ needs.build.outputs.artifact_name }}
-        path: dist/
-    - name: Publish distribution to PyPI
-      uses: pypa/gh-action-pypi-publish@ed0c53931b1dc9bd32cbe73a98c7f6766f8a527e # v1.13.0
+      - name: Download all the dists
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: ${{ needs.build.outputs.artifact_name }}
+          path: dist/
+      - name: Publish distribution to PyPI
+        uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # v1.14.2
