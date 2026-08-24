@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/City-of-Helsinki/django-helusers/compare/django-helusers-v1.2.0...django-helusers-v1.3.0) (2026-08-24)
+
+
+### Features
+
+* Change login method from GET to POST ([e87150e](https://github.com/City-of-Helsinki/django-helusers/commit/e87150e522eb437d5ba3ca3ace4c9a317a3ef9a4))
+
 ## [1.2.0](https://github.com/City-of-Helsinki/django-helusers/compare/django-helusers-v1.1.0...django-helusers-v1.2.0) (2026-07-27)
 
 
