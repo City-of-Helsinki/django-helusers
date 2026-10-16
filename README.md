@@ -6,6 +6,7 @@
 Django-helusers is your friendly app for bolting authentication into Django projects for City of Helsinki. Authentication schemes are based on [OAuth2](https://oauth.net/2/) and [OpenID Connect (OIDC)](https://openid.net/connect/).
 
 The library requires Python 3.11 or newer.
+It supports Django 5.2 and 6.0.
 
 A baseline `User` model is provided that can be used with the various authentication use cases that are supported. The model supports mapping from AD groups to Django groups based on the authentication data.
 
