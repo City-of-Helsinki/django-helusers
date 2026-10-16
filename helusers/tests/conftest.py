@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 import jwt as pyjwt
 import pytest
@@ -38,8 +38,8 @@ def stub_responses():
 
 
 def unix_timestamp_now():
-    epoch = datetime(1970, 1, 1, tzinfo=timezone.utc)
-    return int((datetime.now(tz=timezone.utc) - epoch).total_seconds())
+    epoch = datetime(1970, 1, 1, tzinfo=UTC)
+    return int((datetime.now(tz=UTC) - epoch).total_seconds())
 
 
 @pytest.fixture(name="unix_timestamp_now")
