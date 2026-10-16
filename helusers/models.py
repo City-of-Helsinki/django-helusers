@@ -97,11 +97,11 @@ class AbstractUser(DjangoAbstractUser):
             mappings[ad_group].append(group)
 
         user_ad_groups = set(
-            self.ad_groups.filter(groups__isnull=False).values_list(flat=True)
+            self.ad_groups.filter(groups__isnull=False).values_list("pk", flat=True)
         )
         all_mapped_groups = set(chain(*mappings.values()))
         old_groups = set(
-            self.groups.filter(id__in=all_mapped_groups).values_list(flat=True)
+            self.groups.filter(id__in=all_mapped_groups).values_list("pk", flat=True)
         )
         new_groups = set(chain(*[mappings[x] for x in user_ad_groups]))
 
