@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.3.1](https://github.com/City-of-Helsinki/django-helusers/compare/django-helusers-v1.3.0...django-helusers-v1.3.1) (2026-10-24)
+
+
+### Dependencies
+
+* Add support for Django 6.1 ([072cb9b](https://github.com/City-of-Helsinki/django-helusers/commit/072cb9bdf74f018e3b7a102ab8f8e39f6fe5dec4))
+* Add support for Python 3.15 ([c0f0e9e](https://github.com/City-of-Helsinki/django-helusers/commit/c0f0e9e8f7ebed6ab27b5ce15678afbdf05948d4))
+* Drop support for Django &lt;5.2 ([e8e6f62](https://github.com/City-of-Helsinki/django-helusers/commit/e8e6f62a8df9ab4a76c2d4bfead29108ed7054b7))
+* Drop support for Python 3.10 ([3e4de9a](https://github.com/City-of-Helsinki/django-helusers/commit/3e4de9ab137f4697f3aeddfd17be780a5bb28eb8))
+
 ## [1.3.0](https://github.com/City-of-Helsinki/django-helusers/compare/django-helusers-v1.2.0...django-helusers-v1.3.0) (2026-08-24)
 
 
