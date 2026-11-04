@@ -21,8 +21,9 @@ class TunnistamoOIDCAuth(OpenIdConnectAuth):
     # Workaround for the cases where jwks-endpoint does not specify
     # alg for keys. Default to RS256 per:
     # https://openid.net/specs/openid-connect-core-1_0.html#IDTokenValidation
-    def get_remote_jwks_keys(self):
-        keys = super().get_remote_jwks_keys()
+    # Older social-core versions take no arguments, newer ones accept an optional uri.
+    def get_remote_jwks_keys(self, *args, **kwargs):
+        keys = super().get_remote_jwks_keys(*args, **kwargs)
         for key in keys:
             if "alg" not in key:
                 key["alg"] = "RS256"
