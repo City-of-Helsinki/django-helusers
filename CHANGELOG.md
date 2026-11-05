@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.2](https://github.com/City-of-Helsinki/django-helusers/compare/django-helusers-v1.3.1...django-helusers-v1.3.2) (2026-11-05)
+
+
+### Bug Fixes
+
+* Use request from backend.strategy to store end_session_url ([3eb2922](https://github.com/City-of-Helsinki/django-helusers/commit/3eb29222eb8bc34282c221b4bc52f660bafeecf2))
+
 ## [1.3.1](https://github.com/City-of-Helsinki/django-helusers/compare/django-helusers-v1.3.0...django-helusers-v1.3.1) (2026-11-05)
 
 
