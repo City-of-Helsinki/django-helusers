@@ -91,7 +91,8 @@ def store_end_session_url(details, backend, response, user=None, *args, **kwargs
 
     if not hasattr(backend, "get_end_session_url"):
         return
-    request = kwargs["request"]
+
+    request = getattr(backend.strategy, "request", None)
     if not request:
         return
 
